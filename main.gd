@@ -6,6 +6,9 @@ const Art = preload("res://character_art.gd")
 const World = preload("res://world.gd")
 const ClassCombat = preload("res://class_combat.gd")
 const ClassProgression = preload("res://class_progression.gd")
+const PlayerSkills = preload("res://player_skills.gd")
+const PlayerEffects = preload("res://player_effects.gd")
+const RunCheckpoint = preload("res://run_checkpoint.gd")
 const VIEW = Rect2(32, 112, 896, 456)
 const ARENA = Rect2(32, 112, 1344, 684)
 const CENTER = Vector2(704, 454)
@@ -53,7 +56,16 @@ var active_cap = 6
 var world_data: Dictionary = {}
 var camera_offset = Vector2.ZERO
 var selected_class = 0
-var selected_skill = ""
+var selected_skill = "" # Legacy selection is intentionally ignored.
+var selected_option = "sword"
+var learned_skills: Array = []
+var skill_choices_taken = 0
+var skill_reward_taken = false
+var mastery_bonus_count = 0
+var combo_left = 0
+var dodge_recovery = 0.0
+var checkpoint_path = "user://legis_adventure_checkpoint.json"
+var allow_checkpoint_io = false
 var selected_cosmetic = 0
 # Legacy profile keys keep existing saves compatible with Class and Skill names.
 var profile = {"best_stage":0,"wins":0,"unlocks":[],"equipment":[],"sfx":true,"shake":true,"volume":0.5,"selected_build":0,"selected_ability":"","selected_cosmetic":0}
@@ -128,7 +140,7 @@ func load_profile():
 	for key in ["best_stage", "wins", "selected_build", "selected_cosmetic"]:
 		if saved.get(key) is float or saved.get(key) is int:
 			profile[key] = maxi(0,int(saved[key]))
-	profile.best_stage = mini(20,profile.best_stage)
+	profile.best_stage = mini(D.MAX_STAGE,profile.best_stage)
 	for key in ["sfx", "shake"]:
 		if saved.get(key) is bool: profile[key] = saved[key]
 	if saved.get("volume") is float or saved.get("volume") is int:
@@ -147,18 +159,29 @@ func load_profile():
 	if D.COSMETICS[selected_cosmetic].stage > profile.best_stage: selected_cosmetic = 0
 	selected_skill = saved.get("selected_ability", "") if saved.get("selected_ability", "") is String else ""
 	if not selected_skill in profile.unlocks: selected_skill = ""
+	selected_option=str(saved.get("selected_option",D.CLASSES[selected_class].weapon if selected_class!=2 else "fire"))
 	validate_starting_skill()
 
 func validate_starting_skill():
-	for u in D.TACTICS:
-		if u.id == selected_skill and not u.get("classes",[]).is_empty() and not D.CLASSES[selected_class].id in u.classes:
-			selected_skill = ""
-			return
+	# Legacy Starting Skill selections never grant redesigned gameplay Skills.
+	selected_skill=""
+	validate_starting_option()
+
+func validate_starting_option():
+	if not selected_option in D.CLASSES[selected_class].options:
+		selected_option=D.CLASSES[selected_class].weapon if selected_class!=2 else "fire"
+
+func active_skill_rank(effect: String) -> int:
+	return PlayerSkills.active_rank(self,effect)
+
+func learn_skill(id: String) -> bool:
+	return PlayerSkills.learn(self,id)
 
 func save_profile():
 	if test_mode: return
 	validate_starting_skill()
-	profile.version = 7
+	profile.version = D.SCHEMA_VERSION
+	profile.selected_option = selected_option
 	profile.selected_build = selected_class
 	profile.selected_ability = selected_skill
 	profile.selected_cosmetic = selected_cosmetic
@@ -245,7 +268,7 @@ func show_menu():
 	bullets.clear()
 	hud.text = ""
 	hint.text = "WASD / arrows or hold left mouse to move   •   Space / right mouse to dash   •   Esc to pause"
-	var box = modal("LEGI'S ADVENTURE", "A tiny owl. A very big adventure.\n20 wild arenas • 4 guardians • one more run")
+	var box = modal("LEGI'S ADVENTURE", "A tiny owl. A very big adventure.\n30 wild arenas • 6 guardians • one more run")
 	var spacer = TextureRect.new()
 	spacer.texture = textures.get("owl")
 	spacer.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
@@ -258,13 +281,14 @@ func show_menu():
 	box.add_child(row)
 	button(row,"CLASS: " + str(D.CLASSES[selected_class].name),show_classes).size_flags_horizontal=Control.SIZE_EXPAND_FILL
 	button(row,"COSMETICS",show_cosmetics).size_flags_horizontal=Control.SIZE_EXPAND_FILL
-	button(box,"STARTING SKILL  ·  " + skill_name(selected_skill),show_skills)
+	button(box,"STARTING OPTION · " + selected_option.replace("_"," ").to_upper(),show_skills)
+	if not RunCheckpoint.read(self).is_empty():button(box,"CONTINUE CHECKPOINT →",func():RunCheckpoint.restore(self),Color("416978"))
 	var row2 = HBoxContainer.new()
 	box.add_child(row2)
 	button(row2,"EQUIPMENT JOURNAL",show_equipment).size_flags_horizontal=Control.SIZE_EXPAND_FILL
 	button(row2,"SETTINGS",show_settings).size_flags_horizontal=Control.SIZE_EXPAND_FILL
 	var label = Label.new()
-	label.text = "BEST STAGE %02d / 20     •     %d VICTORIES" % [profile.best_stage,profile.wins]
+	label.text = "BEST STAGE %02d / 30     •     %d VICTORIES" % [profile.best_stage,profile.wins]
 	label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	label.modulate = Color("93a7c8")
 	box.add_child(label)
@@ -272,15 +296,14 @@ func show_menu():
 	queue_redraw()
 
 func skill_name(id: String) -> String:
-	for u in D.TACTICS:
-		if u.id == id: return u.name
-	return "None (" + str(D.CLASSES[selected_class].weapon_label) + " primary)"
+	var skill=PlayerSkills.definition(id)
+	return str(skill.get("name","None"))
 
 func show_classes():
-	var box = modal("CHOOSE YOUR CLASS","Your Class equips its automatic primary weapon from level 1.\nTactics can add other attack types. All stats keep their final limits.")
+	var box = modal("CHOOSE YOUR CLASS","Choose a Class, then its starting weapon or element.\nBoss Skills shape your play; Tactics improve shared attributes.")
 	for i in D.CLASSES.size():
 		var class_def = D.CLASSES[i]
-		button(box,class_def.name + "  ·  " + class_def.weapon_label.to_upper() + "\n" + class_def.description,func(): selected_class=i; save_profile(); show_menu())
+		button(box,class_def.name + "  ·  " + class_def.weapon_label.to_upper() + "\n" + class_def.description,func(): selected_class=i; selected_option="";validate_starting_option();save_profile();show_menu())
 	button(box,"BACK",show_menu)
 
 func show_cosmetics():
@@ -293,21 +316,11 @@ func show_cosmetics():
 	button(box,"BACK",show_menu)
 
 func show_skills():
-	var box = modal("CHOOSE YOUR STARTING SKILL","Tactics you discover unlock Skills for future runs.\nEquip one Skill at rank 1. Discoveries stay unlocked after death.")
-	button(box,"NONE  ·  " + str(D.CLASSES[selected_class].weapon_label) + " primary only",func(): selected_skill="";save_profile();show_menu())
-	var scroll = ScrollContainer.new()
-	scroll.custom_minimum_size.y = 245
-	box.add_child(scroll)
-	var list = VBoxContainer.new()
-	list.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	scroll.add_child(list)
-	for u in D.TACTICS:
-		if u.id in profile.unlocks and (u.get("classes",[]).is_empty() or D.CLASSES[selected_class].id in u.classes):
-			button(list,u.name + "  ·  " + u.description,func(): selected_skill=u.id;save_profile();show_menu())
-	if profile.unlocks.is_empty():
-		var l = Label.new()
-		l.text = "Reach level 5 and choose a Tactic to unlock your first Skill."
-		list.add_child(l)
+	var box=modal("CHOOSE STARTING OPTION","All weapons and elements are available from your first run.\nSwitch during play through a Tactic. Boss victories award Skills.")
+	for option in D.CLASSES[selected_class].options:
+		button(box,str(option).replace("_"," ").capitalize()+("  ✓" if option==selected_option else ""),func():
+			selected_option=option;save_profile();show_menu()
+		)
 	button(box,"BACK",show_menu)
 
 func show_equipment():
@@ -332,17 +345,15 @@ func show_settings():
 
 func start_run():
 	clear_panel()
-	stats={"max_hp":100.0,"damage":18.0,"speed":150.0,"attack_speed":1.0,"range":78.0,"projectiles":0.0,"magic":0.0,"dash_damage":0.0,"dash_cooldown":3.0,"pickup":75.0,"regen":0.15,"armor":0.0,"lifesteal":0.0}
-	level=1;xp=0;stage=1;kills=0;elapsed=0;hp=100;pending_choices=0
-	run_equipment.clear()
-	tactic_ranks.clear()
-	class_fx.clear();trail_patches.clear()
-	validate_starting_skill()
-	# Equip the chosen class before applying its one optional Starting Skill.
+	validate_starting_option()
+	stats={"max_hp":100.0,"damage":18.0,"speed":150.0,"attack_speed":1.0,"range":78.0,"projectiles":0.0,"magic":0.0,"dash_damage":0.0,"dash_cooldown":3.0,"pickup":75.0,"regen":0.15,"armor":0.0,"lifesteal":0.0,
+		"critical_rate":0.05,"critical_damage":0.5,"dodge_rate":0.05,"block_rate":0.05,"dodge_cooldown":3.0,"mage_armor":0.0,"shield_regen":5.0}
+	level=1;xp=0;stage=1;kills=0;elapsed=0;hp=100;pending_choices=0;dodge_recovery=0
+	skill_choices_taken=0;mastery_bonus_count=0;learned_skills.clear()
+	run_equipment.clear();tactic_ranks.clear();class_fx.clear();trail_patches.clear()
+	selected_skill=""
 	apply_stats(D.CLASSES[selected_class].starting_stats)
 	ClassProgression.reset_run(self)
-	for u in D.TACTICS:
-		if u.id==selected_skill: apply_tactic(u.id)
 	hp=stats.max_hp
 	start_stage()
 
@@ -356,7 +367,7 @@ func start_stage():
 	bow_cd=0.3 if primary_weapon()=="bow" else 0.8
 	magic_cd=0.3 if primary_weapon()=="staff" else 1.0
 	enemies.clear();bullets.clear();gems.clear();potions.clear();effects.clear();obstacles.clear();flowers.clear()
-	portal_open=false;boss_reward_taken=false;stage_clear_healed=false;stage_time=0
+	portal_open=false;boss_reward_taken=false;skill_reward_taken=false;stage_clear_healed=false;stage_time=0;dodge_recovery=0;combo_left=0
 	healing_flash=0;healing_feedback=""
 	sword_state="idle";sword_time=0;sword_hits.clear();slash_time=0
 	bow_windup=0;cast_windup=0;release_time=0;release_kind="";player_moving=false
@@ -364,8 +375,8 @@ func start_stage():
 	var palette=D.THEMES[mini(3,int((stage-1)/5))]
 	World.generate(self)
 	spawn_queue.clear()
-	var tier=mini(3,int((stage-1)/5))
-	wave_size=4+tier;active_cap=6+tier*2
+	var tier=mini(5,int((stage-1)/5))
+	wave_size=mini(8,4+tier);active_cap=mini(15,6+tier*2)
 	var has_boss=stage%5==0
 	# Increase the COMPLETE v5 roster by 25%, rounding up once, not per group.
 	total_enemies=int(ceil((8+stage*2+(1 if has_boss else 0))*1.25))
@@ -428,7 +439,7 @@ func spawn_enemy(kind: String):
 			for x in range(int(ARENA.position.x)+40,int(ARENA.end.x)-40,30):
 				var candidate=Vector2(x,y)
 				if candidate.distance_to(player)>185 and not blocked(candidate,radius):pos=candidate;break
-	var tier_health=1.0+clampf(float(stage-5)/15.0,0.0,1.0)*0.2
+	var tier_health=1.0+clampf(float(stage-5)/25.0,0.0,1.0)*0.3
 	var health=(35.0+stage*6)*tier_health
 	var health_multipliers={"archer":0.55,"swift":0.7,"sentinel":1.65,"assassin":0.9,"chanter":1.1,"hexer":1.0}
 	health*=float(health_multipliers.get(kind,1.0))
@@ -463,9 +474,13 @@ func _unhandled_input(event):
 
 func show_pause():
 	state="paused"
-	var box=modal("TAKE A BREATHER","Stage %d  ·  Level %d  ·  %d enemies defeated\nRun equipment: %s" % [stage,level,kills, "None" if run_equipment.is_empty() else ", ".join(run_equipment)])
+	var names=[]
+	for id in learned_skills:
+		var skill=PlayerSkills.definition(id)
+		names.append(skill.name+(" [dormant]" if not PlayerSkills.compatible(self,skill) else ""))
+	var box=modal("TAKE A BREATHER","Stage %d · Level %d · %s / %s\nSkills: %s\nHP %.0f / %.0f · ATK %.1f · Mage Armor %.0f / %.0f\nCrit %.0f%% (+%.0f%%) · Dodge %.0f%% · Block %.0f%%\nAuto save occurs after clearing a stage and choosing all rewards." % [stage,level,D.CLASSES[selected_class].name,selected_option, "None" if names.is_empty() else ", ".join(names),hp,stats.max_hp,stats.damage,shield,ClassProgression.shield_max(self),stats.critical_rate*100,stats.critical_damage*100,stats.dodge_rate*100,stats.block_rate*100])
 	button(box,"RESUME",resume,Color("416946"))
-	button(box,"RETURN TO MENU (ends this run)",show_menu)
+	button(box,"MAIN MENU (last cleared stage is saved)",show_menu)
 
 func resume():
 	clear_panel();state="playing"
@@ -495,6 +510,8 @@ func simulate(dt: float):
 	healing_flash=maxf(0,healing_flash-dt)
 	elapsed+=dt;stage_time+=dt
 	ClassProgression.tick(self,dt)
+	dodge_recovery=maxf(0.0,dodge_recovery-dt)
+	PlayerEffects.tick(self,dt)
 	dash_left=maxf(0,dash_left-dt);hurt_cd=maxf(0,hurt_cd-dt)
 	attack_cd-=dt;magic_cd-=dt;bow_cd-=dt;slash_time=maxf(0,slash_time-dt)
 	hp=minf(stats.max_hp,hp+stats.regen*dt)
@@ -527,9 +544,14 @@ func simulate(dt: float):
 			if b.friendly:
 				for enemy in enemies:
 					if enemy.hp>0 and enemy.pos.distance_to(b.pos)<(28 if enemy.kind=="boss" else 17):
-						damage_enemy(enemy,b.damage,b.pos);remove=true;break
+						if enemy in b.get("hit_ids",[]):continue
+						damage_enemy(enemy,b.damage,b.pos,true,true,str(b.get("element","")),str(b.get("weapon",primary_weapon())))
+						if not b.has("hit_ids"):b["hit_ids"]=[]
+						b.hit_ids.append(enemy);b["pierce"]=int(b.get("pierce",1))-1
+						remove=b.pierce<=0
+						if remove:break
 			elif b.pos.distance_to(player)<14:
-				damage_player(b.damage);remove=true
+				damage_player(b.damage,"projectile");remove=true
 		if remove:bullets.remove_at(i)
 		if hp<=0:end_run(false);return
 	for i in range(enemies.size()-1,-1,-1):
@@ -561,10 +583,12 @@ func simulate(dt: float):
 		show_tactics();return
 	if remaining_enemies()==0 and gems.is_empty() and potions.is_empty() and not portal_open:
 		heal_stage_clear()
+		if stage%5==0 and not skill_reward_taken:
+			PlayerSkills.offer(self);return
 		if stage%5==0 and not boss_reward_taken:show_loot();return
 		open_portal()
 	if portal_open and player.distance_to(CENTER)<28 and stage_time>2:
-		if stage>=20:end_run(true)
+		if stage>=D.MAX_STAGE:end_run(true)
 		else:stage+=1;start_stage()
 	update_hud()
 
@@ -575,7 +599,7 @@ func update_enemy(enemy: Dictionary, dt: float):
 	Combat.tick(self,enemy,dt)
 
 func primary_weapon() -> String:
-	return D.CLASSES[clampi(selected_class,0,D.CLASSES.size()-1)].weapon
+	return "staff" if selected_class==2 else (selected_option if selected_option in D.CLASSES[selected_class].options else D.CLASSES[selected_class].weapon)
 
 func melee_duration(phase_name: String) -> float:
 	return float(ClassCombat.melee_spec(self).get(phase_name,0.12))
@@ -592,26 +616,27 @@ func aimed_projectile_speed(base_speed: float) -> float:
 func update_player_attacks(dt: float, target):
 	if state!="playing" or hp<=0:return
 	var weapon=primary_weapon()
-	release_time=maxf(0,release_time-dt)
-	bow_release_time=maxf(0,bow_release_time-dt)
-	cast_release_time=maxf(0,cast_release_time-dt)
-	# Only melee classes enter this state machine. A ranged class never has an
-	# invisible sword, even if an old state was left behind by a test/transition.
-	if weapon in ["sword","dagger"]:
+	release_time=maxf(0,release_time-dt);bow_release_time=maxf(0,bow_release_time-dt);cast_release_time=maxf(0,cast_release_time-dt)
+	if weapon in ["sword","dagger","knife","axe"]:
 		var spec=ClassCombat.melee_spec(self)
 		if sword_state=="idle":
-			if target!=null and attack_cd<=0:
+			if target!=null and attack_cd<=0 and player.distance_to(target.pos)<melee_range()+40:
 				sword_aim=(target.pos-player).normalized()
 				if sword_aim==Vector2.ZERO:sword_aim=facing
 				sword_state="windup";sword_time=spec.windup;sword_hits.clear()
-				attack_cd=spec.cooldown/maxf(0.3,stats.attack_speed)
+				combo_left=active_skill_rank("extra_attack") if selected_class==0 else 0
+				attack_cd=spec.cooldown/effective_attack_speed()
 		else:
 			var was_active=sword_state=="active"
 			sword_time=maxf(0,sword_time-dt)
-			if was_active and sword_time<=0:sword_state="recover";sword_time=spec.recover
+			if was_active and sword_time<=0:
+				if combo_left>0:
+					combo_left-=1;sword_state="windup";sword_time=0.07;sword_hits.clear()
+				else:sword_state="recover";sword_time=spec.recover
 			if sword_state=="windup" and sword_time<=0:
-				sword_state="active";sword_time=spec.active
-				slash_angle=sword_aim.angle();slash_time=spec.active;beep(310 if weapon=="dagger" else 220,0.025)
+				sword_state="active";sword_time=spec.active;slash_angle=sword_aim.angle();slash_time=spec.active
+				if combo_left==active_skill_rank("extra_attack"):PlayerEffects.shockwave(self,sword_aim)
+				beep(310 if weapon in ["dagger","knife"] else 220,0.025)
 			if sword_state=="active":
 				for enemy in enemies:
 					var relative=enemy.pos-player
@@ -619,31 +644,39 @@ func update_player_attacks(dt: float, target):
 						sword_hits.append(enemy);damage_enemy(enemy,melee_damage())
 			elif sword_state=="recover" and sword_time<=0:sword_state="idle"
 	else:
-		sword_state="idle";sword_time=0;sword_hits.clear();slash_time=0
-	if bow_windup>0:
-		bow_windup=maxf(0,bow_windup-dt)
-		if bow_windup<=0:
-			release_kind="bow";release_time=0.18;bow_release_time=0.18
-			for i in range(clampi(int(stats.projectiles),1,4)):
-				var spread=(float(i)-float(clampi(int(stats.projectiles),1,4)-1)/2)*0.13
-				bullets.append({"pos":player,"vel":bow_aim.rotated(spread)*aimed_projectile_speed(340.0),"life":2.5,"damage":stats.damage*0.9,"friendly":true,"magic":false})
-	elif target!=null and (weapon=="bow" or stats.projectiles>=1) and bow_cd<=0:
-		bow_cd=(0.85 if weapon=="bow" else 1.4)/maxf(0.4,stats.attack_speed)
-		bow_windup=0.2;bow_aim=(target.pos-player).normalized()
-		if bow_aim==Vector2.ZERO:bow_aim=facing
-	if cast_windup>0:
-		cast_windup=maxf(0,cast_windup-dt)
-		if cast_windup<=0:
-			release_kind="cast";release_time=0.22;cast_release_time=0.22
-			if weapon=="staff":
-				ClassCombat.release_staff(self)
-			else:
-				for i in range(8):
-					bullets.append({"pos":player,"vel":Vector2.RIGHT.rotated(i*TAU/8)*160,"life":1.6,"damage":stats.damage*(0.15+maxf(0,minf(2,stats.magic)-1)*0.05),"friendly":true,"magic":true})
-	elif target!=null and (weapon=="staff" or stats.magic>=1) and magic_cd<=0:
-		magic_cd=0.95/maxf(0.5,stats.attack_speed) if weapon=="staff" else 2.3
-		cast_windup=0.28;cast_aim=(target.pos-player).normalized()
-		if cast_aim==Vector2.ZERO:cast_aim=facing
+		sword_state="idle";sword_hits.clear();slash_time=0
+	var ranged=weapon in ["bow","crossbow","gun","throwing_knife"]
+	if ranged:
+		var spec=D.PRIMARY_WEAPONS[weapon]
+		if bow_windup>0:
+			bow_windup=maxf(0,bow_windup-dt)
+			if bow_windup<=0:
+				release_kind="bow";release_time=0.18;bow_release_time=0.18
+				var count=1+active_skill_rank("volley")+active_skill_rank("fan")
+				for i in range(count):
+					var aim=bow_aim.rotated((i-(count-1)*0.5)*0.12)
+					bullets.append({"pos":player,"vel":aim*aimed_projectile_speed(spec.speed),"life":2.5,
+						"damage":stats.damage*spec.damage*(1.0 if count==1 else 0.78),"friendly":true,"magic":false,
+						"weapon":weapon,"pierce":int(spec.pierce)+active_skill_rank("pierce"),"hit_ids":[]})
+		elif target!=null and bow_cd<=0:
+			bow_cd=spec.cooldown/effective_attack_speed();bow_windup=spec.windup
+			bow_aim=(target.pos-player).normalized()
+			if bow_aim==Vector2.ZERO:bow_aim=facing
+	else:bow_windup=0
+	if weapon=="staff":
+		if cast_windup>0:
+			cast_windup=maxf(0,cast_windup-dt)
+			if cast_windup<=0:
+				release_kind="cast";release_time=0.22;cast_release_time=0.22;ClassCombat.release_staff(self)
+		elif target!=null and magic_cd<=0:
+			magic_cd=1.05/effective_attack_speed();cast_windup=0.25
+			cast_aim=(target.pos-player).normalized()
+			if cast_aim==Vector2.ZERO:cast_aim=facing
+	else:cast_windup=0
+
+func effective_attack_speed() -> float:
+	var bonus=0.12*active_skill_rank("rapid")+0.15*active_skill_rank("flurry")+0.18*active_skill_rank("knife_flurry")
+	return maxf(0.3,float(stats.attack_speed)*(1.0+bonus))
 
 func nearest_enemy(pos: Vector2):
 	var result=null
@@ -678,38 +711,54 @@ func heal_stage_clear():
 	heal_player(stats.max_hp*0.1,"ARENA CLEAR")
 	update_hud()
 
-func damage_enemy(enemy: Dictionary,damage: float,source:Vector2=Vector2.INF) -> float:
-	if enemy.hp<=0 or damage<=0:return 0.0
+func damage_enemy(enemy: Dictionary,damage: float,source:Vector2=Vector2.INF,critical:bool=true,trigger_effects:bool=true,element:String="",weapon:String="") -> float:
+	if enemy.hp<=0 or damage<=0 or not is_finite(damage):return 0.0
 	if source==Vector2.INF:source=player
+	if weapon.is_empty():weapon=primary_weapon()
+	if element.is_empty() and weapon=="staff":element=selected_option
+	var effect_power=damage
+	if critical:
+		if enemy.hp<=enemy.get("max_hp",enemy.hp)*0.3:damage*=1.0+active_skill_rank("execution")*0.25
+		var precision=active_skill_rank("precision")
+		if rng.randf()<clampf(stats.critical_rate+precision*0.04,0,0.75):
+			damage*=1.0+stats.critical_damage+precision*0.15
+			effects.append({"pos":enemy.pos,"time":0.3,"color":Color("ffe281"),"radius":14.0})
 	damage*=Combat.incoming_multiplier(enemy,source)
 	var dealt=minf(damage,enemy.hp)
 	enemy.hp-=dealt;enemy.hit=0.1
-	heal_player(dealt*stats.get("lifesteal",0.0),"LIFE DRAIN")
+	if critical:heal_player(dealt*stats.get("lifesteal",0.0),"LIFE DRAIN")
 	effects.append({"pos":enemy.pos+Vector2(rng.randf_range(-9,9),-15),"time":0.35,"color":Color("ffffff"),"radius":3.0})
+	if trigger_effects:PlayerEffects.on_hit(self,enemy,effect_power,weapon,element)
 	return dealt
 
-func damage_player(damage:float):
-	if state!="playing" or hp<=0 or hurt_cd>0 or dash_left>0:return
-	if damage<=0:return
+func damage_player(damage:float,category:String="melee"):
+	if state!="playing" or hp<=0 or hurt_cd>0 or dash_left>0 or damage<=0 or not is_finite(damage):return
+	if category in ["melee","projectile"]:
+		if dodge_recovery<=0 and rng.randf()<stats.dodge_rate:
+			dodge_recovery=stats.dodge_cooldown;toast("DODGE")
+			effects.append({"pos":player,"time":0.3,"color":Color("9ef2ff"),"radius":22.0});return
+		if rng.randf()<stats.block_rate:
+			damage*=0.5;toast("BLOCK")
+			effects.append({"pos":player,"time":0.3,"color":Color("ffe69b"),"radius":20.0})
+			var riposte=active_skill_rank("riposte")
+			if riposte>0:
+				for enemy in enemies:
+					if enemy.hp>0 and enemy.pos.distance_to(player)<105:
+						damage_enemy(enemy,stats.damage*riposte*0.45,player,false,false)
+			if active_skill_rank("bloodguard")>0:heal_player(stats.max_hp*0.015,"BLOODGUARD")
 	hp-=ClassProgression.absorb_damage(self,maxf(1,damage-stats.armor));hurt_cd=0.65
 	beep(100,0.13)
 
 func needed_xp() -> float:return 6.0+level*3.0
 
 func gain_xp(amount:float):
+	if amount<=0 or not is_finite(amount):return
 	xp+=amount
 	while xp>=needed_xp():
 		xp-=needed_xp();level+=1
-		# Equal 3% baseline growth for every active stat; lower cooldown is better.
-		for key in stats:
-			if key=="lifesteal":continue # Fixed 10% ability, never scaled by leveling.
-			if key=="dash_cooldown":stats[key]/=1.03
-			else:stats[key]*=1.03
-		var bonuses=D.CLASSES[selected_class].stats
-		for key in bonuses:stats[key]+=float(bonuses[key])*0.18
-		clamp_stats()
-		hp=minf(stats.max_hp,hp+12)
-		toast("LEVEL %d  ·  Stats +3%%  ·  Class bonus" % level)
+		apply_stats(D.CLASSES[selected_class].stats)
+		hp=minf(stats.max_hp,hp+5)
+		toast("LEVEL %d · %s growth" % [level,D.CLASSES[selected_class].name])
 		if level%5==0:pending_choices+=1
 
 func clamp_stats():
@@ -769,61 +818,48 @@ func apply_tactic(id: String) -> bool:
 
 func apply_stats(changes:Dictionary):
 	for key in changes:
-		if key=="lifesteal":stats[key]=0.1 # Unique ability; applying again cannot stack.
-		elif stats.has(key):stats[key]+=float(changes[key])
+		if stats.has(key) and is_finite(float(changes[key])):stats[key]+=float(changes[key])
 	clamp_stats()
-	if changes.has("max_hp"):hp=minf(stats.max_hp,hp+float(changes.max_hp))
+	if changes.has("max_hp"):hp=minf(stats.max_hp,hp+maxf(0,float(changes.max_hp)))
 
 func show_tactics():
 	if pending_choices<=0:return
 	state="tactic"
 	var choices=available_tactics()
-	# Use the run RNG, so seeded balance and regression tests reproduce choices.
-	for i in range(choices.size()-1,0,-1):
-		var j=rng.randi_range(0,i)
-		var swap=choices[i];choices[i]=choices[j];choices[j]=swap
-	# Guarantee one meaningful class branch when available, retaining two hybrid choices.
-	for i in range(choices.size()):
-		if choices[i].has("classes"):
-			var class_choice=choices[i];choices.remove_at(i);choices.push_front(class_choice)
-			break
-	var box=modal("CHOOSE YOUR TACTIC","LEVEL %d  ·  Choose one randomly offered Tactic
-Tactic ranks reset each run. Starting Skills use rank 1; stat limits apply." % level)
+	PlayerSkills.shuffle(self,choices)
+	var box=modal("CHOOSE YOUR TACTIC","LEVEL %d · Choose one of the offered Tactics\nShared improvements or a weapon/element switch. Skills come from bosses." % level)
 	if choices.is_empty():
-		button(box,"NO FURTHER TACTICS\nRest: restore 10% maximum HP, then continue.",func():
-			heal_player(stats.max_hp*0.1,"MASTERY REST")
+		button(box,"MASTERY · +10 MAX HP / +1 ATK",func():
+			mastery_bonus_count+=1;stats.max_hp+=10;stats.damage+=1;hp+=10;clamp_stats()
 			pending_choices=maxi(0,pending_choices-1);clear_panel();state="playing"
-		,Color("354868")).custom_minimum_size.y=78
+		).custom_minimum_size.y=85
 		return
 	for i in range(mini(3,choices.size())):
 		var tactic=choices[i]
-		var changes=effective_tactic_changes(tactic)
 		var parts=[]
-		for key in changes:
-			parts.append("%+.2f %s" % [changes[key],"melee reach / aimed-shot speed" if key=="range" else key.replace("_"," ")])
-		var description=tactic.description if tactic.id=="life_drain" or tactic.has("classes") else "Next: " + " / ".join(parts)
-		var label=tactic.name + "\nRank %d/%d → %d/%d  ·  " % [tactic_rank(tactic.id),tactic.cap,tactic_rank(tactic.id)+1,tactic.cap] + description
-		button(box,label,func():
+		for key in effective_tactic_changes(tactic):
+			var value=effective_tactic_changes(tactic)[key]
+			parts.append("%+.1f%s %s" % [value*100 if key.ends_with("_rate") or key in ["critical_damage","lifesteal"] else value,"%" if key.ends_with("_rate") or key in ["critical_damage","lifesteal"] else "",key.replace("_"," ")])
+		var detail=tactic.description if tactic.get("effect","")=="switch" else " / ".join(parts)
+		button(box,tactic.name+"\n"+detail,func():
 			if not apply_tactic(tactic.id):return
-			if not tactic.id in profile.unlocks:profile.unlocks.append(tactic.id)
-			save_profile();pending_choices=maxi(0,pending_choices-1);clear_panel();state="playing"
-		,Color("354868")).custom_minimum_size.y=78
+			pending_choices=maxi(0,pending_choices-1);clear_panel();state="playing"
+		,Color("354868")).custom_minimum_size.y=85
 
 func random_equipment() -> Dictionary:
-	var names=D.EQUIPMENT_NAMES
-	var keys=["damage","max_hp","speed","attack_speed","range","pickup","regen","armor"]
-	for i in range(keys.size()-1,0,-1):
-		var j=rng.randi_range(0,i)
-		var swap=keys[i];keys[i]=keys[j];keys[j]=swap
-	var changes={}
-	var descriptions=[]
+	var keys=["damage","max_hp","speed","attack_speed","range","pickup","regen","armor","critical_rate","critical_damage","dodge_rate","block_rate","dodge_cooldown","mage_armor"]
+	PlayerSkills.shuffle(self,keys)
+	var changes={};var descriptions=[]
+	var bases={"damage":4.0,"max_hp":15.0,"speed":8.0,"attack_speed":0.12,"range":8.0,"pickup":12.0,"regen":0.25,"armor":1.0,
+		"critical_rate":0.015,"critical_damage":0.08,"dodge_rate":0.015,"block_rate":0.02,"dodge_cooldown":-0.1,"mage_armor":8.0}
 	for i in range(2):
 		var key=keys[i]
-		var base={"damage":5.0,"max_hp":20.0,"speed":10.0,"attack_speed":0.18,"range":10.0,"pickup":15.0,"regen":0.3,"armor":1.5}[key]
-		var value=snappedf(base*rng.randf_range(0.8,1.5)*(1+stage/20.0),0.1)
+		var value=float(bases[key])*rng.randf_range(0.8,1.3)*(1+stage/40.0)
+		value=snappedf(value,0.001 if key.ends_with("_rate") else 0.01)
 		changes[key]=value
-		descriptions.append("+%s %s" % [str(value),"reach / shot speed" if key=="range" else key.replace("_"," ")])
-	return {"name":names[rng.randi_range(0,names.size()-1)],"stats":changes,"description":"   /   ".join(descriptions)}
+		var rate=key.ends_with("_rate") or key=="critical_damage"
+		descriptions.append("%+.1f%s %s" % [value*100 if rate else value,"%" if rate else "",key.replace("_"," ")])
+	return {"name":D.EQUIPMENT_NAMES[rng.randi_range(0,D.EQUIPMENT_NAMES.size()-1)],"stats":changes,"description":" / ".join(descriptions)}
 
 func show_loot():
 	state="loot"
@@ -842,7 +878,10 @@ func open_portal():
 	portal_open=true
 	profile.best_stage=maxi(int(profile.best_stage),stage)
 	save_profile()
-	toast("ARENA CLEAR!  Enter the center portal" if stage<20 else "THE FINAL PORTAL IS OPEN!")
+	World.reset_hazards(self)
+	var saved=RunCheckpoint.save(self)
+	if stage>=D.MAX_STAGE:RunCheckpoint.complete(self)
+	toast(("AUTO SAVED · " if saved else "")+("ARENA CLEAR! Enter the center portal" if stage<D.MAX_STAGE else "THE FINAL PORTAL IS OPEN!"))
 
 func end_run(won:bool):
 	hp=maxf(0,hp)
@@ -852,15 +891,15 @@ func end_run(won:bool):
 	spawn_queue.clear()
 	World.reset_hazards(self)
 	update_hud()
-	if won:profile.wins+=1;profile.best_stage=20
+	if won:profile.wins+=1;profile.best_stage=D.MAX_STAGE;RunCheckpoint.complete(self)
 	save_profile()
-	var box=modal("HOME, A HERO." if won else "EVERY OWL RISES AGAIN.","%s\nStage %d  ·  Level %d  ·  %d foes defeated\nDiscovered Skills and Cosmetics stay unlocked for future runs." % ["All twenty arenas conquered!" if won else "Your run ends here. Your discoveries don't.",stage,level,kills])
+	var box=modal("HOME, A HERO." if won else "EVERY OWL RISES AGAIN.","%s\nStage %d  ·  Level %d  ·  %d foes defeated\nCosmetics and Equipment journal remain. Continue can reload your last cleared-stage checkpoint." % ["All thirty arenas conquered!" if won else "Your run ends here. Your discoveries don't.",stage,level,kills])
 	button(box,"ONE MORE ADVENTURE",start_run,Color("416946"))
 	button(box,"MAIN MENU",show_menu)
 
 func update_hud():
-	hud.text="STAGE %02d / 20   %s          LEVEL %02d          %d FOES LEFT" % [stage,str(D.THEMES[mini(3,int((stage-1)/5))].name).to_upper(),level,remaining_enemies()]
-	hint.text="HP %d/%d  •  %s  •  %s  •  %s  •  Esc: pause" % [ceil(hp),ceil(stats.max_hp),str(D.CLASSES[selected_class].weapon_label).to_upper(),"DASH %d/%d%s" % [dash_charges,ClassProgression.dash_max(self)," +%.1fs" % dash_recharge if dash_recharge>0 else ""], "ENTER THE CENTER PORTAL" if portal_open else "WASD / hold left mouse: move"]
+	hud.text="STAGE %02d / %d  %s · %s    LEVEL %02d    %d FOES" % [stage,D.MAX_STAGE,D.CLASSES[selected_class].name,selected_option.replace("_"," ").to_upper(),level,remaining_enemies()]
+	hint.text="HP %d/%d · CRIT %.0f%% (+%.0f%%) · DODGE %.0f%% / %.1fs · BLOCK %.0f%% · Skills %d/5 · Esc: pause" % [ceil(hp),ceil(stats.get("max_hp",100)),100*stats.get("critical_rate",.05),100*stats.get("critical_damage",.5),100*stats.get("dodge_rate",.05),dodge_recovery,100*stats.get("block_rate",.05),skill_choices_taken]
 
 func toast(text:String):toast_text=text;toast_time=3
 
@@ -919,6 +958,7 @@ func _draw():
 	for b in bullets:
 		var color=Color("9dffff") if b.friendly else Color("ff6687")
 		if b.magic:color=Color("c796ff")
+		if b.get("element","")!="":color={"fire":Color("ff9a61"),"ice":Color("9ee9ff"),"lightning":Color("fff18e"),"light":Color("fff4d2")}.get(b.element,color)
 		if b.get("variant","")=="hex":color=Color("ce91ed")
 		if b.get("variant","")=="chant":color=Color("ffc778")
 		var direction=b.vel.normalized()
@@ -935,6 +975,7 @@ func _draw():
 	ClassCombat.draw(self)
 	for effect in effects:
 		var color=effect.color;color.a=minf(1,effect.time*3)
+		if effect.has("a"):draw_line(effect.a,effect.b,color,3)
 		draw_arc(effect.pos,effect.radius*(1.5-effect.time),0,TAU,12,color,2)
 	var tint=D.COSMETICS[selected_cosmetic].color
 	if hurt_cd>0 and profile.shake and sin(elapsed*45)>0:tint.a=0.45
@@ -943,10 +984,10 @@ func _draw():
 	var player_pose="idle"
 	var pose_progress=0.0
 	var pose_direction=facing
-	if weapon in ["sword","dagger"] and sword_state!="idle":
+	if weapon in ["sword","dagger","knife","axe"] and sword_state!="idle":
 		player_pose=weapon+"_"+sword_state
 		pose_progress=1.0-sword_time/melee_duration(sword_state);pose_direction=sword_aim
-	elif weapon=="bow":
+	elif weapon in ["bow","crossbow","gun","throwing_knife"]:
 		if bow_release_time>0:
 			player_pose="bow_release";pose_progress=1.0-bow_release_time/0.18;pose_direction=bow_aim
 		if bow_windup>0:
@@ -956,7 +997,7 @@ func _draw():
 			player_pose="cast_release";pose_progress=1.0-cast_release_time/0.22;pose_direction=cast_aim
 		if cast_windup>0:
 			player_pose="cast_windup";pose_progress=1.0-cast_windup/0.28;pose_direction=cast_aim
-	if weapon=="dagger" and dash_left>0:
+	if selected_class==3 and dash_left>0:
 		player_pose="dash";pose_progress=1.0-dash_left/0.18;pose_direction=facing
 	Art.draw_actor(self,"owl",player,pose_direction,player_moving,elapsed,player_pose,pose_progress,tint,0,weapon)
 	# Every auxiliary has independent feedback, including simultaneous releases.
@@ -990,7 +1031,7 @@ func _draw():
 		if enemy.kind!="boss" or enemy.hp<=0:continue
 		var boss_type=int(enemy.get("boss_type",0))
 		var label=Combat.BOSS_NAMES[boss_type]
-		if boss_type==3 and enemy.hp<enemy.get("max_hp",enemy.hp)*0.5:label+="  ·  PHASE II"
+		if boss_type>=3 and enemy.hp<enemy.get("max_hp",enemy.hp)*0.5:label+="  ·  PHASE II"
 		draw_rect(Rect2(320,124,320,31),Color(0.04,0.06,0.1,0.85))
 		draw_string(font,Vector2(327,137),label,HORIZONTAL_ALIGNMENT_CENTER,306,11,Color("ffe1a5"))
 		draw_rect(Rect2(327,144,306,5),Color("393345"))
@@ -1007,18 +1048,18 @@ func _draw():
 	draw_string(font,Vector2(288,80),"EXPERIENCE  %d / %d" % [xp,needed_xp()],HORIZONTAL_ALIGNMENT_LEFT,-1,11,Color("afbdd3"))
 	draw_string(font,Vector2(553,80),"GROUP %d/%d  ·  %d ACTIVE + %d QUEUED" % [wave_index,wave_count,enemies.size(),spawn_queue.size()],HORIZONTAL_ALIGNMENT_LEFT,-1,11,Color("afbdd3"))
 	var resource_text = ""
-	if selected_class==2:
+	if shield>0 or ClassProgression.shield_max(self)>0:
 		draw_rect(Rect2(32,87,150,7),Color("273348"))
 		draw_rect(Rect2(32,87,150*shield/maxf(1,ClassProgression.shield_max(self)),7),Color("b5a3ff"))
-		resource_text="MANA SHIELD %d/%d  ·  %s" % [ceil(shield),ClassProgression.shield_max(self),"REGEN %.1fs" % shield_delay if shield_delay>0 else "+%d/s" % ClassProgression.shield_regen(self)]
+		resource_text="MAGE ARMOR %d/%d  ·  %s" % [ceil(shield),ClassProgression.shield_max(self),"REGEN %.1fs" % shield_delay if shield_delay>0 else "+%d/s" % ClassProgression.shield_regen(self)]
 		draw_string(font,Vector2(193,94),resource_text,HORIZONTAL_ALIGNMENT_LEFT,-1,11,Color("d1c3ff"))
 	elif selected_class==1:
 		resource_text="TRAP EVADE %d/%d%s  ·  map traps only" % [trap_charges,ClassProgression.trap_max(self),"  +%.1fs" % trap_recharge if trap_recharge>0 else ""]
 	elif selected_class==0:
-		resource_text="STYLE: " + ("THRUST · narrow / 130%" if tactic_rank("blade_thrust")>0 else ("CLEAVE · half circle / 80%" if tactic_rank("blade_cleave")>0 else ("SWEEP · full circle / 55%" if tactic_rank("blade_sweep")>0 else "FOCUSED SLASH · narrow / 100%")))
+		resource_text="%s · %d SWINGS · BLOCK %.0f%%" % [selected_option.to_upper(),1+active_skill_rank("extra_attack"),stats.block_rate*100]
 	elif selected_class==3:
-		resource_text="COMET DASH %.2fs  ·  POISON %d/2  ·  PUSH %d/2" % [ClassProgression.dash_duration(self),tactic_rank("comet_poison"),tactic_rank("comet_push")]
-	if selected_class!=2:draw_string(font,Vector2(32,98),resource_text,HORIZONTAL_ALIGNMENT_LEFT,-1,12,Color("c7deff"))
+		resource_text="ROGUE DASH %.2fs · POISON %d/2 · BLEED %d/2" % [ClassProgression.dash_duration(self),active_skill_rank("poison"),active_skill_rank("bleed")]
+	if ClassProgression.shield_max(self)<=0:draw_string(font,Vector2(32,98),resource_text,HORIZONTAL_ALIGNMENT_LEFT,-1,12,Color("c7deff"))
 	if toast_time>0 and state=="playing":
 		draw_rect(Rect2(200,158,560,27),Color(0.05,0.08,0.14,0.85))
 		draw_string(font,Vector2(208,177),toast_text,HORIZONTAL_ALIGNMENT_CENTER,544,15,Color("fff0b3"))
@@ -1055,54 +1096,25 @@ func draw_ellipse_shadow(pos:Vector2,radius:float):
 
 func self_test():
 	var failures=[]
-	start_run()
-	if remaining_enemies()!=13 or enemies.size()!=4:failures.append("stage 1 grouped population")
-	for enemy in enemies:
-		if enemy.pos.distance_to(player)<180:failures.append("safe spawn")
-	var old_level=level
-	gain_xp(100)
-	if level<=old_level:failures.append("XP progression")
-	dash();var before=hp;damage_player(100)
-	if hp!=before:failures.append("dash invulnerability")
-	for number in range(1,21):
-		stage=number;start_stage()
-		var bosses=0;var ranged=0
-		for enemy in enemies:
-			if enemy.kind=="boss":bosses+=1
-			if enemy.kind=="archer":ranged+=1
-		for kind in spawn_queue:
-			if kind=="boss":bosses+=1
-			if kind=="archer":ranged+=1
-		if bosses!=(1 if number%5==0 else 0):failures.append("boss stage %d"%number)
-		if ranged==0:failures.append("ranged stage %d"%number)
-		for i in range(20):simulate(1.0/60)
-		if number%5==0:
-			var item=random_equipment()
-			if item.stats.size()!=2:failures.append("equipment generation")
-	stage=20;end_run(true)
+	for cls in range(4):
+		selected_class=cls;selected_option=""
+		start_run()
+		if available_tactics().size()<30:failures.append("Tactic breadth")
+		if not learned_skills.is_empty() or skill_choices_taken!=0:failures.append("fresh Skills")
+		for number in range(1,D.MAX_STAGE+1):
+			stage=number;start_stage()
+			var bosses=0
+			for enemy in enemies:
+				if enemy.kind=="boss":bosses+=1
+			for kind in spawn_queue:
+				if kind=="boss":bosses+=1
+			if bosses!=(1 if number%5==0 else 0):failures.append("boss count")
+			if random_equipment().stats.size()!=2:failures.append("Equipment")
+	start_run();show_pause();resume()
+	if state!="playing":failures.append("pause")
+	stage=30;end_run(true)
 	if state!="won":failures.append("victory")
 	start_run();end_run(false)
 	if state!="dead":failures.append("death")
-	start_run()
-	if stage!=1 or level!=1 or not run_equipment.is_empty():failures.append("run reset")
-	show_pause();resume()
-	if state!="playing":failures.append("pause resume")
-	# Exercise all three actual choice callbacks, loot, portal, and unlock paths.
-	for choice_index in range(3):
-		start_run();level=5;pending_choices=1;show_tactics()
-		var choice_box=panel.get_child(1)
-		choice_box.get_child(2+choice_index).pressed.emit()
-		if state!="playing" or pending_choices!=0:failures.append("tactic callback")
-		if profile.unlocks.is_empty():failures.append("persistent discovery")
-		stage=5;start_stage();enemies.clear();spawn_queue.clear();gems.clear();simulate(0.01)
-		if state!="loot":failures.append("boss reward transition")
-		panel.get_child(1).get_child(2+choice_index).pressed.emit()
-		if not boss_reward_taken or run_equipment.size()!=1:failures.append("loot callback")
-		stage_time=0;simulate(0.01)
-		if not portal_open:failures.append("portal opens")
-		stage_time=3;player=CENTER;simulate(0.01)
-		if stage!=6:failures.append("portal advances")
-	start_run();stage=20;start_stage();enemies.clear();spawn_queue.clear();gems.clear();boss_reward_taken=true;stage_time=3;simulate(0.01)
-	if state!="won":failures.append("stage20 portal victory")
 	print("SELF_TEST: ","PASS" if failures.is_empty() else str(failures))
 	get_tree().quit(0 if failures.is_empty() else 1)

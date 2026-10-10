@@ -1,5 +1,49 @@
 class_name CharacterArt
 extends RefCounted
+
+static func _tempest_colossus(p: Pixels,aim: Vector2,clock: float,phase: String,progress: float):
+	p.unit=2.4
+	var lift=5.0*absf(_attack(phase,progress))
+	var armor=Color("497884")
+	p.poly([Vector2(-17,-18),Vector2(-11,-27),Vector2(10,-27),Vector2(18,-17),Vector2(14,12),Vector2(-14,12)],INK)
+	p.box(-13,-18,26,25,armor)
+	p.box(-8,-22,16,13,Color("6db6c2"))
+	for side in [-1,1]:
+		p.box(side*12-4,-15,8,11,Color("a2d3db"))
+		p.box(side*9-3,8,6,8,INK)
+		p.box(side*9-2,9,5,6,Color("b4d3d5"))
+		p.limb(Vector2(side*12,-8),Vector2(side*18,-3-lift),Vector2(side*21,5-lift),armor,5)
+		p.poly([Vector2(side*5,-22),Vector2(side*11,-36),Vector2(side*12,-23)],Color("f6dc89"))
+	p.box(-7,-6,14,10,Color("223e5a"))
+	p.poly([Vector2(-1,-9),Vector2(5,-1),Vector2(1,-1),Vector2(3,6),Vector2(-5,-3),Vector2(-1,-3)],Color("ffe886"))
+	_eyes(p,-19,Color("385473"),clock,true)
+	for i in range(3):
+		var a=clock*0.8+i*TAU/3
+		var at=Vector2(cos(a)*23,sin(a)*8-30)
+		p.box(at.x,at.y,2,3,Color("fff1a6"))
+	if phase=="release":_spark(p,Vector2(aim.x*18,-8+aim.y*8),Color("c7ffff"),5)
+
+static func _eclipse_seraph(p: Pixels,aim: Vector2,clock: float,phase: String,progress: float):
+	p.unit=2.3
+	var spread=2.0*sin(clock*2.0)+4*absf(_attack(phase,progress))
+	for side in [-1,1]:
+		p.poly([Vector2(side*5,-15),Vector2(side*(34+spread),-28),Vector2(side*27,-3),Vector2(side*15,4)],INK)
+		p.poly([Vector2(side*7,-15),Vector2(side*(31+spread),-25),Vector2(side*25,-5),Vector2(side*15,2)],Color("e5d9f2") if side==1 else Color("65518b"))
+		for i in range(3):p.line(Vector2(side*(13+i*5),-13-i*2),Vector2(side*(17+i*5),-4-i*3),Color("fff2b9") if side==1 else Color("b093dc"),2)
+	p.poly([Vector2(-9,-21),Vector2(9,-21),Vector2(12,13),Vector2(0,19),Vector2(-12,13)],INK)
+	p.poly([Vector2(-6,-17),Vector2(6,-17),Vector2(9,11),Vector2(0,15),Vector2(-9,11)],Color("8273a9"))
+	p.box(-5,-26,10,11,Color("f1e6d3"))
+	_eyes(p,-23,Color("845daa"),clock)
+	p.poly([Vector2(-7,-29),Vector2(-4,-36),Vector2(0,-31),Vector2(4,-36),Vector2(7,-29)],Color("ffe292"))
+	p.limb(Vector2(-6,-10),Vector2(-12,-4),Vector2(-15,-8-spread),Color("c5afdd"),3)
+	p.limb(Vector2(6,-10),Vector2(12,-4),Vector2(15,-8-spread),Color("f0e1c1"),3)
+	p.box(-1,-10,2,18,Color("ffdf83"))
+	var origin=p.point(Vector2(0,-30))
+	p.canvas.draw_arc(origin,23,PI*0.12,PI*0.88,20,Color("fbe8b3")*p.tint,3)
+	if phase=="release":
+		_spark(p,Vector2(-15,-8-spread),Color("d2b2ff"),4)
+		_spark(p,Vector2(15,-8-spread),Color("fff4c9"),4)
+
 ## Original, articulated pixel actors. Positions are actor centres, in world pixels.
 ## moving drives a four-pose limb cycle; idle never cycles the gait or moves the body.
 ## attack_state: idle, windup, release, recover; weapon and enemy-move prefixes.
@@ -59,11 +103,13 @@ static func draw_actor(canvas: Node2D, kind: String, pos: Vector2, direction: Ve
 		"chanter","support":_chanter(p,aim,step,phase,progress,attack_state)
 		"hexer","zone":_hexer(p,aim,step,phase,progress)
 		"boss":
-			match clampi(boss_type,0,3):
+			match clampi(boss_type,0,5):
 				0:_warden(p,aim,step,phase,progress,attack_state)
 				1:_alchemist(p,aim,step,clock,phase,progress,attack_state)
 				2:_sentinel(p,aim,step,clock,phase,progress,attack_state)
 				3:_sovereign(p,aim,step,clock,phase,progress,attack_state)
+				4:_tempest_colossus(p,aim,clock,phase,progress)
+				5:_eclipse_seraph(p,aim,clock,phase,progress)
 		_:
 			_grunt(p,aim,step,phase,progress)
 	# An attack glint appears on release, never a replacement for the limb motion.
@@ -178,6 +224,19 @@ static func _owl(p: Pixels,aim: Vector2,step: float,moving: bool,clock: float,ph
 		p.limb(Vector2(6,0),Vector2(8,1),hand,feather)
 		if firing and phase!="idle":p.limb(Vector2(-5,1),Vector2(0,2),hand-aim*(2+draw_amount*5),feather,2)
 		_bow(p,hand,bow_aim,draw_amount,Color("aadfcd"))
+	elif weapon in ["crossbow","gun"]:
+		var hand=Vector2(8,1)+aim*(3 if phase=="release" else 0)
+		p.limb(Vector2(6,0),Vector2(8,1),hand,feather)
+		var end=hand+aim*12
+		p.line(hand-aim*3,end,INK,5)
+		p.line(hand-aim*2,end,Color("a6d2d7"),3)
+		if weapon=="crossbow":
+			p.line(end-aim.orthogonal()*6,end+aim.orthogonal()*6,Color("b87b50"),2)
+			p.line(hand,end+aim.orthogonal()*6,Color("f5e5c3"),1)
+			p.line(hand,end-aim.orthogonal()*6,Color("f5e5c3"),1)
+		else:
+			p.box(hand.x-2,hand.y+1,4,4,Color("84646c"))
+			if phase=="release":_spark(p,end+aim*3,Color("ffe5a2"),4)
 	elif weapon=="staff" or weapon=="magic":
 		var casting=state.contains("cast") or state.contains("magic") or state.contains("staff")
 		var lift=absf(a) if casting else 0.0
@@ -189,7 +248,7 @@ static func _owl(p: Pixels,aim: Vector2,step: float,moving: bool,clock: float,ph
 			var offhand=Vector2(-7,-1)+aim*maxf(0,a)*3+Vector2(0,-lift*4)
 			p.limb(Vector2(-5,1),Vector2(-8,1-lift*3),offhand,feather,2)
 		if phase=="release" and casting:_spark(p,hand+Vector2(0,-9),Color("f4e2ff"),4)
-	elif weapon=="dagger":
+	elif weapon in ["dagger","knife","throwing_knife"]:
 		var hand=Vector2(8,4+step)
 		var rear=Vector2(-8,4-step)
 		var blade_angle=0.85
@@ -213,7 +272,14 @@ static func _owl(p: Pixels,aim: Vector2,step: float,moving: bool,clock: float,ph
 		elif phase=="recover":
 			hand=Vector2(9,1).lerp(Vector2(8,3),progress);angle=lerpf(aim.angle()+0.5,-0.8,progress)
 		p.limb(Vector2(6,0),Vector2(8,1),hand,feather)
-		_sword(p,hand,angle,10)
+		if weapon=="axe":
+			var d=Vector2.RIGHT.rotated(angle)
+			p.line(hand-d*2,hand+d*12,INK,3)
+			p.line(hand-d*2,hand+d*12,Color("a87953"),1)
+			var tip=hand+d*10
+			p.poly([tip-d*3-d.orthogonal()*6,tip+d*3-d.orthogonal()*5,tip+d*4+d.orthogonal()*4,tip-d*2+d.orthogonal()*6],INK)
+			p.line(tip-d.orthogonal()*4,tip+d.orthogonal()*4,Color("d5e7eb"),4)
+		else:_sword(p,hand,angle,10)
 	if moving:p.box(-6+step,8,2,1,Color("dba34c"))
 
 static func _dagger(p: Pixels,hand: Vector2,angle: float,color: Color):

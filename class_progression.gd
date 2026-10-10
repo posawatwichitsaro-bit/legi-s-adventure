@@ -1,8 +1,8 @@
 class_name ClassProgression
 extends RefCounted
 
-# Per-class resources deliberately live outside the multiplicative stat table.
-# Level growth and Equipment cannot inflate shields, charges, avoidance or duration.
+# Shields derive from stats; charge capacities and attack behaviors derive from
+# active Skills. Level growth is explicit, never a blanket multiplier.
 const D = preload("res://data.gd")
 const SHIELD_DELAY = 4.0
 
@@ -10,15 +10,16 @@ static func class_id(g) -> String:
 	return str(D.CLASSES[clampi(int(g.selected_class),0,D.CLASSES.size()-1)].id)
 
 static func rank(g, id: String) -> int:
-	return g.tactic_rank(id)
+	return g.active_skill_rank(id)
 
 static func eligible(g, tactic: Dictionary) -> bool:
 	var id = str(tactic.get("id",""))
 	if id.is_empty():return false
 	var classes = tactic.get("classes",[])
 	if not classes.is_empty() and not class_id(g) in classes:return false
-	# Support explicit prerequisites for future skills without silently ignoring
-	# saved/custom data. Current branches are standalone Starting Skill options.
+	if tactic.get("effect","")=="switch":return str(tactic.get("option",""))!=g.selected_option
+	# Optional Tactic prerequisites remain supported; Skill prerequisites are
+	# resolved in player_skills.gd against learned steps rather than Tactic ranks.
 	var requires = tactic.get("requires",{})
 	if requires is String:
 		if not requires.is_empty() and rank(g,requires)<1:return false
@@ -43,7 +44,10 @@ static func stat_bounds(g, key: String) -> Array:
 	var kind = class_id(g)
 	match key:
 		"max_hp":
-			if kind=="mage":bounds[1]=280.0
+			if kind=="mage":bounds[1]=300.0
+			bounds[1]+=g.mastery_bonus_count*10.0
+		"damage":bounds[1]+=g.mastery_bonus_count
+		"dodge_cooldown":bounds[0]=1.0 if kind=="dash" else 2.0
 		"attack_speed":
 			bounds[1]=2.4 if kind=="ranger" else (2.2 if kind=="melee" else 2.0)
 		"projectiles":
@@ -53,31 +57,31 @@ static func stat_bounds(g, key: String) -> Array:
 	return bounds
 
 static func shield_max(g) -> float:
-	return 35.0+10.0*rank(g,"moon_ward") if class_id(g)=="mage" else 0.0
+	return float(g.stats.get("mage_armor",0.0))+10.0*rank(g,"ward")
 
 static func shield_regen(g) -> float:
-	return 7.0+rank(g,"moon_ward") if class_id(g)=="mage" else 0.0
+	return float(g.stats.get("shield_regen",5.0))+rank(g,"ward") if shield_max(g)>0 else 0.0
 
 static func dash_max(g) -> int:
-	return 1+rank(g,"comet_echo") if class_id(g)=="dash" else 1
+	return 1+rank(g,"echo") if class_id(g)=="dash" else 1
 
 static func dash_duration(g) -> float:
-	return 0.18+0.04*rank(g,"comet_length") if class_id(g)=="dash" else 0.18
+	return 0.18+0.04*rank(g,"length") if class_id(g)=="dash" else 0.18
 
 static func dash_cooldown(g) -> float:
-	return clampf(float(g.stats.get("dash_cooldown",3.0)),1.1,10.0)
+	return clampf(float(g.stats.get("dash_cooldown",3.0))-0.2*rank(g,"recovery"),1.1,10.0)
 
 static func trap_max(g) -> int:
-	return 1+rank(g,"ranger_evasion") if class_id(g)=="ranger" else 0
+	return 1+rank(g,"evasion") if class_id(g)=="ranger" else 0
 
 static func trap_cooldown(g) -> float:
-	return 12.0-rank(g,"ranger_evasion") if class_id(g)=="ranger" else 0.0
+	return 12.0-rank(g,"evasion") if class_id(g)=="ranger" else 0.0
 
 static func reset_run(g):
 	reset_stage(g)
 
 static func reset_stage(g):
-	# A new arena deliberately replenishes all class resources. An tactic does
+	# A new arena deliberately replenishes all class resources. A Tactic does
 	# not. This also removes partial recharge/damage-delay carryover across runs.
 	g.shield=shield_max(g)
 	g.shield_delay=0.0
@@ -132,7 +136,7 @@ static func absorb_damage(g, postarmor: float) -> float:
 	# Every accepted hit, even one absorbed in full, resets the 4-second delay;
 	# the caller grants the normal 0.65-second hurt window regardless of HP loss.
 	if postarmor<=0 or not is_finite(postarmor):return 0.0
-	if class_id(g)!="mage":return postarmor
+	if shield_max(g)<=0:return postarmor
 	g.shield_delay=SHIELD_DELAY
 	var absorbed=minf(maxf(0.0,g.shield),postarmor)
 	g.shield=maxf(0.0,g.shield-absorbed)
@@ -148,16 +152,26 @@ static func avoid_trap(g) -> bool:
 	return true
 
 static func on_tactic(g, id: String):
-	# apply_tactic increments the rank BEFORE calling this hook. Added charge
+	for tactic in D.TACTICS:
+		if tactic.id==id and tactic.get("effect","")=="switch":
+			g.selected_option=tactic.option
+			g.sword_state="idle";g.sword_time=0;g.sword_hits.clear();g.combo_left=0
+			g.bow_windup=0;g.cast_windup=0;g.attack_cd=0.15;g.bow_cd=0.15;g.magic_cd=0.15
+			g.shield=minf(g.shield,shield_max(g))
+			return
+	g.shield=minf(g.shield,shield_max(g))
+
+static func on_skill(g, effect: String):
+	# learn_skill records the step BEFORE calling this hook. Added charge
 	# capacity starts empty; existing recharge progress is preserved, not reset.
-	if id=="comet_echo" and class_id(g)=="dash":
+	if effect=="echo" and class_id(g)=="dash":
 		g.dash_charges=clampi(g.dash_charges,0,dash_max(g))
 		if g.dash_charges<dash_max(g) and g.dash_recharge<=0:g.dash_recharge=dash_cooldown(g)
 		sync_dash(g)
-	elif id=="ranger_evasion" and class_id(g)=="ranger":
+	elif effect=="evasion" and class_id(g)=="ranger":
 		g.trap_charges=clampi(g.trap_charges,0,trap_max(g))
 		if g.trap_charges<trap_max(g):
 			g.trap_recharge=trap_cooldown(g) if g.trap_recharge<=0 else minf(g.trap_recharge,trap_cooldown(g))
-	elif id=="moon_ward" and class_id(g)=="mage":
+	elif effect=="ward" and class_id(g)=="mage":
 		# More shield capacity does not erase an accepted-hit recharge delay.
 		g.shield=clampf(g.shield,0.0,shield_max(g))

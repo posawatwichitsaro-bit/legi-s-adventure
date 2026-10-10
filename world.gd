@@ -373,7 +373,7 @@ static func _spawn_hazard(g) -> bool:
 	w.hazard_serial += 1
 	w.hazards.append({"pos":pos.round(), "radius":radius, "state":"telegraph", "time":TELEGRAPH_TIME,
 		"duration":TELEGRAPH_TIME, "hit":false, "theme":w.theme, "serial":w.hazard_serial,
-		"damage":9.0 + mini(g.stage,20) * 0.5, "phase":g.rng.randf() * TAU})
+		"damage":9.0 + mini(g.stage,30) * 0.5, "phase":g.rng.randf() * TAU})
 	return true
 
 static func contact_radius(hazard: Dictionary) -> float:
@@ -409,7 +409,7 @@ static func update_hazards(g, dt: float):
 			# One contact per eruption, including a contact avoided with a dash.
 			# The shared damage function preserves armor and every hurt iframe.
 			hazard.hit = true
-			if not g.ClassProgression.avoid_trap(g):g.damage_player(hazard.damage)
+			if not g.ClassProgression.avoid_trap(g):g.damage_player(hazard.damage,"trap")
 			if g.hp <= 0:
 				w.hazards.clear()
 				return
@@ -420,7 +420,7 @@ static func update_hazards(g, dt: float):
 		for i in range(batch):
 			if w.hazards.size() >= cap:break
 			_spawn_hazard(g)
-		var pressure = clampf(float(g.stage - 1) / 19.0,0,1)
+		var pressure = clampf(float(g.stage - 1) / 29.0,0,1)
 		w.hazard_timer = g.rng.randf_range(5.4 - pressure * 2.4,7.0 - pressure * 2.4)
 
 static func draw_hazards(g):

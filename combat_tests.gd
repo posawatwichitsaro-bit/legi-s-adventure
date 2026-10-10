@@ -27,6 +27,9 @@ func fresh_field(stage_number = 1):
 	game.selected_class = 0
 	game.selected_skill = ""
 	game.start_run()
+	# Isolate old collision/healing rules from redesigned Class attributes and chance.
+	game.stats.max_hp=100.0;game.hp=100.0
+	game.stats.critical_rate=0;game.stats.dodge_rate=0;game.stats.block_rate=0
 	if stage_number != 1:
 		game.stage = stage_number
 		game.start_stage()
@@ -325,32 +328,29 @@ func test_player_sword():
 
 func test_player_casts():
 	fresh_field()
-	var target = enemy_at("grunt", game.player + Vector2(200, 0))
-	game.stats.projectiles = 2.0
-	game.bow_cd = 0.0
-	game.update_player_attacks(0.0, target)
-	var aim = game.bow_aim
-	player_steps(0.18)
-	check(game.bow_windup > 0 and game.bullets.is_empty(), "Player bow draws for 0.20 seconds before releasing arrows")
-	target.pos = game.player + Vector2(0, 200)
-	player_steps(0.04)
-	var arrows_once = game.bullets.size() == 2 and game.bow_aim == aim and game.release_kind == "bow"
-	player_steps(0.1)
-	check(arrows_once and game.bullets.size() == 2, "Bow release produces its configured arrow count once with a locked draw direction")
+	game.selected_class=1;game.selected_option="bow"
+	var target=enemy_at("grunt",game.player+Vector2(200,0))
+	game.bow_cd=0;game.update_player_attacks(0,target)
+	var aim=game.bow_aim
+	player_steps(.12)
+	check(game.bow_windup>0 and game.bullets.is_empty(),"Primary bow telegraphs before release")
+	target.pos=game.player+Vector2(0,200)
+	player_steps(.04)
+	var once=game.bullets.size()==1 and game.bow_aim==aim
+	player_steps(.1)
+	check(once and game.bullets.size()==1,"Primary bow releases once with locked aim")
 	fresh_field()
-	target = enemy_at("grunt", game.player + Vector2(200, 0))
-	game.stats.magic = 1.0
-	game.magic_cd = 0.0
-	game.update_player_attacks(0.0, target)
-	player_steps(0.26)
-	check(game.cast_windup > 0 and game.bullets.is_empty(), "Player magic visibly channels for 0.28 seconds before its burst")
-	player_steps(0.04)
-	var burst_once = game.bullets.size() == 8 and game.release_kind == "cast"
-	player_steps(0.1)
-	check(burst_once and game.bullets.size() == 8, "Magic release emits exactly eight radial projectiles once")
+	game.selected_class=2;game.selected_option="fire"
+	target=enemy_at("grunt",game.player+Vector2(200,0))
+	game.magic_cd=0;game.update_player_attacks(0,target);player_steps(.23)
+	check(game.cast_windup>0 and game.bullets.is_empty(),"Primary spell channels before release")
+	player_steps(.04)
+	var bolt_once=game.bullets.size()==1 and game.release_kind=="cast"
+	player_steps(.1)
+	check(bolt_once and game.bullets.size()==1,"Primary spell releases one elemental bolt once")
 
 func test_interruption_guards():
-	for mode in ["paused", "tactic", "loot", "menu", "dead", "won"]:
+	for mode in ["paused", "tactic", "skill", "loot", "menu", "dead", "won"]:
 		fresh_field()
 		var enemy = enemy_at("grunt", game.player - Vector2(30, 0))
 		arm_active(enemy)

@@ -1,0 +1,1501 @@
+{
+  "method": {
+    "choices": "Greedy damage/speed/range strategy chooses only from actual offered buttons; wholly ineffective upgrades are deprioritized. Equipment and Class Skills selected from actual offers.",
+    "controls": "Equipment-aware eight-direction physical-key input at 12 Hz, ordinary collision movement, AStarGrid2D obstacle routing when line of sight is blocked, enemy and environmental telegraph/bullet avoidance, and normal emergency dash. Dash build also dashes offensively. Identical controller/probe source is used for frozen v5 and v6; navigation bounds are derived from the actual arena.",
+    "damage_definition": "Sum of actual HP removed by accepted damage_player calls, after armor/invulnerability and capped at remaining HP on lethal hits; healing does not subtract from this counter.",
+    "limitations": "Small seeded automated sample, not a human difficulty assessment. Perfect knowledge of visible telegraphs favors this controller; collision navigation is approximate and timeouts remain possible. Old/new maps, spawn cadence, population, XP and random offers differ by design. Campaign seeds are matched, not geometry or progression stats. A fixed 240-second per-stage observation limit includes wave downtime.",
+    "movement": "kite",
+    "outcomes": "Cleared, died, or still alive at the 240-second timeout. A timeout is not a death; clear-time medians exclude timeouts/deaths.",
+    "progression": "Independent healthy-entry encounters: preceding stages supply their exact total dropped XP and legal random three-option rewards. HP is set to normal maximum at entry. No injected kills or HP changes in measured combat; this is not a prior-stage survival result.",
+    "simulation_hz": 120,
+    "stage_time_limit_seconds": 240.0
+  },
+  "rows": [
+    {
+      "active_enemies_remaining": 0,
+      "actual_kills": 74,
+      "arena_seed": 276025,
+      "boss_moves_released": {
+        "fan": 4,
+        "storm_lanes": 2,
+        "thunder_crown": 1
+      },
+      "boss_moves_started": {
+        "fan": 4,
+        "storm_lanes": 2,
+        "thunder_crown": 1
+      },
+      "build": "melee",
+      "clear_seconds": 72.9583333333375,
+      "cleared": true,
+      "damage_taken": 146.110041666667,
+      "debug_navigation": {},
+      "end_hp": 303.47,
+      "end_position": [
+        1040.87475585938,
+        484.557922363281
+      ],
+      "enemies_remaining": 0,
+      "entry_hp": 298.67,
+      "entry_level": 54,
+      "entry_setup": "healthy_entry_encounter",
+      "entry_stats": {
+        "armor": 1.0,
+        "attack_speed": 1.494,
+        "block_rate": 0.302,
+        "critical_damage": 0.5,
+        "critical_rate": 0.06,
+        "damage": 61.2999999999999,
+        "dash_cooldown": 3.0,
+        "dash_damage": 0.0,
+        "dodge_cooldown": 2.92,
+        "dodge_rate": 0.095,
+        "lifesteal": 0.0,
+        "mage_armor": 20.0,
+        "magic": 0.0,
+        "max_hp": 298.67,
+        "pickup": 104.76,
+        "projectiles": 0.0,
+        "range": 116.97,
+        "regen": 0.5,
+        "shield_regen": 5.0,
+        "speed": 168.17
+      },
+      "entry_weapon": "sword",
+      "entry_xp": 28.0,
+      "environment_hazard_contacts": 0,
+      "environment_hazards_released": 32,
+      "environment_hazards_spawned": 34,
+      "gear": [
+        {
+          "description": "Nightfall Cloak\n+0.4 regen / +8.2 range",
+          "stage": 5
+        },
+        {
+          "description": "Bramble Bow\n+17.5 max hp / +5.9 damage",
+          "stage": 10
+        },
+        {
+          "description": "Moonstone Wand\n+10.8 range / +23.9 max hp",
+          "stage": 15
+        },
+        {
+          "description": "Nightfall Cloak\n+19.8 pickup / +12.2 speed",
+          "stage": 20
+        }
+      ],
+      "hits_taken": 8,
+      "initial_enemies": 74,
+      "minimum_hp": 236.507666666658,
+      "mode": "0:sword",
+      "movement": "kite",
+      "outcome": "cleared",
+      "peak_active_enemies": 14,
+      "queued_enemies_remaining": 0,
+      "remaining_enemy_details": [],
+      "seconds_observed": 72.9583333333375,
+      "seed": 1760,
+      "skills": [
+        "melee_stagger_1",
+        "melee_shockwave_1",
+        "melee_shockwave_2",
+        "melee_extra_attack_1"
+      ],
+      "stage": 25,
+      "strategy": "0:sword",
+      "survived": true,
+      "travel_pixels": 9819.49650120735,
+      "upgrades": [
+        {
+          "id": "ward",
+          "level": 5,
+          "source": "offered Tactic"
+        },
+        {
+          "id": "ward",
+          "level": 10,
+          "source": "offered Tactic"
+        },
+        {
+          "id": "melee_stagger_1",
+          "source": "offered Skill",
+          "stage": 5
+        },
+        {
+          "id": "long_reach",
+          "level": 15,
+          "source": "offered Tactic"
+        },
+        {
+          "id": "duelist",
+          "level": 20,
+          "source": "offered Tactic"
+        },
+        {
+          "id": "melee_shockwave_1",
+          "source": "offered Skill",
+          "stage": 10
+        },
+        {
+          "id": "reach_training",
+          "level": 25,
+          "source": "offered Tactic"
+        },
+        {
+          "id": "nimble_guard",
+          "level": 30,
+          "source": "offered Tactic"
+        },
+        {
+          "id": "melee_shockwave_2",
+          "source": "offered Skill",
+          "stage": 15
+        },
+        {
+          "id": "critical_guard",
+          "level": 35,
+          "source": "offered Tactic"
+        },
+        {
+          "id": "stone_skin",
+          "level": 40,
+          "source": "offered Tactic"
+        },
+        {
+          "id": "melee_extra_attack_1",
+          "source": "offered Skill",
+          "stage": 20
+        },
+        {
+          "id": "dodge_focus",
+          "level": 45,
+          "source": "offered Tactic"
+        },
+        {
+          "id": "evasive_steps",
+          "level": 50,
+          "source": "offered Tactic"
+        }
+      ]
+    },
+    {
+      "active_enemies_remaining": 0,
+      "actual_kills": 87,
+      "arena_seed": 276030,
+      "boss_moves_released": {
+        "dawn_rings": 1,
+        "eclipse_seals": 1,
+        "fan": 1,
+        "solar_lance": 1,
+        "storm_sweep": 1
+      },
+      "boss_moves_started": {
+        "dawn_rings": 1,
+        "eclipse_seals": 1,
+        "fan": 1,
+        "solar_lance": 2,
+        "storm_sweep": 1
+      },
+      "build": "melee",
+      "clear_seconds": 80.5916666666769,
+      "cleared": true,
+      "damage_taken": 193.348958333333,
+      "debug_navigation": {},
+      "end_hp": 248.792774999926,
+      "end_position": [
+        840.289672851563,
+        349.963287353516
+      ],
+      "enemies_remaining": 0,
+      "entry_hp": 332.269999999999,
+      "entry_level": 68,
+      "entry_setup": "healthy_entry_encounter",
+      "entry_stats": {
+        "armor": 1.0,
+        "attack_speed": 1.606,
+        "block_rate": 0.358,
+        "critical_damage": 0.5,
+        "critical_rate": 0.08,
+        "damage": 70.4,
+        "dash_cooldown": 3.0,
+        "dash_damage": 0.0,
+        "dodge_cooldown": 2.77,
+        "dodge_rate": 0.095,
+        "lifesteal": 0.0,
+        "mage_armor": 20.0,
+        "magic": 0.0,
+        "max_hp": 332.269999999999,
+        "pickup": 104.76,
+        "projectiles": 0.0,
+        "range": 129.2,
+        "regen": 1.1,
+        "shield_regen": 5.0,
+        "speed": 168.17
+      },
+      "entry_weapon": "sword",
+      "entry_xp": 125.0,
+      "environment_hazard_contacts": 0,
+      "environment_hazards_released": 40,
+      "environment_hazards_spawned": 40,
+      "gear": [
+        {
+          "description": "Nightfall Cloak\n+0.4 regen / +8.2 range",
+          "stage": 5
+        },
+        {
+          "description": "Bramble Bow\n+17.5 max hp / +5.9 damage",
+          "stage": 10
+        },
+        {
+          "description": "Moonstone Wand\n+10.8 range / +23.9 max hp",
+          "stage": 15
+        },
+        {
+          "description": "Nightfall Cloak\n+19.8 pickup / +12.2 speed",
+          "stage": 20
+        },
+        {
+          "description": "Heartwood Buckler\n+2.0% critical rate / +12.2 range",
+          "stage": 25
+        }
+      ],
+      "hits_taken": 9,
+      "initial_enemies": 87,
+      "minimum_hp": 243.054441666598,
+      "mode": "0:sword",
+      "movement": "kite",
+      "outcome": "cleared",
+      "peak_active_enemies": 15,
+      "queued_enemies_remaining": 0,
+      "remaining_enemy_details": [],
+      "seconds_observed": 80.5916666666769,
+      "seed": 1760,
+      "skills": [
+        "melee_stagger_1",
+        "melee_shockwave_1",
+        "melee_shockwave_2",
+        "melee_extra_attack_1",
+        "melee_extra_attack_2"
+      ],
+      "stage": 30,
+      "strategy": "0:sword",
+      "survived": true,
+      "travel_pixels": 11066.9104261398,
+      "upgrades": [
+        {
+          "id": "ward",
+          "level": 5,
+          "source": "offered Tactic"
+        },
+        {
+          "id": "ward",
+          "level": 10,
+          "source": "offered Tactic"
+        },
+        {
+          "id": "melee_stagger_1",
+          "source": "offered Skill",
+          "stage": 5
+        },
+        {
+          "id": "long_reach",
+          "level": 15,
+          "source": "offered Tactic"
+        },
+        {
+          "id": "duelist",
+          "level": 20,
+          "source": "offered Tactic"
+        },
+        {
+          "id": "melee_shockwave_1",
+          "source": "offered Skill",
+          "stage": 10
+        },
+        {
+          "id": "reach_training",
+          "level": 25,
+          "source": "offered Tactic"
+        },
+        {
+          "id": "nimble_guard",
+          "level": 30,
+          "source": "offered Tactic"
+        },
+        {
+          "id": "melee_shockwave_2",
+          "source": "offered Skill",
+          "stage": 15
+        },
+        {
+          "id": "critical_guard",
+          "level": 35,
+          "source": "offered Tactic"
+        },
+        {
+          "id": "stone_skin",
+          "level": 40,
+          "source": "offered Tactic"
+        },
+        {
+          "id": "melee_extra_attack_1",
+          "source": "offered Skill",
+          "stage": 20
+        },
+        {
+          "id": "dodge_focus",
+          "level": 45,
+          "source": "offered Tactic"
+        },
+        {
+          "id": "evasive_steps",
+          "level": 50,
+          "source": "offered Tactic"
+        },
+        {
+          "id": "spring_water",
+          "level": 55,
+          "source": "offered Tactic"
+        },
+        {
+          "id": "melee_extra_attack_2",
+          "source": "offered Skill",
+          "stage": 25
+        },
+        {
+          "id": "reflexes",
+          "level": 60,
+          "source": "offered Tactic"
+        },
+        {
+          "id": "spring_water",
+          "level": 65,
+          "source": "offered Tactic"
+        }
+      ]
+    },
+    {
+      "active_enemies_remaining": 0,
+      "actual_kills": 74,
+      "arena_seed": 276025,
+      "boss_moves_released": {
+        "fan": 3,
+        "ring": 1,
+        "storm_lanes": 3
+      },
+      "boss_moves_started": {
+        "fan": 4,
+        "ring": 1,
+        "storm_lanes": 3
+      },
+      "build": "ranger",
+      "clear_seconds": 164.941666666681,
+      "cleared": true,
+      "damage_taken": 43.0874999999996,
+      "debug_navigation": {},
+      "end_hp": 194.98,
+      "end_position": [
+        319.342224121094,
+        435.169158935547
+      ],
+      "enemies_remaining": 0,
+      "entry_hp": 192.68,
+      "entry_level": 54,
+      "entry_setup": "healthy_entry_encounter",
+      "entry_stats": {
+        "armor": 1.0,
+        "attack_speed": 2.156,
+        "block_rate": 0.05,
+        "critical_damage": 0.74,
+        "critical_rate": 0.05,
+        "damage": 55.7500000000001,
+        "dash_cooldown": 3.0,
+        "dash_damage": 0.0,
+        "dodge_cooldown": 3.0,
+        "dodge_rate": 0.075,
+        "lifesteal": 0.0,
+        "mage_armor": 30.0,
+        "magic": 0.0,
+        "max_hp": 192.68,
+        "pickup": 75.0,
+        "projectiles": 0.0,
+        "range": 99.17,
+        "regen": 0.74,
+        "shield_regen": 5.0,
+        "speed": 201.7
+      },
+      "entry_weapon": "bow",
+      "entry_xp": 28.0,
+      "environment_hazard_contacts": 0,
+      "environment_hazards_released": 76,
+      "environment_hazards_spawned": 76,
+      "gear": [
+        {
+          "description": "Heartwood Buckler\n+8.2 speed / +5.0 damage",
+          "stage": 5
+        },
+        {
+          "description": "Comet Boots\n+21.7 max hp / +0.3 regen",
+          "stage": 10
+        },
+        {
+          "description": "Dewdrop Blade\n+0.1 attack speed / +9.2 range",
+          "stage": 15
+        },
+        {
+          "description": "Ember Pendant\n+10.0% critical damage / +0.2 attack speed",
+          "stage": 20
+        }
+      ],
+      "hits_taken": 5,
+      "initial_enemies": 74,
+      "minimum_hp": 158.918000000003,
+      "mode": "1:bow",
+      "movement": "kite",
+      "outcome": "cleared",
+      "peak_active_enemies": 14,
+      "queued_enemies_remaining": 0,
+      "remaining_enemy_details": [],
+      "seconds_observed": 164.941666666681,
+      "seed": 1760,
+      "skills": [
+        "ranger_rapid_1",
+        "ranger_rapid_2",
+        "ranger_execution_1",
+        "ranger_execution_2"
+      ],
+      "stage": 25,
+      "strategy": "1:bow",
+      "survived": true,
+      "travel_pixels": 26587.5202231407,
+      "upgrades": [
+        {
+          "id": "ward",
+          "level": 5,
+          "source": "offered Tactic"
+        },
+        {
+          "id": "ward",
+          "level": 10,
+          "source": "offered Tactic"
+        },
+        {
+          "id": "ranger_rapid_1",
+          "source": "offered Skill",
+          "stage": 5
+        },
+        {
+          "id": "merciless",
+          "level": 15,
+          "source": "offered Tactic"
+        },
+        {
+          "id": "heartwood",
+          "level": 20,
+          "source": "offered Tactic"
+        },
+        {
+          "id": "ranger_rapid_2",
+          "source": "offered Skill",
+          "stage": 10
+        },
+        {
+          "id": "spring_water",
+          "level": 25,
+          "source": "offered Tactic"
+        },
+        {
+          "id": "ward",
+          "level": 30,
+          "source": "offered Tactic"
+        },
+        {
+          "id": "ranger_execution_1",
+          "source": "offered Skill",
+          "stage": 15
+        },
+        {
+          "id": "long_reach",
+          "level": 35,
+          "source": "offered Tactic"
+        },
+        {
+          "id": "stone_skin",
+          "level": 40,
+          "source": "offered Tactic"
+        },
+        {
+          "id": "ranger_execution_2",
+          "source": "offered Skill",
+          "stage": 20
+        },
+        {
+          "id": "evasive_steps",
+          "level": 45,
+          "source": "offered Tactic"
+        },
+        {
+          "id": "duel_precision",
+          "level": 50,
+          "source": "offered Tactic"
+        }
+      ]
+    },
+    {
+      "active_enemies_remaining": 0,
+      "actual_kills": 87,
+      "arena_seed": 276030,
+      "boss_moves_released": {
+        "dawn_rings": 1,
+        "eclipse_seals": 1,
+        "fan": 1,
+        "solar_lance": 1
+      },
+      "boss_moves_started": {
+        "dawn_rings": 1,
+        "eclipse_seals": 1,
+        "fan": 1,
+        "solar_lance": 1
+      },
+      "build": "ranger",
+      "clear_seconds": 136.991666666706,
+      "cleared": true,
+      "damage_taken": 129.0625,
+      "debug_navigation": {},
+      "end_hp": 122.516800000015,
+      "end_position": [
+        814.358703613281,
+        482.442504882813
+      ],
+      "enemies_remaining": 0,
+      "entry_hp": 220.78,
+      "entry_level": 68,
+      "entry_setup": "healthy_entry_encounter",
+      "entry_stats": {
+        "armor": 1.5,
+        "attack_speed": 2.4,
+        "block_rate": 0.07,
+        "critical_damage": 0.74,
+        "critical_rate": 0.085,
+        "damage": 64.1500000000001,
+        "dash_cooldown": 3.0,
+        "dash_damage": 0.0,
+        "dodge_cooldown": 3.0,
+        "dodge_rate": 0.075,
+        "lifesteal": 0.0,
+        "mage_armor": 30.0,
+        "magic": 0.0,
+        "max_hp": 220.78,
+        "pickup": 75.0,
+        "projectiles": 0.0,
+        "range": 99.17,
+        "regen": 0.74,
+        "shield_regen": 5.0,
+        "speed": 221.49
+      },
+      "entry_weapon": "bow",
+      "entry_xp": 125.0,
+      "environment_hazard_contacts": 0,
+      "environment_hazards_released": 68,
+      "environment_hazards_spawned": 68,
+      "gear": [
+        {
+          "description": "Heartwood Buckler\n+8.2 speed / +5.0 damage",
+          "stage": 5
+        },
+        {
+          "description": "Comet Boots\n+21.7 max hp / +0.3 regen",
+          "stage": 10
+        },
+        {
+          "description": "Dewdrop Blade\n+0.1 attack speed / +9.2 range",
+          "stage": 15
+        },
+        {
+          "description": "Ember Pendant\n+10.0% critical damage / +0.2 attack speed",
+          "stage": 20
+        },
+        {
+          "description": "Nightfall Cloak\n+0.2 attack speed / +14.9 speed",
+          "stage": 25
+        }
+      ],
+      "hits_taken": 4,
+      "initial_enemies": 87,
+      "minimum_hp": 99.1111666666718,
+      "mode": "1:bow",
+      "movement": "kite",
+      "outcome": "cleared",
+      "peak_active_enemies": 15,
+      "queued_enemies_remaining": 0,
+      "remaining_enemy_details": [],
+      "seconds_observed": 136.991666666706,
+      "seed": 1760,
+      "skills": [
+        "ranger_rapid_1",
+        "ranger_rapid_2",
+        "ranger_execution_1",
+        "ranger_execution_2",
+        "ranger_volley_1"
+      ],
+      "stage": 30,
+      "strategy": "1:bow",
+      "survived": true,
+      "travel_pixels": 25322.6935458183,
+      "upgrades": [
+        {
+          "id": "ward",
+          "level": 5,
+          "source": "offered Tactic"
+        },
+        {
+          "id": "ward",
+          "level": 10,
+          "source": "offered Tactic"
+        },
+        {
+          "id": "ranger_rapid_1",
+          "source": "offered Skill",
+          "stage": 5
+        },
+        {
+          "id": "merciless",
+          "level": 15,
+          "source": "offered Tactic"
+        },
+        {
+          "id": "heartwood",
+          "level": 20,
+          "source": "offered Tactic"
+        },
+        {
+          "id": "ranger_rapid_2",
+          "source": "offered Skill",
+          "stage": 10
+        },
+        {
+          "id": "spring_water",
+          "level": 25,
+          "source": "offered Tactic"
+        },
+        {
+          "id": "ward",
+          "level": 30,
+          "source": "offered Tactic"
+        },
+        {
+          "id": "ranger_execution_1",
+          "source": "offered Skill",
+          "stage": 15
+        },
+        {
+          "id": "long_reach",
+          "level": 35,
+          "source": "offered Tactic"
+        },
+        {
+          "id": "stone_skin",
+          "level": 40,
+          "source": "offered Tactic"
+        },
+        {
+          "id": "ranger_execution_2",
+          "source": "offered Skill",
+          "stage": 20
+        },
+        {
+          "id": "evasive_steps",
+          "level": 45,
+          "source": "offered Tactic"
+        },
+        {
+          "id": "duel_precision",
+          "level": 50,
+          "source": "offered Tactic"
+        },
+        {
+          "id": "iron_heart",
+          "level": 55,
+          "source": "offered Tactic"
+        },
+        {
+          "id": "ranger_volley_1",
+          "source": "offered Skill",
+          "stage": 25
+        },
+        {
+          "id": "critical_guard",
+          "level": 60,
+          "source": "offered Tactic"
+        },
+        {
+          "id": "critical_eye",
+          "level": 65,
+          "source": "offered Tactic"
+        }
+      ]
+    },
+    {
+      "active_enemies_remaining": 3,
+      "actual_kills": 71,
+      "arena_seed": 276025,
+      "boss_moves_released": {
+        "fan": 4,
+        "storm_lanes": 3,
+        "storm_sweep": 1,
+        "thunder_crown": 3
+      },
+      "boss_moves_started": {
+        "fan": 4,
+        "storm_lanes": 3,
+        "storm_sweep": 1,
+        "thunder_crown": 3
+      },
+      "build": "mage",
+      "clear_seconds": -1.0,
+      "cleared": false,
+      "damage_taken": 387.831220227448,
+      "debug_navigation": {
+        "obstacles": "[[P: (117.0, 286.0), S: (36.0, 30.0)], [P: (413.0, 196.0), S: (44.0, 37.0)], [P: (945.0, 199.0), S: (52.0, 44.0)], [P: (1216.0, 294.0), S: (36.0, 30.0)], [P: (144.0, 588.0), S: (44.0, 37.0)], [P: (409.0, 673.0), S: (52.0, 44.0)], [P: (969.0, 673.0), S: (36.0, 30.0)], [P: (1250.0, 593.0), S: (44.0, 37.0)], [P: (837.0, 595.0), S: (38.0, 26.0)], [P: (555.0, 218.0), S: (32.0, 24.0)], [P: (811.0, 682.0), S: (38.0, 22.0)], [P: (1082.0, 687.0), S: (38.0, 34.0)], [P: (316.0, 553.0), S: (24.0, 22.0)], [P: (486.0, 550.0), S: (36.0, 26.0)], [P: (315.0, 245.0), S: (36.0, 30.0)], [P: (541.0, 627.0), S: (24.0, 28.0)], [P: (219.0, 284.0), S: (26.0, 28.0)], [P: (1112.0, 242.0), S: (38.0, 22.0)], [P: (808.0, 298.0), S: (26.0, 34.0)], [P: (957.0, 584.0), S: (32.0, 34.0)], [P: (1127.0, 315.0), S: (38.0, 24.0)], [P: (259.0, 663.0), S: (34.0, 28.0)], [P: (466.0, 331.0), S: (32.0, 26.0)], [P: (1074.0, 607.0), S: (36.0, 26.0)], [P: (579.0, 291.0), S: (38.0, 22.0)]]",
+        "path": "[(1124.0, 644.0), (1124.0, 658.0), (1110.0, 658.0), (1096.0, 658.0), (1082.0, 658.0), (1068.0, 658.0), (1054.0, 658.0), (1040.0, 658.0), (1026.0, 658.0), (1012.0, 658.0), (998.0, 658.0), (984.0, 658.0), (970.0, 658.0), (956.0, 644.0), (942.0, 644.0)]",
+        "waypoint": "(1124.0, 672.0)"
+      },
+      "end_hp": 0.0,
+      "end_position": [
+        1160.09594726563,
+        693.6474609375
+      ],
+      "enemies_remaining": 3,
+      "entry_hp": 144.33,
+      "entry_level": 54,
+      "entry_setup": "healthy_entry_encounter",
+      "entry_stats": {
+        "armor": 0.0,
+        "attack_speed": 1.12,
+        "block_rate": 0.1,
+        "critical_damage": 0.82,
+        "critical_rate": 0.105,
+        "damage": 69.05,
+        "dash_cooldown": 3.0,
+        "dash_damage": 0.0,
+        "dodge_cooldown": 4.0,
+        "dodge_rate": 0.075,
+        "lifesteal": 0.1,
+        "mage_armor": 79.0700000000001,
+        "magic": 0.0,
+        "max_hp": 144.33,
+        "pickup": 127.57,
+        "projectiles": 0.0,
+        "range": 90.0,
+        "regen": 0.15,
+        "shield_regen": 5.7,
+        "speed": 140.0
+      },
+      "entry_weapon": "staff",
+      "entry_xp": 28.0,
+      "environment_hazard_contacts": 2,
+      "environment_hazards_released": 64,
+      "environment_hazards_spawned": 64,
+      "gear": [
+        {
+          "description": "Nightfall Cloak\n+21.9 max hp / +10.0% critical damage",
+          "stage": 5
+        },
+        {
+          "description": "Nightfall Cloak\n+15.5 pickup / +3.0% block rate",
+          "stage": 10
+        },
+        {
+          "description": "Sunlit Gauntlets\n+12.0% critical damage / +2.0% critical rate",
+          "stage": 15
+        },
+        {
+          "description": "Ember Pendant\n+10.0% critical damage / +15.2 mage armor",
+          "stage": 20
+        }
+      ],
+      "hits_taken": 13,
+      "initial_enemies": 74,
+      "minimum_hp": 0.0,
+      "mode": "2:lightning",
+      "movement": "kite",
+      "outcome": "died",
+      "peak_active_enemies": 14,
+      "queued_enemies_remaining": 0,
+      "remaining_enemy_details": [
+        {
+          "hp": 212.2098644,
+          "kind": "hexer",
+          "line_of_sight": false,
+          "position": [
+            536.002624511719,
+            561.126586914063
+          ]
+        },
+        {
+          "hp": 27.4989321919998,
+          "kind": "bomber",
+          "line_of_sight": true,
+          "position": [
+            1180.45007324219,
+            344.734100341797
+          ]
+        },
+        {
+          "hp": 647.753953509999,
+          "kind": "boss",
+          "line_of_sight": true,
+          "position": [
+            965.576110839844,
+            646.089172363281
+          ]
+        }
+      ],
+      "seconds_observed": 139.791666666704,
+      "seed": 1760,
+      "skills": [
+        "mage_spread_1",
+        "mage_spread_2",
+        "mage_lightning_1",
+        "mage_lightning_2"
+      ],
+      "stage": 25,
+      "strategy": "2:lightning",
+      "survived": false,
+      "travel_pixels": 16326.6269308329,
+      "upgrades": [
+        {
+          "id": "ward",
+          "level": 5,
+          "source": "offered Tactic"
+        },
+        {
+          "id": "critical_guard",
+          "level": 10,
+          "source": "offered Tactic"
+        },
+        {
+          "id": "mage_spread_1",
+          "source": "offered Skill",
+          "stage": 5
+        },
+        {
+          "id": "evasive_steps",
+          "level": 15,
+          "source": "offered Tactic"
+        },
+        {
+          "id": "quick_hands",
+          "level": 20,
+          "source": "offered Tactic"
+        },
+        {
+          "id": "mage_spread_2",
+          "source": "offered Skill",
+          "stage": 10
+        },
+        {
+          "id": "critical_eye",
+          "level": 25,
+          "source": "offered Tactic"
+        },
+        {
+          "id": "ward_recharge",
+          "level": 30,
+          "source": "offered Tactic"
+        },
+        {
+          "id": "mage_lightning_1",
+          "source": "offered Skill",
+          "stage": 15
+        },
+        {
+          "id": "ward",
+          "level": 35,
+          "source": "offered Tactic"
+        },
+        {
+          "id": "heartwood",
+          "level": 40,
+          "source": "offered Tactic"
+        },
+        {
+          "id": "mage_lightning_2",
+          "source": "offered Skill",
+          "stage": 20
+        },
+        {
+          "id": "long_reach",
+          "level": 45,
+          "source": "offered Tactic"
+        },
+        {
+          "id": "life_drain",
+          "level": 50,
+          "source": "offered Tactic"
+        }
+      ]
+    },
+    {
+      "active_enemies_remaining": 0,
+      "actual_kills": 87,
+      "arena_seed": 276030,
+      "boss_moves_released": {
+        "dawn_rings": 2,
+        "eclipse_seals": 2,
+        "fan": 1,
+        "ring": 1,
+        "solar_lance": 2,
+        "storm_sweep": 1
+      },
+      "boss_moves_started": {
+        "dawn_rings": 2,
+        "eclipse_seals": 2,
+        "fan": 1,
+        "ring": 1,
+        "solar_lance": 2,
+        "storm_sweep": 1
+      },
+      "build": "mage",
+      "clear_seconds": 162.83333333335,
+      "cleared": true,
+      "damage_taken": 232.168958333333,
+      "debug_navigation": {},
+      "end_hp": 157.93,
+      "end_position": [
+        960.330078125,
+        423.025085449219
+      ],
+      "enemies_remaining": 0,
+      "entry_hp": 155.53,
+      "entry_level": 68,
+      "entry_setup": "healthy_entry_encounter",
+      "entry_stats": {
+        "armor": 1.0,
+        "attack_speed": 1.12,
+        "block_rate": 0.1,
+        "critical_damage": 0.92,
+        "critical_rate": 0.135,
+        "damage": 83.95,
+        "dash_cooldown": 3.0,
+        "dash_damage": 0.0,
+        "dodge_cooldown": 3.92,
+        "dodge_rate": 0.095,
+        "lifesteal": 0.1,
+        "mage_armor": 85.3700000000002,
+        "magic": 0.0,
+        "max_hp": 155.53,
+        "pickup": 137.37,
+        "projectiles": 0.0,
+        "range": 90.0,
+        "regen": 0.15,
+        "shield_regen": 5.7,
+        "speed": 140.0
+      },
+      "entry_weapon": "staff",
+      "entry_xp": 125.0,
+      "environment_hazard_contacts": 0,
+      "environment_hazards_released": 81,
+      "environment_hazards_spawned": 82,
+      "gear": [
+        {
+          "description": "Nightfall Cloak\n+21.9 max hp / +10.0% critical damage",
+          "stage": 5
+        },
+        {
+          "description": "Nightfall Cloak\n+15.5 pickup / +3.0% block rate",
+          "stage": 10
+        },
+        {
+          "description": "Sunlit Gauntlets\n+12.0% critical damage / +2.0% critical rate",
+          "stage": 15
+        },
+        {
+          "description": "Ember Pendant\n+10.0% critical damage / +15.2 mage armor",
+          "stage": 20
+        },
+        {
+          "description": "Heartwood Buckler\n+2.0% critical rate / +10.0% critical damage",
+          "stage": 25
+        }
+      ],
+      "hits_taken": 10,
+      "initial_enemies": 87,
+      "minimum_hp": 115.446009810239,
+      "mode": "2:lightning",
+      "movement": "kite",
+      "outcome": "cleared",
+      "peak_active_enemies": 15,
+      "queued_enemies_remaining": 0,
+      "remaining_enemy_details": [],
+      "seconds_observed": 162.83333333335,
+      "seed": 1760,
+      "skills": [
+        "mage_spread_1",
+        "mage_spread_2",
+        "mage_lightning_1",
+        "mage_lightning_2",
+        "mage_ward_1"
+      ],
+      "stage": 30,
+      "strategy": "2:lightning",
+      "survived": true,
+      "travel_pixels": 20034.2434823513,
+      "upgrades": [
+        {
+          "id": "ward",
+          "level": 5,
+          "source": "offered Tactic"
+        },
+        {
+          "id": "critical_guard",
+          "level": 10,
+          "source": "offered Tactic"
+        },
+        {
+          "id": "mage_spread_1",
+          "source": "offered Skill",
+          "stage": 5
+        },
+        {
+          "id": "evasive_steps",
+          "level": 15,
+          "source": "offered Tactic"
+        },
+        {
+          "id": "quick_hands",
+          "level": 20,
+          "source": "offered Tactic"
+        },
+        {
+          "id": "mage_spread_2",
+          "source": "offered Skill",
+          "stage": 10
+        },
+        {
+          "id": "critical_eye",
+          "level": 25,
+          "source": "offered Tactic"
+        },
+        {
+          "id": "ward_recharge",
+          "level": 30,
+          "source": "offered Tactic"
+        },
+        {
+          "id": "mage_lightning_1",
+          "source": "offered Skill",
+          "stage": 15
+        },
+        {
+          "id": "ward",
+          "level": 35,
+          "source": "offered Tactic"
+        },
+        {
+          "id": "heartwood",
+          "level": 40,
+          "source": "offered Tactic"
+        },
+        {
+          "id": "mage_lightning_2",
+          "source": "offered Skill",
+          "stage": 20
+        },
+        {
+          "id": "long_reach",
+          "level": 45,
+          "source": "offered Tactic"
+        },
+        {
+          "id": "life_drain",
+          "level": 50,
+          "source": "offered Tactic"
+        },
+        {
+          "id": "battle_focus",
+          "level": 55,
+          "source": "offered Tactic"
+        },
+        {
+          "id": "mage_ward_1",
+          "source": "offered Skill",
+          "stage": 25
+        },
+        {
+          "id": "stone_skin",
+          "level": 60,
+          "source": "offered Tactic"
+        },
+        {
+          "id": "dodge_focus",
+          "level": 65,
+          "source": "offered Tactic"
+        }
+      ]
+    },
+    {
+      "active_enemies_remaining": 0,
+      "actual_kills": 74,
+      "arena_seed": 276025,
+      "boss_moves_released": {
+        "fan": 1,
+        "storm_lanes": 3,
+        "storm_sweep": 1,
+        "thunder_crown": 1
+      },
+      "boss_moves_started": {
+        "fan": 1,
+        "storm_lanes": 3,
+        "storm_sweep": 1,
+        "thunder_crown": 1
+      },
+      "build": "dash",
+      "clear_seconds": 92.6166666666864,
+      "cleared": true,
+      "damage_taken": 124.430125,
+      "debug_navigation": {},
+      "end_hp": 80.5993750000023,
+      "end_position": [
+        1258.98937988281,
+        676.728088378906
+      ],
+      "enemies_remaining": 0,
+      "entry_hp": 153.3,
+      "entry_level": 54,
+      "entry_setup": "healthy_entry_encounter",
+      "entry_stats": {
+        "armor": 1.0,
+        "attack_speed": 1.54,
+        "block_rate": 0.102,
+        "critical_damage": 1.067,
+        "critical_rate": 0.2355,
+        "damage": 44.15,
+        "dash_cooldown": 2.152,
+        "dash_damage": 22.0,
+        "dodge_cooldown": 1.81,
+        "dodge_rate": 0.347,
+        "lifesteal": 0.0,
+        "mage_armor": 26.0,
+        "magic": 0.0,
+        "max_hp": 153.3,
+        "pickup": 85.0,
+        "projectiles": 0.0,
+        "range": 110.0,
+        "regen": 0.57,
+        "shield_regen": 5.0,
+        "speed": 196.2
+      },
+      "entry_weapon": "dagger",
+      "entry_xp": 28.0,
+      "environment_hazard_contacts": 0,
+      "environment_hazards_released": 44,
+      "environment_hazards_spawned": 44,
+      "gear": [
+        {
+          "description": "Windchime Charm\n-0.1 dodge cooldown / +9.0% critical damage",
+          "stage": 5
+        },
+        {
+          "description": "Dewdrop Blade\n+3.2% block rate / +0.2 attack speed",
+          "stage": 10
+        },
+        {
+          "description": "Dewdrop Blade\n+0.2 attack speed / +0.4 regen",
+          "stage": 15
+        },
+        {
+          "description": "Ember Pendant\n+2.5% dodge rate / +0.2 attack speed",
+          "stage": 20
+        }
+      ],
+      "hits_taken": 6,
+      "initial_enemies": 74,
+      "minimum_hp": 69.0036250000007,
+      "mode": "3:dagger",
+      "movement": "kite",
+      "outcome": "cleared",
+      "peak_active_enemies": 14,
+      "queued_enemies_remaining": 0,
+      "remaining_enemy_details": [],
+      "seconds_observed": 92.6166666666864,
+      "seed": 1760,
+      "skills": [
+        "dash_poison_1",
+        "dash_bleed_1",
+        "dash_execution_1",
+        "dash_poison_2"
+      ],
+      "stage": 25,
+      "strategy": "3:dagger",
+      "survived": true,
+      "travel_pixels": 18174.9625637531,
+      "upgrades": [
+        {
+          "id": "ward",
+          "level": 5,
+          "source": "offered Tactic"
+        },
+        {
+          "id": "ward",
+          "level": 10,
+          "source": "offered Tactic"
+        },
+        {
+          "id": "dash_poison_1",
+          "source": "offered Skill",
+          "stage": 5
+        },
+        {
+          "id": "long_reach",
+          "level": 15,
+          "source": "offered Tactic"
+        },
+        {
+          "id": "reach_training",
+          "level": 20,
+          "source": "offered Tactic"
+        },
+        {
+          "id": "dash_bleed_1",
+          "source": "offered Skill",
+          "stage": 10
+        },
+        {
+          "id": "resilient_ward",
+          "level": 25,
+          "source": "offered Tactic"
+        },
+        {
+          "id": "patient_guard",
+          "level": 30,
+          "source": "offered Tactic"
+        },
+        {
+          "id": "dash_execution_1",
+          "source": "offered Skill",
+          "stage": 15
+        },
+        {
+          "id": "evasive_steps",
+          "level": 35,
+          "source": "offered Tactic"
+        },
+        {
+          "id": "long_reach",
+          "level": 40,
+          "source": "offered Tactic"
+        },
+        {
+          "id": "dash_poison_2",
+          "source": "offered Skill",
+          "stage": 20
+        },
+        {
+          "id": "agile_heart",
+          "level": 45,
+          "source": "offered Tactic"
+        },
+        {
+          "id": "dodge_focus",
+          "level": 50,
+          "source": "offered Tactic"
+        }
+      ]
+    },
+    {
+      "active_enemies_remaining": 0,
+      "actual_kills": 87,
+      "arena_seed": 276030,
+      "boss_moves_released": {
+        "dawn_rings": 1,
+        "eclipse_seals": 1,
+        "ring": 1,
+        "solar_lance": 1
+      },
+      "boss_moves_started": {
+        "dawn_rings": 1,
+        "eclipse_seals": 1,
+        "ring": 1,
+        "solar_lance": 1
+      },
+      "build": "dash",
+      "clear_seconds": 100.350000000026,
+      "cleared": true,
+      "damage_taken": 86.0191666666668,
+      "debug_navigation": {},
+      "end_hp": 136.312333333341,
+      "end_position": [
+        359.940368652344,
+        234.674331665039
+      ],
+      "enemies_remaining": 0,
+      "entry_hp": 178.7,
+      "entry_level": 68,
+      "entry_setup": "healthy_entry_encounter",
+      "entry_stats": {
+        "armor": 2.0,
+        "attack_speed": 1.54,
+        "block_rate": 0.102,
+        "critical_damage": 1.193,
+        "critical_rate": 0.3095,
+        "damage": 51.8499999999999,
+        "dash_cooldown": 1.928,
+        "dash_damage": 22.0,
+        "dodge_cooldown": 1.81,
+        "dodge_rate": 0.418,
+        "lifesteal": 0.0,
+        "mage_armor": 39.84,
+        "magic": 0.0,
+        "max_hp": 178.7,
+        "pickup": 85.0,
+        "projectiles": 0.0,
+        "range": 125.68,
+        "regen": 0.57,
+        "shield_regen": 5.0,
+        "speed": 201.8
+      },
+      "entry_weapon": "dagger",
+      "entry_xp": 125.0,
+      "environment_hazard_contacts": 0,
+      "environment_hazards_released": 48,
+      "environment_hazards_spawned": 48,
+      "gear": [
+        {
+          "description": "Windchime Charm\n-0.1 dodge cooldown / +9.0% critical damage",
+          "stage": 5
+        },
+        {
+          "description": "Dewdrop Blade\n+3.2% block rate / +0.2 attack speed",
+          "stage": 10
+        },
+        {
+          "description": "Dewdrop Blade\n+0.2 attack speed / +0.4 regen",
+          "stage": 15
+        },
+        {
+          "description": "Ember Pendant\n+2.5% dodge rate / +0.2 attack speed",
+          "stage": 20
+        },
+        {
+          "description": "Heartwood Buckler\n+15.7 range / +13.8 mage armor",
+          "stage": 25
+        }
+      ],
+      "hits_taken": 4,
+      "initial_enemies": 87,
+      "minimum_hp": 119.596083333338,
+      "mode": "3:dagger",
+      "movement": "kite",
+      "outcome": "cleared",
+      "peak_active_enemies": 15,
+      "queued_enemies_remaining": 0,
+      "remaining_enemy_details": [],
+      "seconds_observed": 100.350000000026,
+      "seed": 1760,
+      "skills": [
+        "dash_poison_1",
+        "dash_bleed_1",
+        "dash_execution_1",
+        "dash_poison_2",
+        "dash_push_1"
+      ],
+      "stage": 30,
+      "strategy": "3:dagger",
+      "survived": true,
+      "travel_pixels": 20411.0266923904,
+      "upgrades": [
+        {
+          "id": "ward",
+          "level": 5,
+          "source": "offered Tactic"
+        },
+        {
+          "id": "ward",
+          "level": 10,
+          "source": "offered Tactic"
+        },
+        {
+          "id": "dash_poison_1",
+          "source": "offered Skill",
+          "stage": 5
+        },
+        {
+          "id": "long_reach",
+          "level": 15,
+          "source": "offered Tactic"
+        },
+        {
+          "id": "reach_training",
+          "level": 20,
+          "source": "offered Tactic"
+        },
+        {
+          "id": "dash_bleed_1",
+          "source": "offered Skill",
+          "stage": 10
+        },
+        {
+          "id": "resilient_ward",
+          "level": 25,
+          "source": "offered Tactic"
+        },
+        {
+          "id": "patient_guard",
+          "level": 30,
+          "source": "offered Tactic"
+        },
+        {
+          "id": "dash_execution_1",
+          "source": "offered Skill",
+          "stage": 15
+        },
+        {
+          "id": "evasive_steps",
+          "level": 35,
+          "source": "offered Tactic"
+        },
+        {
+          "id": "long_reach",
+          "level": 40,
+          "source": "offered Tactic"
+        },
+        {
+          "id": "dash_poison_2",
+          "source": "offered Skill",
+          "stage": 20
+        },
+        {
+          "id": "agile_heart",
+          "level": 45,
+          "source": "offered Tactic"
+        },
+        {
+          "id": "dodge_focus",
+          "level": 50,
+          "source": "offered Tactic"
+        },
+        {
+          "id": "critical_eye",
+          "level": 55,
+          "source": "offered Tactic"
+        },
+        {
+          "id": "dash_push_1",
+          "source": "offered Skill",
+          "stage": 25
+        },
+        {
+          "id": "stone_skin",
+          "level": 60,
+          "source": "offered Tactic"
+        },
+        {
+          "id": "agile_heart",
+          "level": 65,
+          "source": "offered Tactic"
+        }
+      ]
+    }
+  ]
+}

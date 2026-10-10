@@ -66,7 +66,7 @@ func _draw():
 				var phase=phases[row]
 				var actor_pose="idle" if phase=="idle" else prefix+"_"+("release" if phase=="active" and col in [1,2] else phase)
 				Art.draw_actor(self,"owl",at,Vector2.RIGHT,row==0,elapsed,actor_pose,0.5,Color.WHITE,0,weapon)
-				draw_string(font,at+Vector2(-72,43),["Blade · sword","Ranger · bow","Weaver · staff","Strider · dagger"][col]+" / "+phase,HORIZONTAL_ALIGNMENT_LEFT,-1,11,Color("ffe1a5"))
+				draw_string(font,at+Vector2(-72,43),["Fighter · sword","Ranger · bow","Wizard · staff","Rogue · dagger"][col]+" / "+phase,HORIZONTAL_ALIGNMENT_LEFT,-1,11,Color("ffe1a5"))
 	elif qa_mode==4:
 		for e in enemies:draw_string(font,world_to_screen(e.pos)+Vector2(-35,62),e.kind,HORIZONTAL_ALIGNMENT_LEFT,-1,13,Color("ffe1a5"))
 	else:
