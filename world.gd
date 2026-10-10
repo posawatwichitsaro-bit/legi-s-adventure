@@ -409,7 +409,7 @@ static func update_hazards(g, dt: float):
 			# One contact per eruption, including a contact avoided with a dash.
 			# The shared damage function preserves armor and every hurt iframe.
 			hazard.hit = true
-			g.damage_player(hazard.damage)
+			if not g.ClassProgression.avoid_trap(g):g.damage_player(hazard.damage)
 			if g.hp <= 0:
 				w.hazards.clear()
 				return

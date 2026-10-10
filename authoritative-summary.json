@@ -1,0 +1,52 @@
+{
+  "experiments": {
+    "legal": {
+      "rows": 228,
+      "clears": 228,
+      "deaths": 0,
+      "timeouts": 0,
+      "actual_kills": 9804,
+      "raw_file": "authoritative-legal.json"
+    },
+    "stress": {
+      "rows": 18,
+      "clears": 18,
+      "deaths": 0,
+      "timeouts": 0,
+      "actual_kills": 1116,
+      "raw_file": "authoritative-stress.json"
+    },
+    "campaigns": {
+      "rows": 160,
+      "clears": 160,
+      "deaths": 0,
+      "timeouts": 0,
+      "actual_kills": 5888,
+      "raw_file": "authoritative-campaigns.json"
+    },
+    "replay": {
+      "rows": 8,
+      "clears": 8,
+      "deaths": 0,
+      "timeouts": 0,
+      "actual_kills": 344,
+      "raw_file": "authoritative-replay.json"
+    }
+  },
+  "source_sha256": {
+    "main.gd": "af5ffd8e02c7b4fabd6e78a69e63f63cf05ef4a840258c7482c2788ae1c5e137",
+    "data.gd": "afa39d6a3e8059d07a0da9f3f9703fc66c5a9e6d78a7094ce42f49593f707928",
+    "combat.gd": "c091c15c3f14fde6d0c9aea6926ce947e5989df8c3bbe6458c1c6d2e849fe06b",
+    "class_combat.gd": "e565c9212af55317d429e34cf40e862e8154cd8a99bdb37b2d9edff4795509fc",
+    "class_progression.gd": "f89f3f63e9cad7d407b30c3795a0236d45afb6aa64bf16fec6b61b704068bedd",
+    "world.gd": "b0fdfb7dec2899c86f2b219b5ad496847676a6ba94051b1a0fb839aa16eb09ac",
+    "balance_simulation_v7.gd": "fc0b19ac3e2d8b137f6f01c20525465de3ff50b20f725a2d42fbb8958c47d07e",
+    "balance_probe.gd": "52930c8fb6a95be3882685cab9130f6d4aa47de5a9719b855a9b53eae2eaedf7",
+    "balance_simulation_v6.gd": "4adc696562704228b4de3eb0c5b011afa2aa3cafc2ab5ec904627df3c0b9bdda"
+  },
+  "inherited_v6_verification": {
+    "sha256": "4adc696562704228b4de3eb0c5b011afa2aa3cafc2ab5ec904627df3c0b9bdda",
+    "evidence": "Matches documented v6 release hash; independently verified after final runs"
+  },
+  "replays_identical": 8
+}

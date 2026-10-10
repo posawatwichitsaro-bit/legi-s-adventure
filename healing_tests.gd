@@ -388,7 +388,7 @@ func test_attack_routes():
 		game.bullets[0].pos = game.enemies[0].pos
 		game.bullets[0].vel = Vector2.ZERO
 		game.simulate(0.0)
-		check(near(game.enemies[0].hp, 82.0) and near(game.hp, 41.8), "Magic projectile hits use actual-damage Life Drain")
+		check(near(game.enemies[0].hp, 97.0) and near(game.hp, 40.3), "Magic projectile hits use actual-damage Life Drain")
 
 	prepare_attack_target(30.0, 150.0)
 	game.stats.dash_damage = 30.0
@@ -398,7 +398,9 @@ func test_attack_routes():
 	check(near(game.enemies[0].hp, 100.0) and near(game.hp, 45.0), "Dash damage uses Life Drain")
 	game.simulate(0.0)
 	check(near(game.enemies[0].hp, 100.0) and near(game.hp, 45.0), "A single dash cannot drain the same enemy twice")
-	game.dash_cd = 0.0
+	# V7: dash_cd is only a view; a second action must await real charge recovery.
+	game.dash_left = 0.0
+	game.ClassProgression.tick(game,game.stats.dash_cooldown)
 	game.dash()
 	game.simulate(0.0)
 	check(near(game.enemies[0].hp, 50.0) and near(game.hp, 50.0), "A new dash can damage and drain the enemy again")

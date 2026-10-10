@@ -116,7 +116,7 @@ func test_no_passive_damage():
 		fresh_field(build)
 		var target = enemy_at(Vector2.ZERO)
 		game.simulate(0.2)
-		check(near(target.hp, 1000.0) and near(game.hp, 100.0) and game.sword_state == "idle" and game.bullets.is_empty(), "%s touching an enemy while all attacks are idle does no passive damage" % PRIMARY[build].capitalize())
+		check(near(target.hp, 1000.0) and near(game.hp, game.stats.max_hp) and game.sword_state == "idle" and game.bullets.is_empty(), "%s touching an enemy while all attacks are idle does no passive damage" % PRIMARY[build].capitalize())
 
 func test_dagger_windows():
 	fresh_field(3)
@@ -206,7 +206,7 @@ func test_staff_primary():
 		arm_primary(2)
 		game.update_player_attacks(0.0, target)
 		attack_steps(0.29)
-		check(game.bullets.size() == 1 and near(game.bullets[0].damage, 18.0 * (1.1 + 0.2 * (power - 1))) and game.sword_state == "idle", "Staff power %d strengthens one bolt without secretly enabling sword or radial damage" % int(power))
+		check(game.bullets.size() == 1 and near(game.bullets[0].damage, 18.0 * (1.1 + 0.15 * (power - 1))) and game.sword_state == "idle", "Staff power %d strengthens one bolt without secretly enabling sword or radial damage" % int(power))
 
 func test_cooldowns_and_caps():
 	for build in range(4):
@@ -217,13 +217,14 @@ func test_cooldowns_and_caps():
 		game.update_player_attacks(0.0, target)
 		var actual_cd = game.bow_cd if build == 1 else (game.magic_cd if build == 2 else game.attack_cd)
 		var base_cd = 0.62 if build == 3 else (0.95 if build == 2 else 0.85)
-		check(near(game.stats.attack_speed, 2.2) and near(actual_cd, base_cd / 2.2), "%s primary cooldown obeys the shared attack-speed cap without skipping anticipation" % PRIMARY[build].capitalize())
-		check(near(game.stats.damage, 80.0) and near(game.stats.range, 145.0) and near(game.stats.projectiles, 4.0) and near(game.stats.magic, 3.0), "%s still obeys shared damage, reach, projectile and magic caps" % PRIMARY[build].capitalize())
+		var speed_cap = game.ClassProgression.stat_bounds(game,"attack_speed")[1]
+		check(near(game.stats.attack_speed, speed_cap) and near(actual_cd, base_cd / speed_cap), "%s primary cooldown obeys the class-specific attack-speed cap without skipping anticipation" % PRIMARY[build].capitalize())
+		check(near(game.stats.damage, 80.0) and near(game.stats.range, 145.0) and near(game.stats.projectiles, 4.0 if build==1 else 2.0) and near(game.stats.magic, 3.0 if build==2 else 2.0), "%s still obeys shared damage/reach and class-specific projectile/magic caps" % PRIMARY[build].capitalize())
 		for upgrade in game.D.UPGRADES:
 			for attempt in range(upgrade.cap + 2): game.apply_upgrade(upgrade.id)
 		var before = game.stats.duplicate(true)
 		for upgrade in game.D.UPGRADES: game.apply_upgrade(upgrade.id)
-		check(game.stats == before and game.stats.attack_speed <= 2.2 and game.stats.damage <= 80.0 and game.stats.projectiles <= 4.0 and game.stats.magic <= 3.0, "%s cannot overstack capped upgrades through its exclusive primary" % PRIMARY[build].capitalize())
+		check(game.stats == before and game.stats.attack_speed <= speed_cap and game.stats.damage <= 80.0 and game.stats.projectiles <= 4.0 and game.stats.magic <= 3.0, "%s cannot overstack capped upgrades through its exclusive primary" % PRIMARY[build].capitalize())
 
 func test_range_benefits():
 	for build in [1, 2]:
@@ -261,7 +262,7 @@ func test_intentional_secondary_attacks():
 		game.magic_cd = 0.0
 		game.update_player_attacks(0.0, target)
 		var expected_bow_cd = (0.85 if build == 1 else 1.4) / game.stats.attack_speed
-		var expected_magic_cd = (0.95 if build == 2 else 2.3) / game.stats.attack_speed
+		var expected_magic_cd = 0.95 / game.stats.attack_speed if build == 2 else 2.3
 		check(near(game.bow_cd, expected_bow_cd) and near(game.magic_cd, expected_magic_cd), "%s explicit secondary unlocks keep primary and secondary cooldowns distinct" % PRIMARY[build].capitalize())
 		attack_steps(0.30)
 		var arrow_count = 0

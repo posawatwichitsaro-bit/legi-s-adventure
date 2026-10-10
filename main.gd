@@ -4,6 +4,8 @@ const D = preload("res://data.gd")
 const Combat = preload("res://combat.gd")
 const Art = preload("res://character_art.gd")
 const World = preload("res://world.gd")
+const ClassCombat = preload("res://class_combat.gd")
+const ClassProgression = preload("res://class_progression.gd")
 const VIEW = Rect2(32, 112, 896, 456)
 const ARENA = Rect2(32, 112, 1344, 684)
 const CENTER = Vector2(704, 454)
@@ -80,6 +82,14 @@ var bow_release_time = 0.0
 var cast_release_time = 0.0
 var release_time = 0.0
 var release_kind = ""
+var shield = 0.0
+var shield_delay = 0.0
+var dash_charges = 1
+var dash_recharge = 0.0
+var trap_charges = 0
+var trap_recharge = 0.0
+var class_fx: Dictionary = {}
+var trail_patches: Array = []
 
 
 func _ready():
@@ -136,9 +146,18 @@ func load_profile():
 	if D.COSMETICS[selected_cosmetic].stage > profile.best_stage: selected_cosmetic = 0
 	selected_ability = saved.get("selected_ability", "") if saved.get("selected_ability", "") is String else ""
 	if not selected_ability in profile.unlocks: selected_ability = ""
+	validate_starting_ability()
+
+func validate_starting_ability():
+	for u in D.UPGRADES:
+		if u.id == selected_ability and not u.get("classes",[]).is_empty() and not D.BUILDS[selected_build].id in u.classes:
+			selected_ability = ""
+			return
 
 func save_profile():
 	if test_mode: return
+	validate_starting_ability()
+	profile.version = 7
 	profile.selected_build = selected_build
 	profile.selected_ability = selected_ability
 	profile.selected_cosmetic = selected_cosmetic
@@ -180,9 +199,20 @@ func modal(title: String, subtitle: String) -> VBoxContainer:
 	box.add_child(sub)
 	return box
 
+func wrap_button_text(text: String) -> String:
+	var lines: Array[String] = []
+	for source in text.split("\n"):
+		var line = ""
+		for word in source.split(" "):
+			if line.length()+word.length()+1>80 and not line.is_empty():
+				lines.append(line);line=""
+			line += (" " if not line.is_empty() else "") + word
+		lines.append(line)
+	return "\n".join(lines)
+
 func button(parent: Control, text: String, callback: Callable, color = Color("253552")) -> Button:
 	var b = Button.new()
-	b.text = text
+	b.text = wrap_button_text(text)
 	b.custom_minimum_size = Vector2(0,46)
 	b.add_theme_font_size_override("font_size",16)
 	b.add_theme_color_override("font_color",Color("f2f5ff"))
@@ -207,6 +237,7 @@ func button(parent: Control, text: String, callback: Callable, color = Color("25
 
 func show_menu():
 	state = "menu"
+	class_fx.clear();trail_patches.clear()
 	spawn_queue.clear()
 	World.reset_hazards(self)
 	enemies.clear()
@@ -270,7 +301,7 @@ func show_abilities():
 	list.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	scroll.add_child(list)
 	for u in D.UPGRADES:
-		if u.id in profile.unlocks:
+		if u.id in profile.unlocks and (u.get("classes",[]).is_empty() or D.BUILDS[selected_build].id in u.classes):
 			button(list,u.name + "  ·  " + u.description,func(): selected_ability=u.id;save_profile();show_menu())
 	if profile.unlocks.is_empty():
 		var l = Label.new()
@@ -304,8 +335,11 @@ func start_run():
 	level=1;xp=0;stage=1;kills=0;elapsed=0;hp=100;pending_choices=0
 	run_equipment.clear()
 	upgrade_ranks.clear()
+	class_fx.clear();trail_patches.clear()
+	validate_starting_ability()
 	# Equip the chosen class before applying its one optional starting ability.
 	apply_stats(D.BUILDS[selected_build].starting_stats)
+	ClassProgression.reset_run(self)
 	for u in D.UPGRADES:
 		if u.id==selected_ability: apply_upgrade(u.id)
 	hp=stats.max_hp
@@ -315,6 +349,8 @@ func start_stage():
 	state="playing"
 	clear_panel()
 	player=CENTER;facing=Vector2.RIGHT
+	class_fx.clear();trail_patches.clear()
+	ClassProgression.reset_stage(self)
 	dash_cd=0;dash_left=0;hurt_cd=1.5;attack_cd=0.3
 	bow_cd=0.3 if primary_weapon()=="bow" else 0.8
 	magic_cd=0.3 if primary_weapon()=="staff" else 1.0
@@ -434,8 +470,8 @@ func resume():
 	clear_panel();state="playing"
 
 func dash():
-	if dash_cd>0:return
-	dash_left=0.18;dash_cd=maxf(1.1,stats.dash_cooldown)
+	if not ClassProgression.try_dash(self):return
+	dash_left=ClassProgression.dash_duration(self)
 	hurt_cd=maxf(hurt_cd,0.26)
 	for enemy in enemies:enemy.dash_hit=false
 	beep(550,0.08)
@@ -457,7 +493,8 @@ func simulate(dt: float):
 	if hp<=0:end_run(false);return
 	healing_flash=maxf(0,healing_flash-dt)
 	elapsed+=dt;stage_time+=dt
-	dash_cd=maxf(0,dash_cd-dt);dash_left=maxf(0,dash_left-dt);hurt_cd=maxf(0,hurt_cd-dt)
+	ClassProgression.tick(self,dt)
+	dash_left=maxf(0,dash_left-dt);hurt_cd=maxf(0,hurt_cd-dt)
 	attack_cd-=dt;magic_cd-=dt;bow_cd-=dt;slash_time=maxf(0,slash_time-dt)
 	hp=minf(stats.max_hp,hp+stats.regen*dt)
 	var direction=Vector2(float(Input.is_physical_key_pressed(KEY_D) or Input.is_physical_key_pressed(KEY_RIGHT))-float(Input.is_physical_key_pressed(KEY_A) or Input.is_physical_key_pressed(KEY_LEFT)),float(Input.is_physical_key_pressed(KEY_S) or Input.is_physical_key_pressed(KEY_DOWN))-float(Input.is_physical_key_pressed(KEY_W) or Input.is_physical_key_pressed(KEY_UP)))
@@ -470,6 +507,7 @@ func simulate(dt: float):
 	player=move_actor(player,velocity*dt,12)
 	player_moving=player.distance_squared_to(old_player)>0.0001
 	update_camera()
+	ClassCombat.tick(self,dt,old_player)
 	update_waves(dt)
 	World.update_hazards(self,dt)
 	if hp<=0:end_run(false);return
@@ -481,6 +519,7 @@ func simulate(dt: float):
 	if hp<=0:end_run(false);return
 	for i in range(bullets.size()-1,-1,-1):
 		var b=bullets[i]
+		ClassCombat.update_bullet(self,b,dt)
 		b.pos+=b.vel*dt;b.life-=dt
 		var remove=b.life<=0 or blocked(b.pos,2)
 		if not remove:
@@ -538,13 +577,13 @@ func primary_weapon() -> String:
 	return D.BUILDS[clampi(selected_build,0,D.BUILDS.size()-1)].weapon
 
 func melee_duration(phase_name: String) -> float:
-	return float(D.PRIMARY_WEAPONS.get(primary_weapon(),D.PRIMARY_WEAPONS.sword).get(phase_name,0.12))
+	return float(ClassCombat.melee_spec(self).get(phase_name,0.12))
 
 func melee_range() -> float:
-	return stats.range*float(D.PRIMARY_WEAPONS.get(primary_weapon(),D.PRIMARY_WEAPONS.sword).get("reach",1.0))
+	return stats.range*float(ClassCombat.melee_spec(self).get("reach",1.0))
 
 func melee_damage() -> float:
-	return stats.damage*float(D.PRIMARY_WEAPONS.get(primary_weapon(),D.PRIMARY_WEAPONS.sword).get("damage",1.0))
+	return stats.damage*float(ClassCombat.melee_spec(self).get("damage",1.0))
 
 func aimed_projectile_speed(base_speed: float) -> float:
 	return base_speed+maxf(0,stats.range-78.0)
@@ -558,7 +597,7 @@ func update_player_attacks(dt: float, target):
 	# Only melee classes enter this state machine. A ranged class never has an
 	# invisible sword, even if an old state was left behind by a test/transition.
 	if weapon in ["sword","dagger"]:
-		var spec=D.PRIMARY_WEAPONS[weapon]
+		var spec=ClassCombat.melee_spec(self)
 		if sword_state=="idle":
 			if target!=null and attack_cd<=0:
 				sword_aim=(target.pos-player).normalized()
@@ -575,7 +614,7 @@ func update_player_attacks(dt: float, target):
 			if sword_state=="active":
 				for enemy in enemies:
 					var relative=enemy.pos-player
-					if enemy.hp>0 and not sword_hits.has(enemy) and relative.length()<melee_range() and (relative.length()<1 or sword_aim.dot(relative.normalized())>spec.cone_dot):
+					if enemy.hp>0 and not sword_hits.has(enemy) and relative.length()<melee_range() and (relative.length()<1 or spec.cone_dot<=-1 or sword_aim.dot(relative.normalized())>spec.cone_dot):
 						sword_hits.append(enemy);damage_enemy(enemy,melee_damage())
 			elif sword_state=="recover" and sword_time<=0:sword_state="idle"
 	else:
@@ -596,13 +635,12 @@ func update_player_attacks(dt: float, target):
 		if cast_windup<=0:
 			release_kind="cast";release_time=0.22;cast_release_time=0.22
 			if weapon=="staff":
-				var power=1.1+maxf(0,stats.magic-1)*0.2
-				bullets.append({"pos":player,"vel":cast_aim*aimed_projectile_speed(260.0),"life":2.5,"damage":stats.damage*power,"friendly":true,"magic":true})
+				ClassCombat.release_staff(self)
 			else:
 				for i in range(8):
-					bullets.append({"pos":player,"vel":Vector2.RIGHT.rotated(i*TAU/8)*160,"life":1.6,"damage":stats.damage*(0.7+stats.magic*0.2),"friendly":true,"magic":true})
+					bullets.append({"pos":player,"vel":Vector2.RIGHT.rotated(i*TAU/8)*160,"life":1.6,"damage":stats.damage*(0.15+maxf(0,minf(2,stats.magic)-1)*0.05),"friendly":true,"magic":true})
 	elif target!=null and (weapon=="staff" or stats.magic>=1) and magic_cd<=0:
-		magic_cd=(0.95 if weapon=="staff" else 2.3)/maxf(0.5,stats.attack_speed)
+		magic_cd=0.95/maxf(0.5,stats.attack_speed) if weapon=="staff" else 2.3
 		cast_windup=0.28;cast_aim=(target.pos-player).normalized()
 		if cast_aim==Vector2.ZERO:cast_aim=facing
 
@@ -651,7 +689,8 @@ func damage_enemy(enemy: Dictionary,damage: float,source:Vector2=Vector2.INF) ->
 
 func damage_player(damage:float):
 	if state!="playing" or hp<=0 or hurt_cd>0 or dash_left>0:return
-	hp-=maxf(1,damage-stats.armor);hurt_cd=0.65
+	if damage<=0:return
+	hp-=ClassProgression.absorb_damage(self,maxf(1,damage-stats.armor));hurt_cd=0.65
 	beep(100,0.13)
 
 func needed_xp() -> float:return 6.0+level*3.0
@@ -675,7 +714,7 @@ func gain_xp(amount:float):
 func clamp_stats():
 	for key in D.STAT_LIMITS:
 		if stats.has(key):
-			var bounds=D.STAT_LIMITS[key]
+			var bounds=ClassProgression.stat_bounds(self,key)
 			stats[key]=clampf(float(stats[key]),bounds[0],bounds[1])
 	hp=minf(hp,stats.max_hp)
 
@@ -692,7 +731,7 @@ func upgrade_rank(id: String) -> int:
 
 func available_upgrades() -> Array:
 	return D.UPGRADES.filter(func(u):
-		return upgrade_rank(u.id)<upgrade_cap(u.id) and (u.id!="life_drain" or stats.get("lifesteal",0.0)<=0) and not effective_upgrade_changes(u).is_empty()
+		return ClassProgression.eligible(self,u) and upgrade_rank(u.id)<upgrade_cap(u.id) and (u.id!="life_drain" or stats.get("lifesteal",0.0)<=0) and (ClassProgression.has_effect(self,u) or not effective_upgrade_changes(u).is_empty())
 	)
 
 func upgrade_changes(upgrade: Dictionary) -> Dictionary:
@@ -708,7 +747,7 @@ func effective_upgrade_changes(upgrade: Dictionary) -> Dictionary:
 	var effective={}
 	for key in changes:
 		var current=float(stats.get(key,0.0))
-		var bounds=D.STAT_LIMITS.get(key,[-INF,INF])
+		var bounds=ClassProgression.stat_bounds(self,key)
 		var change=clampf(current+float(changes[key]),bounds[0],bounds[1])-current
 		if not is_zero_approx(change):effective[key]=change
 	return effective
@@ -718,10 +757,12 @@ func apply_upgrade(id: String) -> bool:
 	if id=="life_drain" and stats.get("lifesteal",0.0)>0:return false
 	for upgrade in D.UPGRADES:
 		if upgrade.id==id:
-			if effective_upgrade_changes(upgrade).is_empty():return false
+			if not ClassProgression.eligible(self,upgrade):return false
+			if effective_upgrade_changes(upgrade).is_empty() and not ClassProgression.has_effect(self,upgrade):return false
 			var changes=upgrade_changes(upgrade)
 			upgrade_ranks[id]=upgrade_rank(id)+1
 			apply_stats(changes)
+			ClassProgression.on_upgrade(self,id)
 			return true
 	return false
 
@@ -740,6 +781,11 @@ func show_upgrades():
 	for i in range(choices.size()-1,0,-1):
 		var j=rng.randi_range(0,i)
 		var swap=choices[i];choices[i]=choices[j];choices[j]=swap
+	# Guarantee one meaningful class branch when available, retaining two hybrid choices.
+	for i in range(choices.size()):
+		if choices[i].has("classes"):
+			var class_choice=choices[i];choices.remove_at(i);choices.push_front(class_choice)
+			break
 	var box=modal("A LITTLE WISER","LEVEL %d  ·  Choose one special upgrade
 Ranks reset each run. Starting abilities use rank 1; final stat limits apply." % level)
 	if choices.is_empty():
@@ -754,7 +800,7 @@ Ranks reset each run. Starting abilities use rank 1; final stat limits apply." %
 		var parts=[]
 		for key in changes:
 			parts.append("%+.2f %s" % [changes[key],"melee reach / aimed-shot speed" if key=="range" else key.replace("_"," ")])
-		var description=upgrade.description if upgrade.id=="life_drain" else "Next: " + " / ".join(parts)
+		var description=upgrade.description if upgrade.id=="life_drain" or upgrade.has("classes") else "Next: " + " / ".join(parts)
 		var label=upgrade.name + "\nRank %d/%d → %d/%d  ·  " % [upgrade_rank(upgrade.id),upgrade.cap,upgrade_rank(upgrade.id)+1,upgrade.cap] + description
 		button(box,label,func():
 			if not apply_upgrade(upgrade.id):return
@@ -800,6 +846,8 @@ func open_portal():
 func end_run(won:bool):
 	hp=maxf(0,hp)
 	state="won" if won else "dead"
+	class_fx.clear();trail_patches.clear();bullets.clear();effects.clear()
+	dash_left=0
 	spawn_queue.clear()
 	World.reset_hazards(self)
 	update_hud()
@@ -811,7 +859,7 @@ func end_run(won:bool):
 
 func update_hud():
 	hud.text="STAGE %02d / 20   %s          LEVEL %02d          %d FOES LEFT" % [stage,str(D.THEMES[mini(3,int((stage-1)/5))].name).to_upper(),level,remaining_enemies()]
-	hint.text="HP %d/%d  •  %s  •  %s  •  %s  •  Esc: pause" % [ceil(hp),ceil(stats.max_hp),str(D.BUILDS[selected_build].weapon_label).to_upper(),"DASH READY" if dash_cd<=0 else "DASH %.1fs" % dash_cd, "ENTER THE CENTER PORTAL" if portal_open else "WASD / hold left mouse: move"]
+	hint.text="HP %d/%d  •  %s  •  %s  •  %s  •  Esc: pause" % [ceil(hp),ceil(stats.max_hp),str(D.BUILDS[selected_build].weapon_label).to_upper(),"DASH %d/%d%s" % [dash_charges,ClassProgression.dash_max(self)," +%.1fs" % dash_recharge if dash_recharge>0 else ""], "ENTER THE CENTER PORTAL" if portal_open else "WASD / hold left mouse: move"]
 
 func toast(text:String):toast_text=text;toast_time=3
 
@@ -883,6 +931,7 @@ func _draw():
 			if b.friendly:
 				draw_line(b.pos,b.pos-direction*10,color.darkened(0.2),2)
 				draw_rect(Rect2(b.pos-Vector2(1,1),Vector2(2,2)),Color("f8eeff"))
+	ClassCombat.draw(self)
 	for effect in effects:
 		var color=effect.color;color.a=minf(1,effect.time*3)
 		draw_arc(effect.pos,effect.radius*(1.5-effect.time),0,TAU,12,color,2)
@@ -920,7 +969,7 @@ func _draw():
 
 	if dash_left>0:draw_arc(player,24,0,TAU,16,Color("c8ffff"),2)
 	if slash_time>0 and weapon in ["sword","dagger"]:
-		var spec=D.PRIMARY_WEAPONS[weapon]
+		var spec=ClassCombat.melee_spec(self)
 		var slash_color=Color("b6f5ff") if weapon=="dagger" else Color("fff3b0")
 		slash_color.a=clampf(slash_time/spec.active,0.0,1.0)
 		var half_angle=acos(float(spec.cone_dot))
@@ -956,9 +1005,22 @@ func _draw():
 	draw_string(font,Vector2(32,80),"HEALTH",HORIZONTAL_ALIGNMENT_LEFT,-1,11,Color("afbdd3"))
 	draw_string(font,Vector2(288,80),"EXPERIENCE  %d / %d" % [xp,needed_xp()],HORIZONTAL_ALIGNMENT_LEFT,-1,11,Color("afbdd3"))
 	draw_string(font,Vector2(553,80),"GROUP %d/%d  ·  %d ACTIVE + %d QUEUED" % [wave_index,wave_count,enemies.size(),spawn_queue.size()],HORIZONTAL_ALIGNMENT_LEFT,-1,11,Color("afbdd3"))
+	var resource_text = ""
+	if selected_build==2:
+		draw_rect(Rect2(32,87,150,7),Color("273348"))
+		draw_rect(Rect2(32,87,150*shield/maxf(1,ClassProgression.shield_max(self)),7),Color("b5a3ff"))
+		resource_text="MANA SHIELD %d/%d  ·  %s" % [ceil(shield),ClassProgression.shield_max(self),"REGEN %.1fs" % shield_delay if shield_delay>0 else "+%d/s" % ClassProgression.shield_regen(self)]
+		draw_string(font,Vector2(193,94),resource_text,HORIZONTAL_ALIGNMENT_LEFT,-1,11,Color("d1c3ff"))
+	elif selected_build==1:
+		resource_text="TRAP EVADE %d/%d%s  ·  map traps only" % [trap_charges,ClassProgression.trap_max(self),"  +%.1fs" % trap_recharge if trap_recharge>0 else ""]
+	elif selected_build==0:
+		resource_text="STYLE: " + ("THRUST · narrow / 130%" if upgrade_rank("blade_thrust")>0 else ("CLEAVE · half circle / 80%" if upgrade_rank("blade_cleave")>0 else ("SWEEP · full circle / 55%" if upgrade_rank("blade_sweep")>0 else "FOCUSED SLASH · narrow / 100%")))
+	elif selected_build==3:
+		resource_text="COMET DASH %.2fs  ·  POISON %d/2  ·  PUSH %d/2" % [ClassProgression.dash_duration(self),upgrade_rank("comet_poison"),upgrade_rank("comet_push")]
+	if selected_build!=2:draw_string(font,Vector2(32,98),resource_text,HORIZONTAL_ALIGNMENT_LEFT,-1,12,Color("c7deff"))
 	if toast_time>0 and state=="playing":
-		draw_rect(Rect2(200,91,560,27),Color(0.05,0.08,0.14,0.85))
-		draw_string(font,Vector2(208,110),toast_text,HORIZONTAL_ALIGNMENT_CENTER,544,15,Color("fff0b3"))
+		draw_rect(Rect2(200,158,560,27),Color(0.05,0.08,0.14,0.85))
+		draw_string(font,Vector2(208,177),toast_text,HORIZONTAL_ALIGNMENT_CENTER,544,15,Color("fff0b3"))
 
 func draw_navigation():
 	# Warnings at the viewport edge preserve awareness of off-screen windups.
