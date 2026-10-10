@@ -227,7 +227,9 @@ static func tick(g, e: Dictionary, dt: float):
 	# Dash damage is a distinct player action, never passive contact.
 	if g.dash_left>0 and g.player.distance_to(e.pos)<38 and not e.dash_hit:
 		e.dash_hit=true
-		if g.stats.dash_damage>0:g.damage_enemy(e,g.stats.damage+g.stats.dash_damage)
+		if g.stats.dash_damage>0:
+			g.damage_enemy(e,g.stats.damage+g.stats.dash_damage)
+			g.ClassCombat.on_dash_hit(g,e)
 
 static func finish_active(e: Dictionary):
 	if e.attack_pattern=="explode":e.hp=0

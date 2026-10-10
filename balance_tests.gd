@@ -23,11 +23,24 @@ func check(condition: bool, message: String):
 func near(actual: float, expected: float) -> bool:
 	return absf(actual - expected) < 0.0001
 
-func fresh_run():
-	game.selected_build = 0
+func fresh_run(build_index: int = 0):
+	game.selected_build = build_index
 	game.selected_ability = ""
 	game.start_run()
 	game.level = 5
+
+func upgrade_build(upgrade: Dictionary) -> int:
+	var classes = upgrade.get("classes",[])
+	if not classes.is_empty():
+		for i in game.D.BUILDS.size():
+			if game.D.BUILDS[i].id in classes:return i
+	# The primary Ranger can use all three Split Shot ranks; auxiliary bows
+	# intentionally become ineffective at two arrows, before rank three.
+	return 1 if upgrade.id=="split_shot" else 0
+
+func resource_snapshot() -> Array:
+	return [game.shield, game.shield_delay, game.dash_charges, game.dash_recharge,
+		game.trap_charges, game.trap_recharge, game.dash_cd]
 
 func buttons_in(node: Node) -> Array:
 	var result: Array = []
@@ -58,7 +71,7 @@ func cap_all_except(ids: Array):
 
 func all_stats_bounded() -> bool:
 	for key in game.D.STAT_LIMITS:
-		var bounds = game.D.STAT_LIMITS[key]
+		var bounds = game.ClassProgression.stat_bounds(game,key)
 		var value = float(game.stats.get(key, NAN))
 		if not is_finite(value) or value < float(bounds[0]) - 0.0001 or value > float(bounds[1]) + 0.0001:
 			print("UNBOUNDED_STAT: ", key, "=", value, " expected ", bounds)
@@ -84,6 +97,7 @@ func run_tests():
 	test_every_upgrade_cap()
 	test_rank_validation()
 	test_starting_rank_reset()
+	test_class_eligibility()
 	test_available_pools()
 	test_saturated_stats_pool()
 	test_choice_safety()
@@ -125,7 +139,7 @@ func test_data_contract():
 
 func test_every_upgrade_cap():
 	for upgrade in game.D.UPGRADES:
-		fresh_run()
+		fresh_run(upgrade_build(upgrade))
 		var valid = game.upgrade_rank(upgrade.id) == 0
 		var unlocks_before = game.profile.unlocks.duplicate()
 		for rank in range(1, game.upgrade_cap(upgrade.id) + 1):
@@ -134,18 +148,19 @@ func test_every_upgrade_cap():
 			valid = valid and applied and game.upgrade_rank(upgrade.id) == rank and all_stats_bounded()
 			var rank_scale = float(upgrade.rank_scales[rank - 1]) if upgrade.has("rank_scales") else 1.0
 			for key in upgrade.stats:
-				var expected = clampf(float(before[key]) + float(upgrade.stats[key]) * rank_scale, float(game.D.STAT_LIMITS[key][0]), float(game.D.STAT_LIMITS[key][1]))
+				var expected = clampf(float(before[key]) + float(upgrade.stats[key]) * rank_scale, float(game.ClassProgression.stat_bounds(game,key)[0]), float(game.ClassProgression.stat_bounds(game,key)[1]))
 				if key == "lifesteal":
 					expected = 0.1
 				valid = valid and near(float(game.stats[key]), expected)
-		check(valid, "%s applies its stat bonus once at each rank up to its cap" % upgrade.name)
+		check(valid, "%s applies its stat or branch benefit once per rank on an eligible class" % upgrade.name)
 		var capped_stats = game.stats.duplicate(true)
 		var capped_ranks = game.upgrade_ranks.duplicate(true)
 		var capped_hp = game.hp
+		var capped_resources = resource_snapshot()
 		var refused = true
 		for attempt in range(4):
 			refused = not game.apply_upgrade(upgrade.id) and refused
-		check(refused and game.stats == capped_stats and game.upgrade_ranks == capped_ranks and near(game.hp, capped_hp), "%s refuses all over-cap applications without side effects" % upgrade.name)
+		check(refused and game.stats == capped_stats and game.upgrade_ranks == capped_ranks and near(game.hp, capped_hp) and resource_snapshot()==capped_resources, "%s refuses all over-cap applications without side effects" % upgrade.name)
 		check(game.profile.unlocks == unlocks_before, "%s direct application does not change permanent discoveries" % upgrade.name)
 
 func test_rank_validation():
@@ -163,7 +178,7 @@ func test_rank_validation():
 
 func test_starting_rank_reset():
 	for upgrade in game.D.UPGRADES:
-		fresh_run()
+		fresh_run(upgrade_build(upgrade))
 		game.upgrade_ranks["keen_edge"] = game.upgrade_cap("keen_edge")
 		game.selected_ability = upgrade.id
 		game.start_run()
@@ -181,9 +196,44 @@ func test_starting_rank_reset():
 	game.start_run()
 	check(game.upgrade_ranks.is_empty(), "An unknown starting selection cannot create a run rank")
 
-func test_available_pools():
+func test_class_eligibility():
+	for build_index in game.D.BUILDS.size():
+		for upgrade in game.D.UPGRADES:
+			if not upgrade.has("classes"):continue
+			fresh_run(build_index)
+			var right_class = game.D.BUILDS[build_index].id in upgrade.classes
+			var before_stats=game.stats.duplicate(true)
+			var before_resources=resource_snapshot()
+			var applied=game.apply_upgrade(upgrade.id)
+			check(applied==right_class and game.upgrade_rank(upgrade.id)==(1 if right_class else 0), "%s %s direct %s" % [game.D.BUILDS[build_index].name,"accepts" if right_class else "rejects",upgrade.name])
+			if not right_class:
+				check(game.stats==before_stats and resource_snapshot()==before_resources, "Wrong-class %s leaves stats and resources unchanged" % upgrade.name)
+				game.selected_ability=upgrade.id
+				game.start_run()
+				check(game.selected_ability=="" and game.upgrade_ranks.is_empty(), "Wrong-class starting %s is cleared without acquiring power" % upgrade.name)
+	for selected_style in ["blade_thrust","blade_cleave","blade_sweep"]:
+		fresh_run()
+		var accepted=game.apply_upgrade(selected_style)
+		var forbidden=[]
+		for other_style in ["blade_thrust","blade_cleave","blade_sweep"]:
+			if other_style!=selected_style:
+				forbidden.append(other_style not in offered_ids() and not game.apply_upgrade(other_style))
+		check(accepted and forbidden==[true,true], "%s excludes and rejects both conflicting styles" % selected_style)
+	# Two-arrow auxiliaries deliberately exhaust Split Shot early rather than
+	# consuming a third rank that has no effect.
 	fresh_run()
-	check(game.available_upgrades().size() == game.D.UPGRADES.size(), "All upgrades are available at the beginning of an unequipped run")
+	check(game.apply_upgrade("split_shot") and game.apply_upgrade("split_shot") and not game.apply_upgrade("split_shot") and game.upgrade_rank("split_shot")==2 and "split_shot" not in offered_ids(), "Auxiliary Split Shot stops at two arrows without wasting rank three")
+
+func test_available_pools():
+	for build_index in game.D.BUILDS.size():
+		fresh_run(build_index)
+		var expected=[]
+		for upgrade in game.D.UPGRADES:
+			if not upgrade.has("classes") or game.D.BUILDS[build_index].id in upgrade.classes:expected.append(upgrade.id)
+		var actual=offered_ids()
+		expected.sort();actual.sort()
+		check(actual==expected, "Build %d initially offers all generic and only its own class branches" % build_index)
+	fresh_run()
 	game.stats.lifesteal = 0.1
 	check("life_drain" not in offered_ids(), "Already-active Life Drain is excluded even without a recorded rank")
 	check(not game.apply_upgrade("life_drain") and game.upgrade_rank("life_drain") == 0 and near(game.stats.lifesteal, 0.1), "Already-active Life Drain cannot consume another rank through direct application")
@@ -225,23 +275,34 @@ func test_available_pools():
 
 func test_saturated_stats_pool():
 	var excluded = true
+	var branches_remain = true
 	for upgrade in game.D.UPGRADES:
-		fresh_run()
+		fresh_run(upgrade_build(upgrade))
 		for key in upgrade.stats:
-			game.stats[key] = game.D.STAT_LIMITS[key][0 if float(upgrade.stats[key]) < 0 else 1]
-		excluded = excluded and upgrade.id not in offered_ids() and game.effective_upgrade_changes(upgrade).is_empty()
-	check(excluded, "Every upgrade is excluded when all of its affected stats are already at their beneficial limits")
+			game.stats[key] = game.ClassProgression.stat_bounds(game,key)[0 if float(upgrade.stats[key]) < 0 else 1]
+		if upgrade.stats.is_empty():
+			branches_remain = branches_remain and upgrade.id in offered_ids() and game.ClassProgression.has_effect(game,upgrade) and game.effective_upgrade_changes(upgrade).is_empty()
+		else:
+			excluded = excluded and upgrade.id not in offered_ids() and game.effective_upgrade_changes(upgrade).is_empty()
+	check(excluded, "Every stat upgrade disappears when all affected stats reach its class's beneficial limits")
+	check(branches_remain, "Every eligible statless branch remains meaningful despite an empty stat delta")
 	fresh_run()
 	for key in game.D.STAT_LIMITS:
-		game.stats[key] = game.D.STAT_LIMITS[key][0 if key == "dash_cooldown" else 1]
+		game.stats[key] = game.ClassProgression.stat_bounds(game,key)[0 if key == "dash_cooldown" else 1]
 	game.hp = 20.0
-	game.pending_choices = 1
+	game.pending_choices = 2
 	game.show_upgrades()
 	var choices = shown_buttons()
-	check(game.upgrade_ranks.is_empty() and game.available_upgrades().is_empty() and choices.size() == 1 and button_upgrade_id(choices[0]) == "", "A fully saturated build offers rest even when upgrade ranks are unfilled")
-	if choices.size() == 1:
-		choices[0].pressed.emit()
-	check(game.pending_choices == 0 and near(game.hp, 60.0) and game.state == "playing", "A stat-saturated build can claim its rest heal and continue")
+	var styles_only=choices.size()==3
+	for choice in choices:
+		styles_only=styles_only and button_upgrade_id(choice) in ["blade_thrust","blade_cleave","blade_sweep"]
+	check(game.upgrade_ranks.is_empty() and styles_only, "Stat saturation preserves all three unchosen Blade styles rather than prematurely offering rest")
+	if choices.size()==3:choices[0].pressed.emit()
+	advance_reward_panel()
+	choices=shown_buttons()
+	check(game.available_upgrades().is_empty() and choices.size()==1 and button_upgrade_id(choices[0])=="", "Choosing one saturated-build style exhausts its mutually exclusive branches and offers rest")
+	if choices.size() == 1:choices[0].pressed.emit()
+	check(game.pending_choices == 0 and near(game.hp, 60.0) and game.state == "playing", "A stat-saturated build claims one branch and one rest heal, then continues")
 
 	fresh_run()
 	cap_all_except(["farshot"])

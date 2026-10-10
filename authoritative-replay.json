@@ -1,0 +1,1115 @@
+{
+  "method": {
+    "choices": "Each named branch starts with its rank-one ability (an unlocked starting ability) and prioritizes that branch among actual random offers, then common sustain/damage. Base policies start without an ability. Other compatible branches can appear as lower-priority legal fallback choices. Entry and exit ranks are recorded.",
+    "controls": "Same eight-direction physical-key controller for all classes at 12 Hz, 120 Hz combat, actual collisions and telegraph avoidance. Sword/dagger stand at their real reach; bow/staff aim at 205 pixels. Comet dashes offensively inside 125 pixels and uses only available charges. Ranger trap evasion remains passive in the unmodified hazard code. Other classes emergency-dash below 42 pixels.",
+    "damage_definition": "Sum of actual HP removed by accepted damage_player calls, after armor/invulnerability and capped at remaining HP on lethal hits; healing does not subtract from this counter.",
+    "limitations": "Small seeded automated sample; exact telegraph knowledge favors the controller. Approximate movement may stall and fixed 240-second observations retain living timeouts. Healthy-entry and stress encounters do not establish prior-stage survival, campaign completion, human win rates, or definitive class balance. Natural campaign observations are separately marked.",
+    "matching": "Every branch uses the identical listed seed and target-stage arena seed; map geometry, initial roster and stage match. Legal class progression, random reward pools and later RNG consumption naturally differ.",
+    "movement": "kite",
+    "outcomes": "Cleared, died, or still alive at the 240-second timeout. A timeout is not a death; clear-time medians exclude timeouts/deaths.",
+    "progression": "Independent healthy-entry encounters: preceding stages supply their exact total dropped XP and legal random three-option rewards. HP is set to normal maximum at entry. No injected kills or HP changes in measured combat; this is not a prior-stage survival result.",
+    "shield_measurement": "Damage counter is actual health lost after shield absorption; shield left is reported separately. This counter is not incoming raw damage or total effective damage.",
+    "simulation_hz": 120,
+    "stage_time_limit_seconds": 240.0,
+    "stress": "No adversarial grants.",
+    "version": "v7 actual combat; inherits v6 movement/navigation and measurement"
+  },
+  "rows": [
+    {
+      "active_enemies_remaining": 0,
+      "actual_kills": 24,
+      "adversarial_max_stack": false,
+      "arena_seed": 276005,
+      "boss_moves_released": {
+        "charge": 2,
+        "cleave": 1,
+        "rootline": 2,
+        "thornwheel": 1
+      },
+      "boss_moves_started": {
+        "charge": 2,
+        "cleave": 1,
+        "rootline": 2,
+        "thornwheel": 2
+      },
+      "branch": "blade_thrust",
+      "build": "melee",
+      "clear_seconds": 52.858333333331,
+      "cleared": true,
+      "damage_taken": 0.0,
+      "dash_attempts": 0,
+      "debug_navigation": {
+
+      },
+      "end_dash_charges": 1,
+      "end_hp": 130.477318382924,
+      "end_position": [
+        821.760070800781,
+        259.409332275391
+      ],
+      "end_shield": 0.0,
+      "end_trap_charges": 0,
+      "enemies_remaining": 0,
+      "entry_hp": 122.987386542487,
+      "entry_level": 8,
+      "entry_ranks": {
+        "blade_thrust": 1,
+        "stone_skin": 1
+      },
+      "entry_setup": "healthy_entry_encounter",
+      "entry_shield": 0.0,
+      "entry_stats": {
+        "armor": 2.185454,
+        "attack_speed": 1.7126089828171,
+        "damage": 22.1377295776477,
+        "dash_cooldown": 2.43927453403006,
+        "dash_damage": 0.0,
+        "lifesteal": 0.0,
+        "magic": 0.0,
+        "max_hp": 122.987386542487,
+        "pickup": 92.2405399068653,
+        "projectiles": 0.0,
+        "range": 95.9301615031399,
+        "regen": 0.184481079813731,
+        "speed": 214.824430049813
+      },
+      "entry_weapon": "sword",
+      "entry_xp": 6.0,
+      "environment_hazard_contacts": 0,
+      "environment_hazards_released": 9,
+      "environment_hazards_spawned": 9,
+      "exit_ranks": {
+        "blade_thrust": 1,
+        "long_reach": 1,
+        "stone_skin": 1
+      },
+      "exit_stats": {
+        "armor": 2.3185481486,
+        "attack_speed": 1.94479686987066,
+        "damage": 23.4859173089264,
+        "dash_cooldown": 2.29925019703088,
+        "dash_damage": 0.0,
+        "lifesteal": 0.0,
+        "magic": 0.0,
+        "max_hp": 130.477318382924,
+        "pickup": 97.8579887871933,
+        "projectiles": 0.0,
+        "range": 129.772308338681,
+        "regen": 0.195715977574387,
+        "speed": 235.946037839847
+      },
+      "gear": [],
+      "hits_taken": 0,
+      "initial_enemies": 24,
+      "minimum_hp": 122.987386542487,
+      "movement": "kite",
+      "outcome": "cleared",
+      "peak_active_enemies": 6,
+      "queued_enemies_remaining": 0,
+      "remaining_enemy_details": [],
+      "seconds_observed": 52.858333333331,
+      "seed": 1760,
+      "stage": 5,
+      "strategy": "blade_thrust",
+      "survived": true,
+      "travel_pixels": 9737.46725738049,
+      "upgrades": [
+        {
+          "id": "blade_thrust",
+          "level": 1,
+          "source": "starting ability"
+        },
+        {
+          "id": "stone_skin",
+          "level": 5,
+          "source": "three offered upgrades"
+        }
+      ]
+    },
+    {
+      "active_enemies_remaining": 0,
+      "actual_kills": 62,
+      "adversarial_max_stack": false,
+      "arena_seed": 276020,
+      "boss_moves_released": {
+        "charge": 1,
+        "cleave": 1,
+        "eclipse": 1
+      },
+      "boss_moves_started": {
+        "charge": 1,
+        "cleave": 1,
+        "eclipse": 1,
+        "nightfall": 1
+      },
+      "branch": "blade_thrust",
+      "build": "melee",
+      "clear_seconds": 55.0083333333309,
+      "cleared": true,
+      "damage_taken": 46.3509433439947,
+      "dash_attempts": 1,
+      "debug_navigation": {
+
+      },
+      "end_dash_charges": 1,
+      "end_hp": 400.0,
+      "end_position": [
+        517.691650390625,
+        275.287445068359
+      ],
+      "end_shield": 0.0,
+      "end_trap_charges": 0,
+      "enemies_remaining": 0,
+      "entry_hp": 400.0,
+      "entry_level": 40,
+      "entry_ranks": {
+        "blade_thrust": 1,
+        "duelist": 1,
+        "heartwood": 2,
+        "keen_edge": 1,
+        "life_drain": 1,
+        "stone_skin": 2,
+        "treasure_magnet": 1
+      },
+      "entry_setup": "healthy_entry_encounter",
+      "entry_shield": 0.0,
+      "entry_stats": {
+        "armor": 7.62772490874305,
+        "attack_speed": 2.2,
+        "damage": 72.5170553432395,
+        "dash_cooldown": 1.1,
+        "dash_damage": 0.0,
+        "lifesteal": 0.1,
+        "magic": 0.0,
+        "max_hp": 400.0,
+        "pickup": 240.0,
+        "projectiles": 0.0,
+        "range": 145.0,
+        "regen": 0.475054047378506,
+        "speed": 240.0
+      },
+      "entry_weapon": "sword",
+      "entry_xp": 104.0,
+      "environment_hazard_contacts": 0,
+      "environment_hazards_released": 26,
+      "environment_hazards_spawned": 26,
+      "exit_ranks": {
+        "blade_thrust": 1,
+        "duelist": 1,
+        "heartwood": 2,
+        "keen_edge": 1,
+        "life_drain": 1,
+        "stone_skin": 2,
+        "treasure_magnet": 1
+      },
+      "exit_stats": {
+        "armor": 8.0,
+        "attack_speed": 2.2,
+        "damage": 79.2413443340521,
+        "dash_cooldown": 1.1,
+        "dash_damage": 0.0,
+        "lifesteal": 0.1,
+        "magic": 0.0,
+        "max_hp": 400.0,
+        "pickup": 240.0,
+        "projectiles": 0.0,
+        "range": 145.0,
+        "regen": 0.519104384029773,
+        "speed": 240.0
+      },
+      "gear": [
+        {
+          "description": "Ember Pendant\n+16.7 reach / shot speed   /   +36.7 max hp",
+          "stage": 5
+        },
+        {
+          "description": "Heartwood Buckler\n+30.3 max hp   /   +19.6 reach / shot speed",
+          "stage": 10
+        },
+        {
+          "description": "Moonstone Wand\n+18.2 speed   /   +0.4 attack speed",
+          "stage": 15
+        }
+      ],
+      "hits_taken": 3,
+      "initial_enemies": 62,
+      "minimum_hp": 378.055422340176,
+      "movement": "kite",
+      "outcome": "cleared",
+      "peak_active_enemies": 12,
+      "queued_enemies_remaining": 0,
+      "remaining_enemy_details": [],
+      "seconds_observed": 55.0083333333309,
+      "seed": 1760,
+      "stage": 20,
+      "strategy": "blade_thrust",
+      "survived": true,
+      "travel_pixels": 10115.6072217226,
+      "upgrades": [
+        {
+          "id": "blade_thrust",
+          "level": 1,
+          "source": "starting ability"
+        },
+        {
+          "id": "stone_skin",
+          "level": 5,
+          "source": "three offered upgrades"
+        },
+        {
+          "id": "heartwood",
+          "level": 10,
+          "source": "three offered upgrades"
+        },
+        {
+          "id": "treasure_magnet",
+          "level": 15,
+          "source": "three offered upgrades"
+        },
+        {
+          "id": "keen_edge",
+          "level": 20,
+          "source": "three offered upgrades"
+        },
+        {
+          "id": "duelist",
+          "level": 25,
+          "source": "three offered upgrades"
+        },
+        {
+          "id": "heartwood",
+          "level": 30,
+          "source": "three offered upgrades"
+        },
+        {
+          "id": "life_drain",
+          "level": 35,
+          "source": "three offered upgrades"
+        },
+        {
+          "id": "stone_skin",
+          "level": 40,
+          "source": "three offered upgrades"
+        }
+      ]
+    },
+    {
+      "active_enemies_remaining": 0,
+      "actual_kills": 24,
+      "adversarial_max_stack": false,
+      "arena_seed": 276005,
+      "boss_moves_released": {
+        "charge": 3,
+        "rootline": 2,
+        "thornwheel": 1
+      },
+      "boss_moves_started": {
+        "charge": 3,
+        "rootline": 3,
+        "thornwheel": 1
+      },
+      "branch": "ranger_fan",
+      "build": "ranger",
+      "clear_seconds": 54.8499999999975,
+      "cleared": true,
+      "damage_taken": 30.5,
+      "dash_attempts": 0,
+      "debug_navigation": {
+
+      },
+      "end_dash_charges": 1,
+      "end_hp": 108.792175672838,
+      "end_position": [
+        1208.26147460938,
+        328.606536865234
+      ],
+      "end_shield": 0.0,
+      "end_trap_charges": 2,
+      "enemies_remaining": 0,
+      "entry_hp": 122.987386542487,
+      "entry_level": 8,
+      "entry_ranks": {
+        "ranger_evasion": 1,
+        "ranger_fan": 1
+      },
+      "entry_setup": "healthy_entry_encounter",
+      "entry_shield": 0.0,
+      "entry_stats": {
+        "armor": 0.0,
+        "attack_speed": 1.48331710486606,
+        "damage": 26.2754591552953,
+        "dash_cooldown": 2.43927453403006,
+        "dash_damage": 0.0,
+        "lifesteal": 0.0,
+        "magic": 0.0,
+        "max_hp": 122.987386542487,
+        "pickup": 92.2405399068653,
+        "projectiles": 2.45974773084974,
+        "range": 95.9301615031399,
+        "regen": 0.184481079813731,
+        "speed": 220.744899219549
+      },
+      "entry_weapon": "bow",
+      "entry_xp": 6.0,
+      "environment_hazard_contacts": 0,
+      "environment_hazards_released": 9,
+      "environment_hazards_spawned": 9,
+      "exit_ranks": {
+        "ranger_evasion": 1,
+        "ranger_fan": 1
+      },
+      "exit_stats": {
+        "armor": 0.0,
+        "attack_speed": 1.53681661801204,
+        "damage": 27.6037229299542,
+        "dash_cooldown": 2.36822770294181,
+        "dash_damage": 0.0,
+        "lifesteal": 0.0,
+        "magic": 0.0,
+        "max_hp": 126.677008138762,
+        "pickup": 95.0077561040712,
+        "projectiles": 2.53354016277523,
+        "range": 98.8080663482341,
+        "regen": 0.190015512208142,
+        "speed": 228.087246196136
+      },
+      "gear": [],
+      "hits_taken": 2,
+      "initial_enemies": 24,
+      "minimum_hp": 94.0554757209096,
+      "movement": "kite",
+      "outcome": "cleared",
+      "peak_active_enemies": 6,
+      "queued_enemies_remaining": 0,
+      "remaining_enemy_details": [],
+      "seconds_observed": 54.8499999999975,
+      "seed": 1760,
+      "stage": 5,
+      "strategy": "ranger_fan",
+      "survived": true,
+      "travel_pixels": 9140.9409122467,
+      "upgrades": [
+        {
+          "id": "ranger_fan",
+          "level": 1,
+          "source": "starting ability"
+        },
+        {
+          "id": "ranger_evasion",
+          "level": 5,
+          "source": "three offered upgrades"
+        }
+      ]
+    },
+    {
+      "active_enemies_remaining": 0,
+      "actual_kills": 62,
+      "adversarial_max_stack": false,
+      "arena_seed": 276020,
+      "boss_moves_released": {
+        "charge": 1,
+        "eclipse": 1,
+        "nightfall": 1
+      },
+      "boss_moves_started": {
+        "charge": 1,
+        "eclipse": 1,
+        "nightfall": 1
+      },
+      "branch": "ranger_fan",
+      "build": "ranger",
+      "clear_seconds": 63.3166666666637,
+      "cleared": true,
+      "damage_taken": 46.2075,
+      "dash_attempts": 0,
+      "debug_navigation": {
+
+      },
+      "end_dash_charges": 1,
+      "end_hp": 400.0,
+      "end_position": [
+        1137.14758300781,
+        641.868774414062
+      ],
+      "end_shield": 0.0,
+      "end_trap_charges": 3,
+      "enemies_remaining": 0,
+      "entry_hp": 395.004976458583,
+      "entry_level": 40,
+      "entry_ranks": {
+        "farshot": 1,
+        "heartwood": 1,
+        "life_drain": 1,
+        "ranger_evasion": 2,
+        "ranger_fan": 2,
+        "spring_water": 1,
+        "stone_skin": 1
+      },
+      "entry_setup": "healthy_entry_encounter",
+      "entry_shield": 0.0,
+      "entry_stats": {
+        "armor": 8.0,
+        "attack_speed": 2.4,
+        "damage": 80.0,
+        "dash_cooldown": 1.1,
+        "dash_damage": 0.0,
+        "lifesteal": 0.1,
+        "magic": 0.0,
+        "max_hp": 395.004976458583,
+        "pickup": 237.527023689253,
+        "projectiles": 4.0,
+        "range": 145.0,
+        "regen": 1.4829913318866,
+        "speed": 240.0
+      },
+      "entry_weapon": "bow",
+      "entry_xp": 104.0,
+      "environment_hazard_contacts": 0,
+      "environment_hazards_released": 32,
+      "environment_hazards_spawned": 32,
+      "exit_ranks": {
+        "farshot": 1,
+        "heartwood": 1,
+        "life_drain": 1,
+        "ranger_evasion": 2,
+        "ranger_fan": 2,
+        "spring_water": 1,
+        "stone_skin": 1
+      },
+      "exit_stats": {
+        "armor": 8.0,
+        "attack_speed": 2.4,
+        "damage": 80.0,
+        "dash_cooldown": 1.1,
+        "dash_damage": 0.0,
+        "lifesteal": 0.1,
+        "magic": 0.0,
+        "max_hp": 400.0,
+        "pickup": 240.0,
+        "projectiles": 4.0,
+        "range": 145.0,
+        "regen": 1.62050466911845,
+        "speed": 240.0
+      },
+      "gear": [
+        {
+          "description": "Ember Pendant\n+2.8 armor   /   +14.0 reach / shot speed",
+          "stage": 5
+        },
+        {
+          "description": "Crystal Circlet\n+0.3 attack speed   /   +3.1 armor",
+          "stage": 10
+        },
+        {
+          "description": "Nightfall Cloak\n+37.8 max hp   /   +8.8 damage",
+          "stage": 15
+        }
+      ],
+      "hits_taken": 3,
+      "initial_enemies": 62,
+      "minimum_hp": 380.4,
+      "movement": "kite",
+      "outcome": "cleared",
+      "peak_active_enemies": 12,
+      "queued_enemies_remaining": 0,
+      "remaining_enemy_details": [],
+      "seconds_observed": 63.3166666666637,
+      "seed": 1760,
+      "stage": 20,
+      "strategy": "ranger_fan",
+      "survived": true,
+      "travel_pixels": 12050.3647179604,
+      "upgrades": [
+        {
+          "id": "ranger_fan",
+          "level": 1,
+          "source": "starting ability"
+        },
+        {
+          "id": "ranger_evasion",
+          "level": 5,
+          "source": "three offered upgrades"
+        },
+        {
+          "id": "ranger_fan",
+          "level": 10,
+          "source": "three offered upgrades"
+        },
+        {
+          "id": "ranger_evasion",
+          "level": 15,
+          "source": "three offered upgrades"
+        },
+        {
+          "id": "stone_skin",
+          "level": 20,
+          "source": "three offered upgrades"
+        },
+        {
+          "id": "farshot",
+          "level": 25,
+          "source": "three offered upgrades"
+        },
+        {
+          "id": "spring_water",
+          "level": 30,
+          "source": "three offered upgrades"
+        },
+        {
+          "id": "heartwood",
+          "level": 35,
+          "source": "three offered upgrades"
+        },
+        {
+          "id": "life_drain",
+          "level": 40,
+          "source": "three offered upgrades"
+        }
+      ]
+    },
+    {
+      "active_enemies_remaining": 0,
+      "actual_kills": 24,
+      "adversarial_max_stack": false,
+      "arena_seed": 276005,
+      "boss_moves_released": {
+        "charge": 2,
+        "rootline": 2
+      },
+      "boss_moves_started": {
+        "charge": 2,
+        "rootline": 2
+      },
+      "branch": "moon_spread",
+      "build": "mage",
+      "clear_seconds": 39.1499999999984,
+      "cleared": true,
+      "damage_taken": 0.0,
+      "dash_attempts": 0,
+      "debug_navigation": {
+
+      },
+      "end_dash_charges": 1,
+      "end_hp": 86.0911705797409,
+      "end_position": [
+        963.635620117188,
+        663.948913574219
+      ],
+      "end_shield": 2.10833333333328,
+      "end_trap_charges": 0,
+      "enemies_remaining": 0,
+      "entry_hp": 86.0911705797409,
+      "entry_level": 8,
+      "entry_ranks": {
+        "moon_spread": 2
+      },
+      "entry_setup": "healthy_entry_encounter",
+      "entry_shield": 35.0,
+      "entry_stats": {
+        "armor": 0.0,
+        "attack_speed": 1.22987386542487,
+        "damage": 24.8962159627461,
+        "dash_cooldown": 2.43927453403006,
+        "dash_damage": 0.0,
+        "lifesteal": 0.0,
+        "magic": 1.64364682318964,
+        "max_hp": 86.0911705797409,
+        "pickup": 119.82540375785,
+        "projectiles": 0.0,
+        "range": 95.9301615031399,
+        "regen": 0.184481079813731,
+        "speed": 184.481079813731
+      },
+      "entry_weapon": "staff",
+      "entry_xp": 6.0,
+      "environment_hazard_contacts": 0,
+      "environment_hazards_released": 6,
+      "environment_hazards_spawned": 6,
+      "exit_ranks": {
+        "moon_spread": 2
+      },
+      "exit_stats": {
+        "armor": 0.0,
+        "attack_speed": 1.22987386542487,
+        "damage": 24.8962159627461,
+        "dash_cooldown": 2.43927453403006,
+        "dash_damage": 0.0,
+        "lifesteal": 0.0,
+        "magic": 1.64364682318964,
+        "max_hp": 86.0911705797409,
+        "pickup": 119.82540375785,
+        "projectiles": 0.0,
+        "range": 95.9301615031399,
+        "regen": 0.184481079813731,
+        "speed": 184.481079813731
+      },
+      "gear": [],
+      "hits_taken": 0,
+      "initial_enemies": 24,
+      "minimum_hp": 86.0911705797409,
+      "movement": "kite",
+      "outcome": "cleared",
+      "peak_active_enemies": 6,
+      "queued_enemies_remaining": 0,
+      "remaining_enemy_details": [],
+      "seconds_observed": 39.1499999999984,
+      "seed": 1760,
+      "stage": 5,
+      "strategy": "moon_spread",
+      "survived": true,
+      "travel_pixels": 5542.77167117596,
+      "upgrades": [
+        {
+          "id": "moon_spread",
+          "level": 1,
+          "source": "starting ability"
+        },
+        {
+          "id": "moon_spread",
+          "level": 5,
+          "source": "three offered upgrades"
+        }
+      ]
+    },
+    {
+      "active_enemies_remaining": 0,
+      "actual_kills": 62,
+      "adversarial_max_stack": false,
+      "arena_seed": 276020,
+      "boss_moves_released": {
+        "blast": 1,
+        "charge": 1,
+        "eclipse": 1,
+        "nightfall": 1
+      },
+      "boss_moves_started": {
+        "blast": 1,
+        "charge": 1,
+        "eclipse": 2,
+        "nightfall": 1
+      },
+      "branch": "moon_spread",
+      "build": "mage",
+      "clear_seconds": 59.2666666666639,
+      "cleared": true,
+      "damage_taken": 9.84998749399659,
+      "dash_attempts": 1,
+      "debug_navigation": {
+
+      },
+      "end_dash_charges": 1,
+      "end_hp": 280.0,
+      "end_position": [
+        498.911865234375,
+        270.844024658203
+      ],
+      "end_shield": 49.4250000000003,
+      "end_trap_charges": 0,
+      "enemies_remaining": 0,
+      "entry_hp": 280.0,
+      "entry_level": 40,
+      "entry_ranks": {
+        "heartwood": 1,
+        "keen_edge": 1,
+        "life_drain": 1,
+        "moon_familiar": 1,
+        "moon_spread": 2,
+        "moon_ward": 2,
+        "stone_skin": 1
+      },
+      "entry_setup": "healthy_entry_encounter",
+      "entry_shield": 55.0,
+      "entry_stats": {
+        "armor": 6.83382623527354,
+        "attack_speed": 2.0,
+        "damage": 80.0,
+        "dash_cooldown": 1.1,
+        "dash_damage": 0.0,
+        "lifesteal": 0.1,
+        "magic": 3.0,
+        "max_hp": 280.0,
+        "pickup": 240.0,
+        "projectiles": 0.0,
+        "range": 145.0,
+        "regen": 0.475054047378506,
+        "speed": 240.0
+      },
+      "entry_weapon": "staff",
+      "entry_xp": 104.0,
+      "environment_hazard_contacts": 0,
+      "environment_hazards_released": 28,
+      "environment_hazards_spawned": 30,
+      "exit_ranks": {
+        "heartwood": 1,
+        "keen_edge": 1,
+        "life_drain": 1,
+        "moon_familiar": 1,
+        "moon_spread": 2,
+        "moon_ward": 2,
+        "stone_skin": 1
+      },
+      "exit_stats": {
+        "armor": 7.46750644059175,
+        "attack_speed": 2.0,
+        "damage": 80.0,
+        "dash_cooldown": 1.1,
+        "dash_damage": 0.0,
+        "lifesteal": 0.1,
+        "magic": 3.0,
+        "max_hp": 280.0,
+        "pickup": 240.0,
+        "projectiles": 0.0,
+        "range": 145.0,
+        "regen": 0.519104384029773,
+        "speed": 240.0
+      },
+      "gear": [
+        {
+          "description": "Windchime Charm\n+0.2 attack speed   /   +15.7 speed",
+          "stage": 5
+        },
+        {
+          "description": "Comet Boots\n+7.2 damage   /   +2.5 armor",
+          "stage": 10
+        },
+        {
+          "description": "Bramble Bow\n+20.1 reach / shot speed   /   +10.9 damage",
+          "stage": 15
+        }
+      ],
+      "hits_taken": 1,
+      "initial_enemies": 62,
+      "minimum_hp": 270.150012506003,
+      "movement": "kite",
+      "outcome": "cleared",
+      "peak_active_enemies": 12,
+      "queued_enemies_remaining": 0,
+      "remaining_enemy_details": [],
+      "seconds_observed": 59.2666666666639,
+      "seed": 1760,
+      "stage": 20,
+      "strategy": "moon_spread",
+      "survived": true,
+      "travel_pixels": 11338.7508331537,
+      "upgrades": [
+        {
+          "id": "moon_spread",
+          "level": 1,
+          "source": "starting ability"
+        },
+        {
+          "id": "moon_spread",
+          "level": 5,
+          "source": "three offered upgrades"
+        },
+        {
+          "id": "heartwood",
+          "level": 10,
+          "source": "three offered upgrades"
+        },
+        {
+          "id": "moon_ward",
+          "level": 15,
+          "source": "three offered upgrades"
+        },
+        {
+          "id": "moon_ward",
+          "level": 20,
+          "source": "three offered upgrades"
+        },
+        {
+          "id": "keen_edge",
+          "level": 25,
+          "source": "three offered upgrades"
+        },
+        {
+          "id": "life_drain",
+          "level": 30,
+          "source": "three offered upgrades"
+        },
+        {
+          "id": "stone_skin",
+          "level": 35,
+          "source": "three offered upgrades"
+        },
+        {
+          "id": "moon_familiar",
+          "level": 40,
+          "source": "three offered upgrades"
+        }
+      ]
+    },
+    {
+      "active_enemies_remaining": 0,
+      "actual_kills": 24,
+      "adversarial_max_stack": false,
+      "arena_seed": 276005,
+      "boss_moves_released": {
+        "charge": 1,
+        "cleave": 1,
+        "thornwheel": 1
+      },
+      "boss_moves_started": {
+        "charge": 1,
+        "cleave": 1,
+        "thornwheel": 1
+      },
+      "branch": "comet_echo",
+      "build": "dash",
+      "clear_seconds": 33.6499999999987,
+      "cleared": true,
+      "damage_taken": 30.5,
+      "dash_attempts": 20,
+      "debug_navigation": {
+
+      },
+      "end_dash_charges": 0,
+      "end_hp": 98.2465937592221,
+      "end_position": [
+        837.700988769531,
+        396.623718261719
+      ],
+      "end_shield": 0.0,
+      "end_trap_charges": 0,
+      "enemies_remaining": 0,
+      "entry_hp": 122.987386542487,
+      "entry_level": 8,
+      "entry_ranks": {
+        "comet_echo": 1,
+        "second_wind": 1
+      },
+      "entry_setup": "healthy_entry_encounter",
+      "entry_shield": 0.0,
+      "entry_stats": {
+        "armor": 0.0,
+        "attack_speed": 1.22987386542487,
+        "damage": 22.1377295776477,
+        "dash_cooldown": 1.8519631411951,
+        "dash_damage": 57.40057527543,
+        "lifesteal": 0.0,
+        "magic": 0.0,
+        "max_hp": 122.987386542487,
+        "pickup": 92.2405399068653,
+        "projectiles": 0.0,
+        "range": 95.9301615031399,
+        "regen": 0.184481079813731,
+        "speed": 184.481079813731
+      },
+      "entry_weapon": "dagger",
+      "entry_xp": 6.0,
+      "environment_hazard_contacts": 0,
+      "environment_hazards_released": 5,
+      "environment_hazards_spawned": 6,
+      "exit_ranks": {
+        "comet_echo": 1,
+        "second_wind": 1
+      },
+      "exit_stats": {
+        "armor": 0.0,
+        "attack_speed": 1.26677008138762,
+        "damage": 22.8018614649771,
+        "dash_cooldown": 1.73502246717971,
+        "dash_damage": 63.0825925336929,
+        "lifesteal": 0.0,
+        "magic": 0.0,
+        "max_hp": 126.677008138762,
+        "pickup": 95.0077561040712,
+        "projectiles": 0.0,
+        "range": 98.8080663482341,
+        "regen": 0.190015512208142,
+        "speed": 190.015512208142
+      },
+      "gear": [],
+      "hits_taken": 2,
+      "initial_enemies": 24,
+      "minimum_hp": 98.1690040917373,
+      "movement": "kite",
+      "outcome": "cleared",
+      "peak_active_enemies": 6,
+      "queued_enemies_remaining": 0,
+      "remaining_enemy_details": [],
+      "seconds_observed": 33.6499999999987,
+      "seed": 1760,
+      "stage": 5,
+      "strategy": "comet_echo",
+      "survived": true,
+      "travel_pixels": 7153.55674540997,
+      "upgrades": [
+        {
+          "id": "comet_echo",
+          "level": 1,
+          "source": "starting ability"
+        },
+        {
+          "id": "second_wind",
+          "level": 5,
+          "source": "three offered upgrades"
+        }
+      ]
+    },
+    {
+      "active_enemies_remaining": 0,
+      "actual_kills": 62,
+      "adversarial_max_stack": false,
+      "arena_seed": 276020,
+      "boss_moves_released": {
+        "blast": 1,
+        "charge": 1,
+        "nightfall": 1
+      },
+      "boss_moves_started": {
+        "blast": 2,
+        "charge": 1,
+        "nightfall": 1
+      },
+      "branch": "comet_echo",
+      "build": "dash",
+      "clear_seconds": 44.4583333333315,
+      "cleared": true,
+      "damage_taken": 49.5195,
+      "dash_attempts": 42,
+      "debug_navigation": {
+
+      },
+      "end_dash_charges": 0,
+      "end_hp": 342.520392575877,
+      "end_position": [
+        640.411376953125,
+        391.308654785156
+      ],
+      "end_shield": 0.0,
+      "end_trap_charges": 0,
+      "enemies_remaining": 0,
+      "entry_hp": 316.702698252338,
+      "entry_level": 40,
+      "entry_ranks": {
+        "comet_echo": 1,
+        "comet_length": 1,
+        "farshot": 2,
+        "second_wind": 1,
+        "spring_water": 3,
+        "stone_skin": 1
+      },
+      "entry_setup": "healthy_entry_encounter",
+      "entry_shield": 0.0,
+      "entry_stats": {
+        "armor": 8.0,
+        "attack_speed": 2.0,
+        "damage": 80.0,
+        "dash_cooldown": 1.1,
+        "dash_damage": 120.0,
+        "lifesteal": 0.0,
+        "magic": 0.0,
+        "max_hp": 316.702698252338,
+        "pickup": 237.527023689253,
+        "projectiles": 0.0,
+        "range": 145.0,
+        "regen": 3.0,
+        "speed": 240.0
+      },
+      "entry_weapon": "dagger",
+      "entry_xp": 104.0,
+      "environment_hazard_contacts": 0,
+      "environment_hazards_released": 19,
+      "environment_hazards_spawned": 21,
+      "exit_ranks": {
+        "comet_echo": 1,
+        "comet_length": 1,
+        "farshot": 2,
+        "second_wind": 1,
+        "spring_water": 3,
+        "stone_skin": 1
+      },
+      "exit_stats": {
+        "armor": 8.0,
+        "attack_speed": 2.0,
+        "damage": 80.0,
+        "dash_cooldown": 1.1,
+        "dash_damage": 120.0,
+        "lifesteal": 0.0,
+        "magic": 0.0,
+        "max_hp": 346.069589353182,
+        "pickup": 240.0,
+        "projectiles": 0.0,
+        "range": 145.0,
+        "regen": 3.0,
+        "speed": 240.0
+      },
+      "gear": [
+        {
+          "description": "Ember Pendant\n+2.8 armor   /   +14.0 reach / shot speed",
+          "stage": 5
+        },
+        {
+          "description": "Heartwood Buckler\n+0.3 attack speed   /   +8.7 damage",
+          "stage": 10
+        },
+        {
+          "description": "Moonstone Wand\n+0.3 attack speed   /   +19.4 reach / shot speed",
+          "stage": 15
+        }
+      ],
+      "hits_taken": 3,
+      "initial_enemies": 62,
+      "minimum_hp": 312.420392575894,
+      "movement": "kite",
+      "outcome": "cleared",
+      "peak_active_enemies": 12,
+      "queued_enemies_remaining": 0,
+      "remaining_enemy_details": [],
+      "seconds_observed": 44.4583333333315,
+      "seed": 1760,
+      "stage": 20,
+      "strategy": "comet_echo",
+      "survived": true,
+      "travel_pixels": 15373.28287673,
+      "upgrades": [
+        {
+          "id": "comet_echo",
+          "level": 1,
+          "source": "starting ability"
+        },
+        {
+          "id": "second_wind",
+          "level": 5,
+          "source": "three offered upgrades"
+        },
+        {
+          "id": "farshot",
+          "level": 10,
+          "source": "three offered upgrades"
+        },
+        {
+          "id": "spring_water",
+          "level": 15,
+          "source": "three offered upgrades"
+        },
+        {
+          "id": "farshot",
+          "level": 20,
+          "source": "three offered upgrades"
+        },
+        {
+          "id": "stone_skin",
+          "level": 25,
+          "source": "three offered upgrades"
+        },
+        {
+          "id": "spring_water",
+          "level": 30,
+          "source": "three offered upgrades"
+        },
+        {
+          "id": "spring_water",
+          "level": 35,
+          "source": "three offered upgrades"
+        },
+        {
+          "id": "comet_length",
+          "level": 40,
+          "source": "three offered upgrades"
+        }
+      ]
+    }
+  ]
+}

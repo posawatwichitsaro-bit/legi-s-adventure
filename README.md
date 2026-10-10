@@ -1,8 +1,9 @@
-# Legi's adventure — v6
+# Legi's adventure — v7
 
 An original pixel-art survivors roguelike made in **Godot 4.6.3**.
-Twenty expanded arenas, four guardians, ten regular enemy types, staggered
-enemy groups, environmental hazards, and four real starting weapons. This ZIP is the editable source project, **not a standalone EXE**.
+Four distinct class builds with bounded branches, rechargeable resources and original
+pixel effects. Twenty expanded arenas, four guardians, ten regular enemy types,
+staggered enemy groups and environmental hazards remain. This ZIP is the editable source project, **not a standalone EXE**.
 
 ## Play
 1. Install standard Godot 4.6.x from https://godotengine.org/download/.
@@ -16,31 +17,105 @@ QA progress is enabled by default.
 
 ## Controls
 - WASD / arrows: move; hold left mouse to follow the pointer.
-- Space / right mouse: dash. One charge, automatic recharge, dash immunity.
+- Space / right mouse: dash. One charge (Comet can unlock two), serial recharge, dash immunity. A second dash starts after the first ends.
 - Escape: pause / resume.
 - Primary attacks automatically aim at the nearest living enemy. Move to
   establish line of sight; arrows and spells stop at walls and their first hit.
 
-## Your BUILD equips your weapon immediately
-| Build | Level-1 weapon | Playstyle |
-|---|---|---|
-| Blade Dancer | Sword | Wide, timed melee slash; movement and attack-speed growth |
-| Star Ranger | Bow | Aimed arrow volley with visible draw; arrows and damage growth |
-| Moon Weaver | Moon staff | Aimed magic bolt with visible channel; magic-power and pickup growth |
-| Comet Strider | Daggers + damaging dash | Faster, shorter, narrower slash; dash-damage/recharge growth |
+## Four class identities
 
-Ranger and Weaver **do not have a hidden sword attack**. Each class has its own
-held-weapon silhouette, walking pose and attack animation. Special upgrades
-still support hybrid builds: Split Shot adds a bow to another class; Starlight
-adds radial magic to non-staff classes or strengthens staff bolts; Comet Tail
-adds dash damage. Starting abilities are optional additions to the equipped
-weapon. There is one persistent starting-ability slot.
+All primary attacks have visible anticipation and aim automatically. No class has
+an invisible sword. Hybrid skills remain available, but auxiliary bow/magic caps
+are lower than the specialist's caps. At least one eligible class branch is offered
+in every three-choice upgrade menu; the remaining offers come from the shuffled pool.
+Class branches are standalone so any discovered branch can be your one starting skill.
+Auxiliary Starlight gives eight support sparks at 15% / 20% base damage and a
+fixed 2.3s cooldown. Its old high-damage, attack-speed-multiplied volley is reduced
+so an auxiliary does not overshadow a class primary. Auxiliary bow still uses
+a 1.4s base cooldown and at most two arrows.
 
-The shared range stat extends melee reach and, above its initial 78, increases
-aimed arrow/staff-bolt speed by one pixel/second per point. Thus Long Reach and
-Farshot still help ranged classes. It does not add projectile piercing or
-increase projectile lifetime. See [V5_COMBAT_NOTES.md](V5_COMBAT_NOTES.md) for
-exact weapon damage, timing and scaling.
+### Blade Dancer: narrow precision or lower-damage coverage
+Starts with a **70-degree focused sword slash**, 78px reach, 18 damage and
+0.85s base start-to-start cooldown. Windup/active/recovery are 0.12s each.
+Choose **one** style per run; selecting it locks the other two out:
+
+| Style | Total arc | Reach multiplier | Damage per target | Base cooldown |
+|---|---:|---:|---:|---:|
+| Starting slash | ~70° | 100% | 100% | 0.85s |
+| Needle Thrust | ~33° | 130% | 130% | 0.90s |
+| Crescent Cleave | 180° | 100% | 80% | 0.85s |
+| Whirlwind Sweep | 360° | 90% | 55% | 0.85s |
+
+Each swing hits each enemy once. A full sweep includes directly behind the owl.
+Thrust is longer and stronger but narrower and slower; wide styles sacrifice
+single-target damage. Actual reach follows the drawn outer arc.
+
+### Moon Weaver: fragile health, mana shield and turning spells
+Starts with **70 HP + 35 shield**, versus 100 HP on other classes. Shield regenerates
+at **7/s after four seconds without an accepted hit**. Armor applies first, shield
+absorbs next and only the remainder damages HP. Even a fully absorbed hit resets
+the delay and grants the ordinary 0.65s hurt window. Ignored iframe hits do not
+restart it. Potions, regen, level heals, clear heals and Life Drain restore HP only.
+The HUD has a separate numeric shield bar and recharge-delay indicator.
+
+The staff channels for 0.28s, has 0.95s base cooldown and releases a homing bolt
+that turns at most **2.8 radians/s**. It still stops at walls or its first target;
+it does not pierce or instantly snap direction. Spread bolts fly straight for the
+first 0.12s before homing so the fan remains readable. Damage multiplier is
+`1.1 + 0.15 × (magic power − 1)`, bounded to 1.1–1.4 at normal staff power.
+
+- **Lunar Fan, 2 ranks:** 3 / 5 homing bolts. The whole volley deals 135% / 165%
+  of a normal bolt if all connect, divided among the bolts; no full-damage cloning.
+- **Moonburst, 2 ranks:** a staff release can add eight non-homing radial sparks,
+  each 15% / 22% base damage, with a separate **2.3s minimum cooldown**.
+- **Moonfire, 2 ranks:** walking leaves violet fire every 12px; dashing does not.
+  Patches last 1.4s, radius 17px, maximum 32. Each enemy takes 12% / 18% base damage
+  at most once per 0.35s across all overlapping patches.
+- **Orbiting Familiar, 1 rank:** one little pixel spirit follows you and launches
+  a homing shot every 0.9s for 35% base damage. It is not a collision blocker.
+- **Waxing Ward, 2 ranks:** +10 shield capacity and +1 shield/s each; maximum 55
+  shield at 9/s. Buying capacity does not fill it or bypass the damage delay.
+
+### Star Ranger: mobility, quick volleys and finite trap avoidance
+Starts at **175px/s movement, 1.15 attack speed and one arrow**. Other classes
+start at 150px/s and 1.0 attack speed. Bow draw 0.20s, base cooldown 0.85s, each
+arrow 90% damage. Arrows use a fixed 0.13-radian spread and stop on first hit/wall.
+
+- **Quickdraw, 2 ranks:** +0.20 attack speed each, specialist cap 2.40.
+- **Star Fan, 2 ranks:** +1 arrow each, shared with Split Shot, maximum 4 arrows.
+- Base **Trap Evade:** one charge, **12s** serial recharge. An otherwise damaging
+  environmental eruption spends one charge instead of damaging you.
+- **Trail Instinct, 2 ranks:** +1 capacity and −1s recharge each; maximum 3 charges,
+  minimum 10s. Added capacity begins empty. No extra hurt immunity is granted.
+
+The HUD shows charges and next recharge. Trap Evade applies **only to map
+eruptions**, never guardian moves, enemy melee or bullets. Existing dash/hurt
+immunity avoids a map hit without wasting a charge. A different simultaneous
+trap can still hit if charges are empty.
+
+### Comet Strider: consecutive dashes, poison and impact
+Starts with a fast short dagger (82% damage, 78% reach, 0.62s base cooldown) and
+**+22 dash bonus damage**. A damaging dash deals base damage plus dash bonus
+once per enemy per dash. The original cyan pixel afterimages now visibly mark
+the travelled path.
+
+- **Second Comet, 1 rank:** two genuinely separate dash charges. Spent charges
+  recharge **one at a time**; spending the second never restarts the first timer.
+  Added capacity begins empty, and you cannot restart an active dash.
+- **Long Comet, 2 ranks:** dash duration 0.18 → 0.22 → 0.26s. Movement uses swept
+  wall collision; longer duration cannot add another hit on the same enemy.
+- **Venom Wake, 2 ranks:** a dash contact poisons its target for 3s, ticking every
+  0.5s for 1.5 / 2 damage per stack. Maximum3 stacks, refreshed duration but preserved
+  tick cadence. At most six ticks per application interval; no per-frame stacking.
+- **Comet Impact, 2 ranks:** collision-safe 20 / 32px push on idle/recovering foes.
+  Windup/active enemies stay anchored so their displayed attack geometry remains valid.
+
+Poison is applied by dash contact, not by lingering decorative afterimages.
+All poison, fire, familiar, bolt, melee and dash damage uses the same actual-damage
+Life Drain path: no overkill healing, repeated dead-target healing or revival.
+Resources and damage-over-time freeze during menus/pause/death. Every new arena
+clears old effects and replenishes shield, dash and trap charges deliberately;
+there is no mid-arena free refill from upgrading.
 
 ## New enemies and late-game pressure
 The original grunt, archer, swift, bomber, ghost and potion-carrying herbalist
@@ -113,15 +188,15 @@ forever without attacking. No mid-windup retargeting occurs.
 
 ## Progression and healing
 Every run begins at stage 1 / level 1. EXP crystal value rises with each
-five-stage theme. Every fifth level offers three random special upgrades;
+five-stage theme. Every fifth level offers three special upgrades (including a class branch when eligible);
 guardians offer a choice of three relics. Enter the center portal after all
 enemies and drops are resolved. Stage 20's final portal wins the run.
 
-The v3 limits, upgrade ranks and diminishing increments are preserved.
+Shared skill ranks and diminishing increments remain, with class-aware final caps.
 Baseline level growth is 3% for active stats, except the fixed Life Drain
-percentage; each build also receives its existing path bonuses. Death resets
+percentage; each build also receives 18% of its listed path bonus: Blade speed 22/attack-speed 0.35; Ranger speed 4/attack-speed 0.05/damage 3; Weaver magic 0.3/pickup 20/damage 2; Comet dash-damage 22/cooldown −0.35. Death resets
 run growth and equipment; discovered abilities, cosmetics, equipment journal,
-records and settings persist. Existing saves need no migration.
+records and settings persist. V6 saves are accepted: discovered IDs remain, invalid/unknown IDs are discarded, and an equipped class-incompatible skill is cleared when loading or switching classes. Run ranks, shield and charge timers are never persisted.
 
 - Base EXP/potion pickup: **75 px**.
 - Once-per-arena clear heal: **10% of maximum HP**.
@@ -133,13 +208,13 @@ records and settings persist. Existing saves need no migration.
 ### Final effective limits, including relics
 | Stat | Limits |
 |---|---|
-| Maximum HP | 1–400 |
+| Maximum HP | 1–280 Weaver; 1–400 others |
 | Base damage stat | 1–80 |
 | Movement speed | 1–240 px/s |
-| Attack-speed stat | 0.3–2.2 |
-| Range | 1–145; dagger uses 78% of melee range |
-| Arrows per volley | 0–4, floored; Ranger starts with 1 |
-| Magic power | 0–3; Weaver starts with 1 |
+| Attack-speed stat | 0.3–2.4 Ranger; 2.2 Blade; 2.0 Weaver/Comet |
+| Range | 1–145; dagger78%, thrust130%, sweep90% reach |
+| Arrows per volley | 0–4 Ranger; 0–2 auxiliaries; floored |
+| Magic power | 0–3 Weaver; 0–2 auxiliaries |
 | Dash bonus damage | 0–120 |
 | Dash recharge | 1.1–10 seconds |
 | Pickup radius | 1–240 px |
@@ -149,21 +224,26 @@ records and settings persist. Existing saves need no migration.
 
 Per-run skill ranks: Life Drain 1; Windstep, Long Reach, Starlight, Second
 Wind, Treasure Magnet, Duelist's Rhythm, Farshot, Moon Harvest and Meteor
-Boots 2; other skills 3. Farshot increments scale 1 / .7; Long Reach 1 / .65;
+Boots 2; other original skills 3. New branch caps are listed above. Farshot increments scale 1 / .7; Long Reach 1 / .65;
 Keen Edge and Quick Hands 1 / .8 / .6. Starting abilities consume rank 1.
 Choice cards show actual next gains. Capped or wholly ineffective choices are
 excluded; an exhausted pool safely offers a one-time 10% mastery rest per
 pending reward. Relics cannot bypass final limits.
 
 ## Verification and limits
-See [V6_WORLD_NOTES.md](V6_WORLD_NOTES.md) for current map, hazard, wave and
-visual coverage, and [V6_BALANCE_NOTES.md](V6_BALANCE_NOTES.md) for matched
-v5/v6 real-combat comparisons. V5 notes/results are retained as historical
-records of the unchanged weapon and guardian mechanics.
 
-**863 assertions plus the integration self-test pass.** Run from the project folder:
+**1,375 regression assertions plus the integration self-test pass** in Godot 4.6.3.
+Inherited tests were adapted explicitly for class caps, Moon HP/bolt scaling,
+real charge recovery and the lower auxiliary-magic damage/cooldown. The new
+293-assertion suite covers branches, resource timing, interrupted states and
+no-op/overcap upgrade handling.
+
+See [V7_BALANCE_NOTES.md](V7_BALANCE_NOTES.md) for current actual-combat benchmark
+method, class observations, regressions and limits. V6/V5 reports remain historical
+records and are not claims about the new balance.
+
+Run from the project folder:
 ```sh
-# Import assets once after extracting a fresh ZIP.
 godot --headless --editor --path . --import --quit
 godot --headless --path . -- --self-test
 godot --headless --path . --script regression_tests.gd
@@ -173,30 +253,21 @@ godot --headless --path . --script combat_tests.gd
 godot --headless --path . --script weapon_tests.gd
 godot --headless --path . --script pattern_tests.gd
 godot --headless --path . --script v6_tests.gd
+godot --headless --path . --script v7_tests.gd
 ```
-In restricted Linux environments use writable HOME / XDG data, config and
-cache directories. Tests disable profile saves. Progression regressions use
-injected kills to test the lifecycle; the separately labelled balance
-campaigns use actual attacks, drops and rewards without injected kills.
+Use writable HOME/XDG directories in restricted Linux environments. Test fixtures
+never save profile progress; lifecycle regressions inject deaths for isolation.
+Benchmark combat separately uses real attacks, movement, damage and kills.
 
-Native cloud-desktop v6 inspection covers all four larger themed maps,
-landmarks, environmental warning/active/recovery visuals, wave HUD, camera
-scrolling and the portal indicator. The earlier v5 inspection covered all four
-weapon silhouettes, ten regular enemies and eight new guardian moves.
-`visual_qa_v6.tscn` and the retained `visual_qa.tscn` are optional, save-disabled,
-clearly labelled SEEDED QA fixtures, not normal progression. Their controls are
-listed in V6_WORLD_NOTES and V5_COMBAT_NOTES respectively. A complete human 20-stage playthrough and audio
-playback are not claimed. The cloud desktop uses a dummy audio driver.
-Enemy steering is lightweight and may stall at obstacles; the automated
-controller is not a measure of human win rate or exhaustive build balance.
-
-Visual references: [Meadow warning](screenshots/seeded-v6-1-hazards-telegraph-view0.png),
-[Ember hazard](screenshots/seeded-v6-2-hazards-active-view0.png),
-[Crystal hazard](screenshots/seeded-v6-3-hazards-active-view0.png),
-[Night hazard](screenshots/seeded-v6-4-hazards-active-view0.png).
-Earlier references: [weapon gallery](screenshots/seeded-weapons.jpg),
-[enemy gallery](screenshots/seeded-enemies.jpg),
-[Nightfall warning](screenshots/seeded-nightfall.jpg). All these visual references are labelled seeded fixtures.
+The optional `visual_qa_v7.tscn` uses actual native rendering of class branches,
+resources and upgrade menus, visibly labelled **SEEDED QA**. V6 and older visual
+fixtures are retained for maps/enemies/guardians. The default is still the clean
+normal `main.tscn` menu. Twenty-four native branch/menu screenshots are included.
+Examples: [Blade choices](screenshots/seeded-v7-21-menu-blade-upgrades.png),
+[Moonfire](screenshots/seeded-v7-08-moon-fire.png),
+[shield damage](screenshots/seeded-v7-10-moon-shield-hit.png),
+[Comet trail](screenshots/seeded-v7-16-comet-long-trail.png). A full human 20-stage playthrough, audio listening test,
+exhaustive build balance or human win-rate estimate is not claimed.
 
 ## Save data and project files
 Godot stores `legis_adventure.json` in its local user-data directory, usually
@@ -208,6 +279,10 @@ telemetry are used. Save files and generated Godot caches are not included.
 - `world.gd`: authored procedural maps, theme details and environmental hazards.
 - `character_art.gd`: original articulated pixel characters and weapons.
 - `data.gd`: build/weapon definitions, stat limits, upgrades and cosmetics.
+- `class_progression.gd`: class eligibility, final limits, shields and charge recovery.
+- `class_combat.gd`: style shapes, turning magic, fire/familiar/poison and pixel effects.
+- `balance_simulation_v7.gd` / `V7_BALANCE_NOTES.md`: current combat verification.
+- `visual_qa_v7.gd` / `.tscn`: current isolated branch inspection fixture.
 - `*_tests.gd`: automated regressions.
 - `balance_simulation_v6.gd` / `balance_probe.gd`: optional instrumented controller.
 - `visual_qa_v6.gd` / `.tscn`: optional labelled expanded-world inspection fixture.
