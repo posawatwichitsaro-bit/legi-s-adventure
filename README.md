@@ -1,14 +1,14 @@
 # Legi's adventure — v7
 
 An original pixel-art survivors roguelike made in **Godot 4.6.3**.
-Four distinct class builds with bounded branches, rechargeable resources and original
+Four distinct Classes with bounded branches, rechargeable resources and original
 pixel effects. Twenty expanded arenas, four guardians, ten regular enemy types,
 staggered enemy groups and environmental hazards remain. This ZIP is the editable source project, **not a standalone EXE**.
 
 ## Play
 1. Install standard Godot 4.6.x from https://godotengine.org/download/.
 2. Extract the ZIP, import `project.godot`, and press F5.
-3. Choose BUILD in the normal menu, then Start Adventure.
+3. Choose CLASS in the normal menu, then Start Adventure.
 
 No add-ons, paid assets, network connection, or external dependencies are
 required. The Compatibility renderer is used. The default scene is
@@ -22,13 +22,27 @@ QA progress is enabled by default.
 - Primary attacks automatically aim at the nearest living enemy. Move to
   establish line of sight; arrows and spells stop at walls and their first hit.
 
-## Four class identities
+## Player systems
+
+| System | Current behavior |
+|---|---|
+| Class | Select the primary weapon, starting attributes, Class bonus and resources before a run. |
+| Tactic | Every five levels, choose one of up to three random offers. Ranks reset each run; a Class Tactic is offered whenever eligible. |
+| Skill | Choosing a Tactic permanently discovers its corresponding Skill. Equip one Starting Skill at rank 1 for the next run. |
+| Equipment | After clearing a guardian arena, choose one random Equipment reward with two stat bonuses. Bonuses stack for this run; discovered names remain in the Equipment Journal. |
+| Stats | Bounded combat attributes affected by levels, Class bonuses, Tactics and Equipment. |
+| Cosmetics | Permanent appearance choices with no stat bonuses. |
+
+These names replace Build, Special Upgrade, Starting Ability and Relic.
+This terminology update preserves the current reward rules: guardians award Equipment; Skills are discovered through Tactics. Equipment has no removable slots in the current game. See [CONTEXT.md](CONTEXT.md) for the glossary.
+
+## Four Class identities
 
 All primary attacks have visible anticipation and aim automatically. No class has
-an invisible sword. Hybrid skills remain available, but auxiliary bow/magic caps
+an invisible sword. Hybrid Tactics remain available, but auxiliary bow/magic caps
 are lower than the specialist's caps. At least one eligible class branch is offered
-in every three-choice upgrade menu; the remaining offers come from the shuffled pool.
-Class branches are standalone so any discovered branch can be your one starting skill.
+in every three-choice Tactic menu; the remaining offers come from the shuffled pool.
+Class branches are standalone so any discovered branch can be your one Starting Skill.
 Auxiliary Starlight gives eight support sparks at 15% / 20% base damage and a
 fixed 2.3s cooldown. Its old high-damage, attack-speed-multiplied volley is reduced
 so an auxiliary does not overshadow a class primary. Auxiliary bow still uses
@@ -155,7 +169,7 @@ remaining enemies and the progress bar include both active and queued foes.
 The larger roster totals **736 foes across the run**, versus 584 in v5. The
 per-stage counts are 13, 15, 18, 20, 24 / 25, 28, 30, 33, 37 /
 38, 40, 43, 45, 49 / 50, 53, 55, 58, 62. Rounding explains why the full-run
-increase is slightly above 25%. The once-only 10% clear heal, guardian relic
+increase is slightly above 25%. The once-only 10% clear heal, guardian Equipment
 choice and portal all wait for every group and its remaining drops.
 Pausing and reward menus also freeze the wave clock and hazard clock.
 
@@ -188,14 +202,14 @@ forever without attacking. No mid-windup retargeting occurs.
 
 ## Progression and healing
 Every run begins at stage 1 / level 1. EXP crystal value rises with each
-five-stage theme. Every fifth level offers three special upgrades (including a class branch when eligible);
-guardians offer a choice of three relics. Enter the center portal after all
+five-stage theme. Every fifth level offers three Tactics (including a class branch when eligible);
+guardians offer a choice of three Equipment. Enter the center portal after all
 enemies and drops are resolved. Stage 20's final portal wins the run.
 
-Shared skill ranks and diminishing increments remain, with class-aware final caps.
+Shared Tactic ranks and diminishing increments remain, with class-aware final caps.
 Baseline level growth is 3% for active stats, except the fixed Life Drain
-percentage; each build also receives 18% of its listed path bonus: Blade speed 22/attack-speed 0.35; Ranger speed 4/attack-speed 0.05/damage 3; Weaver magic 0.3/pickup 20/damage 2; Comet dash-damage 22/cooldown −0.35. Death resets
-run growth and equipment; discovered abilities, cosmetics, equipment journal,
+percentage; each Class also receives 18% of its listed Class bonus: Blade speed 22/attack-speed 0.35; Ranger speed 4/attack-speed 0.05/damage 3; Weaver magic 0.3/pickup 20/damage 2; Comet dash-damage 22/cooldown −0.35. Death resets
+run growth and equipment; discovered Skills, cosmetics, equipment journal,
 records and settings persist. V6 saves are accepted: discovered IDs remain, invalid/unknown IDs are discarded, and an equipped class-incompatible skill is cleared when loading or switching classes. Run ranks, shield and charge timers are never persisted.
 
 - Base EXP/potion pickup: **75 px**.
@@ -205,7 +219,7 @@ records and settings persist. V6 saves are accepted: discovered IDs remain, inva
   shield mitigation and excluding overkill. It cannot revive a dead player.
 - Level-up heal: **12 HP**. All healing is bounded by maximum HP.
 
-### Final effective limits, including relics
+### Final effective limits, including Equipment
 | Stat | Limits |
 |---|---|
 | Maximum HP | 1–280 Weaver; 1–400 others |
@@ -222,13 +236,13 @@ records and settings persist. V6 saves are accepted: discovered IDs remain, inva
 | Flat armor | 0–8 |
 | Life Drain | 0–10% |
 
-Per-run skill ranks: Life Drain 1; Windstep, Long Reach, Starlight, Second
+Per-run Tactic ranks: Life Drain 1; Windstep, Long Reach, Starlight, Second
 Wind, Treasure Magnet, Duelist's Rhythm, Farshot, Moon Harvest and Meteor
-Boots 2; other original skills 3. New branch caps are listed above. Farshot increments scale 1 / .7; Long Reach 1 / .65;
-Keen Edge and Quick Hands 1 / .8 / .6. Starting abilities consume rank 1.
+Boots 2; other original Tactics 3. New branch caps are listed above. Farshot increments scale 1 / .7; Long Reach 1 / .65;
+Keen Edge and Quick Hands 1 / .8 / .6. Starting Skills consume rank 1.
 Choice cards show actual next gains. Capped or wholly ineffective choices are
 excluded; an exhausted pool safely offers a one-time 10% mastery rest per
-pending reward. Relics cannot bypass final limits.
+pending reward. Equipment cannot bypass final limits.
 
 ## Verification and limits
 
@@ -236,9 +250,11 @@ pending reward. Relics cannot bypass final limits.
 Inherited tests were adapted explicitly for class caps, Moon HP/bolt scaling,
 real charge recovery and the lower auxiliary-magic damage/cooldown. The new
 293-assertion suite covers branches, resource timing, interrupted states and
-no-op/overcap upgrade handling.
+no-op/overcap Tactic handling.
 
-See [V7_BALANCE_NOTES.md](V7_BALANCE_NOTES.md) for current actual-combat benchmark
+The original release screenshots, raw benchmark JSON and frozen hashes in the release notes are historical v7 snapshots from before the terminology update. Their labels may use the former names; they have not been regenerated by this rename.
+
+See [V7_BALANCE_NOTES.md](V7_BALANCE_NOTES.md) for the recorded actual-combat benchmark
 method, class observations, regressions and limits. V6/V5 reports remain historical
 records and are not claims about the new balance.
 
@@ -260,25 +276,28 @@ never save profile progress; lifecycle regressions inject deaths for isolation.
 Benchmark combat separately uses real attacks, movement, damage and kills.
 
 The optional `visual_qa_v7.tscn` uses actual native rendering of class branches,
-resources and upgrade menus, visibly labelled **SEEDED QA**. V6 and older visual
+resources and Tactic menus, visibly labelled **SEEDED QA**. V6 and older visual
 fixtures are retained for maps/enemies/guardians. The default is still the clean
 normal `main.tscn` menu. Twenty-four native branch/menu screenshots are included.
 Examples: [Blade choices](screenshots/seeded-v7-21-menu-blade-upgrades.png),
 [Moonfire](screenshots/seeded-v7-08-moon-fire.png),
 [shield damage](screenshots/seeded-v7-10-moon-shield-hit.png),
 [Comet trail](screenshots/seeded-v7-16-comet-long-trail.png). A full human 20-stage playthrough, audio listening test,
-exhaustive build balance or human win-rate estimate is not claimed.
+exhaustive Class balance or human win-rate estimate is not claimed.
+
+Current terminology menu captures (deterministic fixtures, not a natural playthrough): [Main menu](screenshots/systems/main-menu.png), [Class](screenshots/systems/class.png), [Tactic](screenshots/systems/tactic.png), [Starting Skill](screenshots/systems/skill.png), [Equipment](screenshots/systems/equipment.png).
 
 ## Save data and project files
 Godot stores `legis_adventure.json` in its local user-data directory, usually
 `%APPDATA%/Godot/app_userdata/Legi's adventure/` on Windows. No accounts or
-telemetry are used. Save files and generated Godot caches are not included.
+telemetry are used. Save files and generated Godot caches are not included. The legacy profile keys `selected_build` and `selected_ability` remain unchanged so existing Class and Starting Skill selections still load.
 
+- `CONTEXT.md`: canonical player-system terminology.
 - `main.gd`: game loop, weapons, spawning, UI, healing, progression, saves.
 - `combat.gd`: enemy behavior, boss selection, shared warning/hit geometry.
 - `world.gd`: authored procedural maps, theme details and environmental hazards.
 - `character_art.gd`: original articulated pixel characters and weapons.
-- `data.gd`: build/weapon definitions, stat limits, upgrades and cosmetics.
+- `data.gd`: Class/weapon definitions, stat limits, Tactics and cosmetics.
 - `class_progression.gd`: class eligibility, final limits, shields and charge recovery.
 - `class_combat.gd`: style shapes, turning magic, fire/familiar/poison and pixel effects.
 - `balance_simulation_v7.gd` / `V7_BALANCE_NOTES.md`: current combat verification.

@@ -53,7 +53,7 @@ func move_player(_dt: float):
 	if target==null:return
 	var distance=game.player.distance_to(target.pos)
 	if game.dash_charges<=0:return
-	if game.selected_build==3 and distance<125 and visible_segment(game.player,target.pos,12):
+	if game.selected_class==3 and distance<125 and visible_segment(game.player,target.pos,12):
 		set_movement_input((target.pos-game.player).normalized())
 		game.facing=(target.pos-game.player).normalized()
 		combat_dash_attempts+=1
@@ -64,17 +64,17 @@ func move_player(_dt: float):
 		game.dash()
 
 func combat_distance() -> float:
-	if game.selected_build in [1,2]:return 205.0
-	return clampf(game.melee_range()*(0.55 if game.selected_build==3 else 0.68),40.0,105.0)
+	if game.selected_class in [1,2]:return 205.0
+	return clampf(game.melee_range()*(0.55 if game.selected_class==3 else 0.68),40.0,105.0)
 
 func fight() -> Dictionary:
 	combat_dash_attempts=0
 	var entry_shield = game.shield
-	var entry_ranks = game.upgrade_ranks.duplicate(true)
+	var entry_ranks = game.tactic_ranks.duplicate(true)
 	var result = super.fight()
 	result["branch"] = mode
 	result["entry_ranks"] = entry_ranks
-	result["exit_ranks"] = game.upgrade_ranks.duplicate(true)
+	result["exit_ranks"] = game.tactic_ranks.duplicate(true)
 	result["entry_shield"] = entry_shield
 	result["end_shield"] = game.shield
 	result["exit_stats"] = game.stats.duplicate(true)
@@ -88,8 +88,8 @@ func fight() -> Dictionary:
 func grant_stress_ranks():
 	# Iteration uses the real application/eligibility gate. Exclusive melee
 	# styles cannot all be accepted, even under this adversarial request.
-	for upgrade in game.D.UPGRADES:
-		for attempt in range(int(upgrade.cap)+3):game.apply_upgrade(upgrade.id)
+	for upgrade in game.D.TACTICS:
+		for attempt in range(int(upgrade.cap)+3):game.apply_tactic(upgrade.id)
 	game.hp=game.stats.max_hp
 	game.ClassProgression.reset_stage(game)
 

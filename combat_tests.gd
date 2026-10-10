@@ -24,8 +24,8 @@ func near(a: float, b: float) -> bool:
 	return absf(a - b) < 0.0001
 
 func fresh_field(stage_number = 1):
-	game.selected_build = 0
-	game.selected_ability = ""
+	game.selected_class = 0
+	game.selected_skill = ""
 	game.start_run()
 	if stage_number != 1:
 		game.stage = stage_number
@@ -350,7 +350,7 @@ func test_player_casts():
 	check(burst_once and game.bullets.size() == 8, "Magic release emits exactly eight radial projectiles once")
 
 func test_interruption_guards():
-	for mode in ["paused", "upgrade", "loot", "menu", "dead", "won"]:
+	for mode in ["paused", "tactic", "loot", "menu", "dead", "won"]:
 		fresh_field()
 		var enemy = enemy_at("grunt", game.player - Vector2(30, 0))
 		arm_active(enemy)

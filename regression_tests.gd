@@ -28,10 +28,14 @@ func run_tests():
 	root.add_child(game)
 	game.set_process(false)
 	game.rng.seed = 1760
+	# _ready loads the user's profile even in test mode. Gameplay fixtures must
+	# start with the sword and no persistent ability, regardless of that save.
+	game.selected_class = 0
+	game.selected_skill = ""
 	game.start_run()
 	game.level = 5
 	game.pending_choices = 1
-	game.show_upgrades()
+	game.show_tactics()
 	var button = game.panel.get_child(1).get_child(2)
 	button.pressed.emit()
 	var accepted_stats = game.stats.duplicate(true)
@@ -50,7 +54,7 @@ func run_tests():
 	game.start_run()
 	game.level = 5
 	game.pending_choices = 1
-	game.show_upgrades()
+	game.show_tactics()
 	button = game.panel.get_child(1).get_child(2)
 	game.show_menu()
 	accepted_stats = game.stats.duplicate(true)
@@ -60,12 +64,12 @@ func run_tests():
 	game.start_run()
 	game.level = 5
 	game.pending_choices = 1
-	game.show_upgrades()
+	game.show_tactics()
 	button = game.panel.get_child(1).get_child(2)
-	game.show_upgrades()
+	game.show_tactics()
 	accepted_stats = game.stats.duplicate(true)
 	button.pressed.emit()
-	check(game.state == "upgrade" and game.pending_choices == 1 and game.stats == accepted_stats, "Stale upgrade callback cannot act on a subsequent upgrade modal")
+	check(game.state == "tactic" and game.pending_choices == 1 and game.stats == accepted_stats, "Stale upgrade callback cannot act on a subsequent upgrade modal")
 
 	game.start_run()
 	game.stage = 5
@@ -132,20 +136,20 @@ func run_tests():
 	game.panel.get_child(1).get_child(4).value = 0.3
 	game.profile.best_stage = 20
 	game.profile.unlocks = ["heartwood"]
-	game.show_builds()
+	game.show_classes()
 	game.panel.get_child(1).get_child(4).pressed.emit()
 	game.show_cosmetics()
 	game.panel.get_child(1).get_child(3).pressed.emit()
-	game.show_abilities()
+	game.show_skills()
 	game.panel.get_child(1).get_child(3).get_child(0).get_child(0).pressed.emit()
 	game.profile.sfx = not expected_sfx
 	game.profile.volume = 0.9
-	game.selected_build = 0
+	game.selected_class = 0
 	game.selected_cosmetic = 0
-	game.selected_ability = ""
+	game.selected_skill = ""
 	game.load_profile()
 	check(game.profile.sfx == expected_sfx and is_equal_approx(float(game.profile.volume), 0.3), "Settings callbacks persist sound and volume")
-	check(game.selected_build == 2 and game.selected_cosmetic == 1 and game.selected_ability == "heartwood", "Build, cosmetic and starting-ability callbacks persist selections")
+	check(game.selected_class == 2 and game.selected_cosmetic == 1 and game.selected_skill == "heartwood", "Build, cosmetic and starting-ability callbacks persist selections")
 	game.test_mode = true
 
 	game.start_run()
@@ -166,8 +170,8 @@ func run_tests():
 		DirAccess.remove_absolute(ProjectSettings.globalize_path(game.SAVE_PATH))
 
 	for build_index in range(4):
-		game.selected_build = build_index
-		game.selected_ability = ""
+		game.selected_class = build_index
+		game.selected_skill = ""
 		game.start_run()
 		var upgrade_count = 0
 		var loot_count = 0
@@ -181,7 +185,7 @@ func run_tests():
 			for frame in range(3600):
 				if game.stage != stage_number or game.state == "won":
 					break
-				if game.state == "upgrade":
+				if game.state == "tactic":
 					upgrade_count += 1
 					game.panel.get_child(1).get_child(2).pressed.emit()
 				elif game.state == "loot":

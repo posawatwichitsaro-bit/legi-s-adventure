@@ -21,8 +21,8 @@ func near(a: float,b: float) -> bool:
 	return absf(a-b)<0.001
 
 func fresh(stage_number: int = 1):
-	game.selected_build=0
-	game.selected_ability=""
+	game.selected_class=0
+	game.selected_skill=""
 	game.start_run()
 	game.stage=stage_number
 	game.rng.seed=6030+stage_number
@@ -137,7 +137,7 @@ func test_pause_and_reset():
 	game.enemies.clear()
 	var queue_before=game.spawn_queue.duplicate()
 	var timer_before=game.wave_timer
-	for state_name in ["paused","upgrade","loot","dead","menu"]:
+	for state_name in ["paused","tactic","loot","dead","menu"]:
 		game.state=state_name
 		game.update_waves(10.0)
 		game.simulate(10.0)
@@ -186,7 +186,7 @@ func test_camera_and_world_units():
 	game.potions.append({"pos":game.player,"fraction":0.02})
 	game.simulate(0.0)
 	check(game.potions.is_empty() and near(game.hp,52),"Scrolled-camera pickups collect at the player's world position")
-	game.selected_build=1
+	game.selected_class=1
 	game.bow_cd=0;game.bow_windup=0
 	game.update_player_attacks(0,game.enemies[0])
 	check(game.bow_aim.distance_to(Vector2.RIGHT)<0.001,"Ranged attack direction stays in world space after camera movement")
@@ -321,7 +321,7 @@ func test_hazards():
 	game.World.update_hazards(game,0.0)
 	check(near(game.hp,80),"Walking into the active circle consumes exactly its one available contact")
 
-	for state_name in ["paused","upgrade","loot","menu"]:
+	for state_name in ["paused","tactic","loot","menu"]:
 		fresh()
 		hazard=hazard_fixture()
 		game.state=state_name

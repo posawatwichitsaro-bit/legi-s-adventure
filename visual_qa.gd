@@ -10,7 +10,7 @@ func _ready():
 	test_mode=true
 	super._ready()
 	profile.sfx=false
-	selected_ability=""
+	selected_skill=""
 	start_run()
 	setup_qa(0)
 func setup_qa(mode:int):
@@ -39,13 +39,13 @@ func pose(which:String):
 		e.moving=which=="walk"
 		if which=="walk":e.attack_state="idle"
 	player_moving=which=="walk";sword_state="idle";sword_time=0.06;sword_aim=Vector2.LEFT;bow_aim=Vector2.LEFT;cast_aim=Vector2.LEFT
-	if selected_build in [0,3]:
+	if selected_class in [0,3]:
 		sword_state="idle" if which in ["idle","walk"] else which
 		if which=="active":slash_time=0.1;slash_angle=PI
-	elif selected_build==1:
+	elif selected_class==1:
 		if which=="windup":bow_windup=0.1
 		if which=="active":release_kind="bow";release_time=0.12;bow_release_time=0.12
-	elif selected_build==2:
+	elif selected_class==2:
 		if which=="windup":cast_windup=0.14
 		if which=="active":release_kind="cast";release_time=0.12;cast_release_time=0.12
 	update_hud();queue_redraw()
@@ -79,7 +79,7 @@ func _unhandled_input(event):
 			KEY_G:setup_qa(4)
 			KEY_H:setup_qa(5)
 			KEY_Q:
-				selected_build=(selected_build+1)%4;start_run();setup_qa(qa_mode)
+				selected_class=(selected_class+1)%4;start_run();setup_qa(qa_mode)
 			KEY_T:pose("windup")
 			KEY_Y:pose("active")
 			KEY_U:pose("recover")

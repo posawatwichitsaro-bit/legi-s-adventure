@@ -43,8 +43,8 @@ func new_game(build: int, ability: String, run_seed: int):
 	root.add_child(game)
 	game.set_process(false)
 	game.rng.seed = run_seed
-	game.selected_build = build
-	game.selected_ability = ability
+	game.selected_class = build
+	game.selected_skill = ability
 	game.profile.sfx = false
 	game.profile.shake = false
 	game.start_run()
@@ -71,9 +71,9 @@ func upgrade_score(id: String) -> float:
 	# spend a reward entirely above an effective stat ceiling.
 	var useful=false
 	var limited=game.D.get_script_constant_map().get("STAT_LIMITS",{})
-	for upgrade in game.D.UPGRADES:
+	for upgrade in game.D.TACTICS:
 		if upgrade.id!=id:continue
-		var changes=game.upgrade_changes(upgrade) if game.has_method("upgrade_changes") else upgrade.stats
+		var changes=game.tactic_changes(upgrade) if game.has_method("tactic_changes") else upgrade.stats
 		for key in changes:
 			var before=float(game.stats.get(key,0))
 			var after=before+float(changes[key])
@@ -82,7 +82,7 @@ func upgrade_score(id: String) -> float:
 	return (100.0 - order.find(id)) if useful else -100.0 - order.find(id)
 
 func resolve_modal():
-	if game.state == "upgrade":
+	if game.state == "tactic":
 		var box = game.panel.get_child(1)
 		var best = null
 		var best_score = -INF
@@ -90,7 +90,7 @@ func resolve_modal():
 		for child in box.get_children():
 			if not child is Button:continue
 			var id = ""
-			for upgrade in game.D.UPGRADES:
+			for upgrade in game.D.TACTICS:
 				if child.text.begins_with(upgrade.name):id = upgrade.id;break
 			var score = upgrade_score(id)
 			if score > best_score:best_score=score;best=child;best_id=id
@@ -136,7 +136,7 @@ func grant_prior_stages(target: int):
 		for value in values:
 			game.gain_xp(value)
 			while game.pending_choices > 0:
-				game.show_upgrades();resolve_modal()
+				game.show_tactics();resolve_modal()
 		if previous % 5 == 0:
 			game.show_loot();resolve_modal()
 	game.stage = target
@@ -216,7 +216,7 @@ func fight() -> Dictionary:
 	var entry_weapon=game.primary_weapon() if game.has_method("primary_weapon") else "sword"
 	var total_travel=0.0
 	while seconds < LIMIT and game.hp > 0 and game.stage == started:
-		if game.state in ["upgrade","loot"]:
+		if game.state in ["tactic","loot"]:
 			resolve_modal();continue
 		if game.state != "playing":break
 		if full_remaining()==0:
@@ -239,7 +239,7 @@ func fight() -> Dictionary:
 	var remaining: Array=[]
 	for enemy in game.enemies:
 		remaining.append({"kind":enemy.kind,"hp":enemy.hp,"position":[enemy.pos.x,enemy.pos.y],"line_of_sight":visible_segment(game.player,enemy.pos,3)})
-	return {"debug_navigation":{ "path":str(navigation_path), "obstacles":str(game.obstacles), "waypoint":str(obstacle_waypoint(game.enemies[0].pos)) if not game.enemies.is_empty() else ""} if clear_time<0 else {},"entry_weapon":entry_weapon,"travel_pixels":total_travel,"end_position":[game.player.x,game.player.y],"remaining_enemy_details":remaining,"seed":seed_value,"build":game.D.BUILDS[game.selected_build].id,"strategy":mode,"movement":movement,"stage":started,"entry_level":entry_level,"entry_xp":entry_xp,"entry_stats":initial,"entry_hp":start_hp,"clear_seconds":clear_time,"seconds_observed":seconds,"cleared":clear_time>=0,"survived":game.hp>0,"entry_setup":"natural_campaign" if campaign else "healthy_entry_encounter","arena_seed":null if campaign else 100000+seed_value*100+started,"outcome":"cleared" if clear_time>=0 else ("died" if game.hp<=0 else "timeout"),"boss_moves_started":game.measured_boss_starts.duplicate(),"boss_moves_released":game.measured_boss_releases.duplicate(),"damage_taken":game.measured_damage_taken-start_damage,"hits_taken":game.measured_hits-start_hits,"end_hp":game.hp,"minimum_hp":min_hp,"enemies_remaining":full_remaining(),"active_enemies_remaining":game.enemies.size(),"queued_enemies_remaining":full_remaining()-game.enemies.size(),"peak_active_enemies":peak_active,"environment_hazards_spawned":observed_hazards.size(),"environment_hazards_released":released_hazards.size(),"environment_hazard_contacts":touched_hazards.size(),"actual_kills":game.kills-kills_before,"initial_enemies":initial_enemies,"upgrades":actions_before,"gear":relics_before}
+	return {"debug_navigation":{ "path":str(navigation_path), "obstacles":str(game.obstacles), "waypoint":str(obstacle_waypoint(game.enemies[0].pos)) if not game.enemies.is_empty() else ""} if clear_time<0 else {},"entry_weapon":entry_weapon,"travel_pixels":total_travel,"end_position":[game.player.x,game.player.y],"remaining_enemy_details":remaining,"seed":seed_value,"build":game.D.CLASSES[game.selected_class].id,"strategy":mode,"movement":movement,"stage":started,"entry_level":entry_level,"entry_xp":entry_xp,"entry_stats":initial,"entry_hp":start_hp,"clear_seconds":clear_time,"seconds_observed":seconds,"cleared":clear_time>=0,"survived":game.hp>0,"entry_setup":"natural_campaign" if campaign else "healthy_entry_encounter","arena_seed":null if campaign else 100000+seed_value*100+started,"outcome":"cleared" if clear_time>=0 else ("died" if game.hp<=0 else "timeout"),"boss_moves_started":game.measured_boss_starts.duplicate(),"boss_moves_released":game.measured_boss_releases.duplicate(),"damage_taken":game.measured_damage_taken-start_damage,"hits_taken":game.measured_hits-start_hits,"end_hp":game.hp,"minimum_hp":min_hp,"enemies_remaining":full_remaining(),"active_enemies_remaining":game.enemies.size(),"queued_enemies_remaining":full_remaining()-game.enemies.size(),"peak_active_enemies":peak_active,"environment_hazards_spawned":observed_hazards.size(),"environment_hazards_released":released_hazards.size(),"environment_hazard_contacts":touched_hazards.size(),"actual_kills":game.kills-kills_before,"initial_enemies":initial_enemies,"upgrades":actions_before,"gear":relics_before}
 
 func run_benchmark():
 	var args = OS.get_cmdline_user_args()
@@ -282,7 +282,7 @@ func run_campaign(run_seed: int):
 		var stage_before=game.stage
 		var ticks=0
 		while game.stage==stage_before and game.state!="won" and ticks<2400:
-			if game.state in ["upgrade","loot"]:resolve_modal();continue
+			if game.state in ["tactic","loot"]:resolve_modal();continue
 			# Portal travel is skipped only once combat and all loot have ended.
 			# start_stage places the player at this same center for the next fight.
 			if game.portal_open:game.player=game.CENTER

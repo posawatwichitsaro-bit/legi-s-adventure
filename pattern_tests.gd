@@ -33,8 +33,8 @@ func near(a: float, b: float) -> bool:
 	return absf(a - b) < 0.0001
 
 func fresh_field(stage_number = 11):
-	game.selected_build = 0
-	game.selected_ability = ""
+	game.selected_class = 0
+	game.selected_skill = ""
 	game.start_run()
 	game.stage = stage_number
 	game.start_stage()

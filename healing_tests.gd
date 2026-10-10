@@ -28,8 +28,8 @@ func enemy_at(pos: Vector2, health = 100.0, kind = "grunt") -> Dictionary:
 	return {"pos":pos,"hp":health,"kind":kind,"cooldown":99.0,"hit":0.0,"phase":0.0,"dash_hit":false}
 
 func fresh_field(stage_number = 1):
-	game.selected_build = 0
-	game.selected_ability = ""
+	game.selected_class = 0
+	game.selected_skill = ""
 	game.start_run()
 	if stage_number != 1:
 		game.stage = stage_number
@@ -68,7 +68,7 @@ func offer_life_drain():
 	game.pending_choices = 1
 	# Use actual randomly generated choice panels and actual callbacks.
 	for attempt in range(160):
-		game.show_upgrades()
+		game.show_tactics()
 		var offered = find_button(game.panel, str(life_drain.get("name", "Life Drain")) + "\n")
 		if offered != null:
 			return offered
@@ -84,7 +84,7 @@ func run_tests():
 	root.add_child(game)
 	game.set_process(false)
 	game.rng.seed = 98241
-	for upgrade in game.D.UPGRADES:
+	for upgrade in game.D.TACTICS:
 		if upgrade.id == "life_drain":
 			life_drain = upgrade
 	check(not life_drain.is_empty(), "Life Drain is an obtainable special upgrade")
@@ -107,13 +107,13 @@ func run_tests():
 
 func test_base_pickup():
 	var all_builds_match = true
-	for build_index in range(game.D.BUILDS.size()):
-		game.selected_build = build_index
-		game.selected_ability = ""
+	for build_index in range(game.D.CLASSES.size()):
+		game.selected_class = build_index
+		game.selected_skill = ""
 		game.start_run()
 		all_builds_match = all_builds_match and near(game.stats.pickup, 75.0)
 	check(all_builds_match, "All four builds begin with the wider 75-pixel pickup radius")
-	game.selected_ability = "treasure_magnet"
+	game.selected_skill = "treasure_magnet"
 	game.start_run()
 	check(near(game.stats.pickup, 111.0), "Treasure Magnet adds its existing 36 pixels to the new base radius")
 
@@ -431,7 +431,7 @@ func test_life_drain_callbacks():
 	var complete_choices = true
 	for attempt in range(100):
 		game.pending_choices = 1
-		game.show_upgrades()
+		game.show_tactics()
 		excluded = excluded and find_button(game.panel, str(life_drain.name) + "\n") == null
 		complete_choices = complete_choices and game.panel.get_child(1).get_child_count() == 5
 	check(excluded and complete_choices, "Active Life Drain is excluded from 100 subsequent three-choice upgrade panels")
@@ -445,17 +445,17 @@ func test_life_drain_callbacks():
 	fresh_field()
 	offered = offer_life_drain()
 	if offered != null:
-		game.show_upgrades()
+		game.show_tactics()
 		offered.pressed.emit()
-		check(game.state == "upgrade" and game.pending_choices == 1 and near(game.stats.lifesteal, 0.0), "A stale Life Drain callback cannot alter a newer upgrade panel")
+		check(game.state == "tactic" and game.pending_choices == 1 and near(game.stats.lifesteal, 0.0), "A stale Life Drain callback cannot alter a newer upgrade panel")
 	fresh_field()
 	offered = offer_life_drain()
 	if offered != null:
 		game.start_run()
 		game.pending_choices = 1
-		game.show_upgrades()
+		game.show_tactics()
 		offered.pressed.emit()
-		check(game.state == "upgrade" and game.pending_choices == 1 and near(game.stats.lifesteal, 0.0), "A stale Life Drain callback cannot carry healing into a new run")
+		check(game.state == "tactic" and game.pending_choices == 1 and near(game.stats.lifesteal, 0.0), "A stale Life Drain callback cannot carry healing into a new run")
 
 func test_life_drain_persistence():
 	fresh_field()
@@ -467,30 +467,30 @@ func test_life_drain_persistence():
 		game.test_mode = true
 		return
 	offered.pressed.emit()
-	game.show_abilities()
+	game.show_skills()
 	var equip = find_button(game.panel, str(life_drain.name) + "  ·  ")
 	check(equip != null, "Discovered Life Drain appears in the starting-ability menu")
 	if equip == null:
 		game.test_mode = true
 		return
 	equip.pressed.emit()
-	game.selected_ability = ""
+	game.selected_skill = ""
 	game.profile.unlocks = []
 	game.load_profile()
-	check(game.selected_ability == "life_drain" and game.profile.unlocks.count("life_drain") == 1, "Life Drain discovery and equipped selection survive a profile reload")
+	check(game.selected_skill == "life_drain" and game.profile.unlocks.count("life_drain") == 1, "Life Drain discovery and equipped selection survive a profile reload")
 	game.start_run()
 	check(near(game.stats.lifesteal, 0.1), "An equipped Life Drain ability is active from the first frame of a new run")
 	game.hp = 0.0
 	game.end_run(false)
 	game.start_run()
 	check(game.stage == 1 and near(game.stats.lifesteal, 0.1) and "life_drain" in game.profile.unlocks, "Death preserves the discovered and equipped Life Drain starting ability")
-	game.show_abilities()
+	game.show_skills()
 	var unequip = find_button(game.panel, "NONE")
 	if unequip != null:
 		unequip.pressed.emit()
 	game.load_profile()
 	game.start_run()
-	check(game.selected_ability == "" and near(game.stats.lifesteal, 0.0) and "life_drain" in game.profile.unlocks, "Unequipping Life Drain removes its run effect while preserving the permanent unlock")
+	check(game.selected_skill == "" and near(game.stats.lifesteal, 0.0) and "life_drain" in game.profile.unlocks, "Unequipping Life Drain removes its run effect while preserving the permanent unlock")
 	game.test_mode = true
 
 func finish():
