@@ -13,6 +13,12 @@ const BOSS_NEW = [
 	{"stage":15, "index":3, "pattern":"crystal_spokes", "count":6},
 	{"stage":20, "index":1, "pattern":"eclipse", "count":1},
 	{"stage":20, "index":3, "pattern":"nightfall", "count":3},
+	{"stage":25, "index":0, "pattern":"storm_lanes", "count":3},
+	{"stage":25, "index":1, "pattern":"thunder_crown", "count":1},
+	{"stage":25, "index":2, "pattern":"storm_sweep", "count":1},
+	{"stage":30, "index":0, "pattern":"solar_lance", "count":2},
+	{"stage":30, "index":1, "pattern":"dawn_rings", "count":1},
+	{"stage":30, "index":2, "pattern":"eclipse_seals", "count":4},
 ]
 var game
 var passed = 0
@@ -36,6 +42,9 @@ func fresh_field(stage_number = 11):
 	game.selected_class = 0
 	game.selected_skill = ""
 	game.start_run()
+	# Isolate old collision/healing rules from redesigned Class attributes and chance.
+	game.stats.max_hp=100.0;game.hp=100.0
+	game.stats.critical_rate=0;game.stats.dodge_rate=0;game.stats.block_rate=0
 	game.stage = stage_number
 	game.start_stage()
 	game.enemies.clear()
@@ -238,6 +247,11 @@ func hazard_and_safe(enemy: Dictionary) -> Array:
 	var origin = enemy.attack_origin
 	var target = enemy.attack_target
 	match enemy.attack_pattern:
+		"storm_lanes":return [origin+Vector2(150,0),origin+Vector2(150,40)]
+		"thunder_crown","dawn_rings":return [origin+Vector2(120,0),origin]
+		"storm_sweep":return [origin+Vector2(80,0),origin-Vector2(80,0)]
+		"solar_lance":return [origin+Vector2(150,48),origin+Vector2(150,0)]
+		"eclipse_seals":return [target+Vector2(74,0),target]
 		"rootline": return [origin + Vector2(66, 0), origin]
 		"thornwheel": return [origin + Vector2(90, 0), origin]
 		"cinder_cross": return [target + Vector2(70, 0), target + Vector2(70, 70)]

@@ -2,7 +2,7 @@ extends RefCounted
 
 # Every attack commits to a visible shape/heading before release. Contact is safe.
 # Shared shape data drives both ground cues and hit tests, including safe holes.
-const BOSS_NAMES = ["THORN WARDEN", "EMBER ALCHEMIST", "CRYSTAL SENTINEL", "NIGHT SOVEREIGN"]
+const BOSS_NAMES = ["THORN WARDEN", "EMBER ALCHEMIST", "CRYSTAL SENTINEL", "NIGHT SOVEREIGN", "TEMPEST COLOSSUS", "ECLIPSE SERAPH"]
 const NEW_KINDS = ["sentinel", "assassin", "chanter", "hexer"]
 const NEW_BOSS_PATTERNS = ["rootline", "thornwheel", "cinder_cross", "ember_bloom", "prism_lance", "crystal_spokes", "eclipse", "nightfall"]
 
@@ -10,18 +10,20 @@ static func initialize(e: Dictionary, stage: int):
 	e.merge({"attack_state":"idle", "attack_time":0.0, "attack_duration":1.0,
 		"attack_aim":Vector2.RIGHT, "attack_origin":e.pos, "attack_target":e.pos,
 		"attack_hit":false, "attack_pattern":"melee", "attack_index":0,
-		"boss_type":clampi(int(stage / 5)-1,0,3), "moving":false,
+		"boss_type":clampi(int(stage / 5)-1,0,5), "moving":false,
 		"facing":Vector2.RIGHT, "max_hp":e.hp, "haste_time":0.0,
 		"flank_sign":-1.0 if sin(e.get("phase",0.0))<0 else 1.0}, false)
 
 static func late_pressure(stage: int) -> float:
-	return clampf(float(stage-8)/12.0,0.0,1.0)
+	return clampf(float(stage-8)/12.0,0.0,1.0)+clampf(float(stage-20)/10.0,0.0,1.0)*0.25
 
 static func boss_patterns(e: Dictionary) -> Array:
 	match int(e.boss_type):
 		0:return ["cleave","rootline","charge","thornwheel"]
 		1:return ["blast","cinder_cross","ember_bloom"]
 		2:return ["fan","prism_lance","ring","crystal_spokes"]
+		4:return ["storm_lanes","thunder_crown","storm_sweep","fan"] if e.hp>e.max_hp*0.5 else ["storm_lanes","thunder_crown","storm_sweep","ring","fan"]
+		5:return ["solar_lance","dawn_rings","eclipse_seals","fan"] if e.hp>e.max_hp*0.5 else ["solar_lance","eclipse_seals","dawn_rings","ring","storm_sweep"]
 	return ["cleave","eclipse","charge","nightfall","blast"] if e.hp>e.max_hp*0.5 else ["cleave","eclipse","charge","nightfall","fan","blast"]
 
 static func next_pattern(e: Dictionary) -> String:
@@ -65,6 +67,7 @@ static func begin(g, e: Dictionary):
 				1:windup=1.0
 				2:windup=0.85
 				3:windup=0.72 if e.hp>e.max_hp*0.5 else 0.6
+				4,5:windup=1.05 if e.hp>e.max_hp*0.5 else 0.9
 			# Larger new hazards get extra warning, even in the final rage phase.
 			if e.attack_pattern in NEW_BOSS_PATTERNS:windup=maxf(windup,0.85)
 	# Late pressure is bounded; the shortest warning never drops below 0.38s.
@@ -106,6 +109,11 @@ static func release(g, e: Dictionary):
 
 static func attack_trigger(e: Dictionary) -> float:
 	match next_pattern(e):
+		"storm_lanes":return 340.0
+		"thunder_crown":return 220.0
+		"storm_sweep":return 175.0
+		"solar_lance":return 400.0
+		"dawn_rings":return 235.0
 		"melee":return 49.0
 		"shield_bash":return 74.0
 		"explode":return 65.0
@@ -133,7 +141,8 @@ static func select_reachable_boss_pattern(e: Dictionary, distance: float):
 	e.attack_index=original_index
 
 static func movement_speed(e: Dictionary, stage: int) -> float:
-	var speed=(45.0+mini(stage,20)*1.8)*(1.0+0.4*late_pressure(stage))
+	var speed=(45.0+mini(stage,30)*1.8)*(1.0+0.4*late_pressure(stage))
+	if e.get("slow_left",0.0)>0:speed*=float(e.get("slow_factor",1.0))
 	match e.kind:
 		"swift":speed*=1.8
 		"boss":speed*=0.72 if stage>=10 else 0.65
@@ -220,7 +229,10 @@ static func tick(g, e: Dictionary, dt: float):
 				var damage=(17+g.stage*0.7) if e.kind=="boss" else (18+g.stage if e.kind=="bomber" else 8+g.stage*0.8)
 				if e.kind=="sentinel":damage*=1.12
 				if e.kind=="assassin":damage*=1.15
-				g.damage_player(damage*(1.0+0.15*late_pressure(g.stage)))
+				var category="melee"
+				if e.attack_pattern in ["rootline","thornwheel","blast","hex_pool","cinder_cross","ember_bloom","eclipse","nightfall","thunder_crown","dawn_rings","eclipse_seals"]:category="hazard"
+				elif e.attack_pattern in ["prism_lance","crystal_spokes","storm_lanes","solar_lance"]:category="projectile"
+				g.damage_player(damage*(1.0+0.15*late_pressure(g.stage)),category)
 		elif e.attack_state=="recover" and e.attack_time<=0:
 			e.attack_state="idle"
 			e.cooldown=recovery_cooldown(e,g.stage)
@@ -228,7 +240,7 @@ static func tick(g, e: Dictionary, dt: float):
 	if g.dash_left>0 and g.player.distance_to(e.pos)<38 and not e.dash_hit:
 		e.dash_hit=true
 		if g.stats.dash_damage>0:
-			g.damage_enemy(e,g.stats.damage+g.stats.dash_damage)
+			g.damage_enemy(e,g.stats.damage+g.stats.dash_damage,Vector2.INF,true,false)
 			g.ClassCombat.on_dash_hit(g,e)
 
 static func finish_active(e: Dictionary):
@@ -248,6 +260,19 @@ static func attack_shapes(e: Dictionary, preview: bool=false) -> Array:
 	var aim:Vector2=e.attack_aim
 	var target:Vector2=e.attack_target
 	match e.attack_pattern:
+		"storm_lanes":
+			for offset in [-85.0,0.0,85.0]:
+				var start=origin+aim.orthogonal()*offset
+				shapes.append({"type":"lane","a":start,"b":start+aim*340.0,"radius":17.0})
+		"thunder_crown":shapes.append({"type":"annulus","center":origin,"inner":90.0,"radius":220.0})
+		"storm_sweep":shapes.append({"type":"sector","center":origin,"radius":175.0,"aim":aim,"half":PI*0.6})
+		"solar_lance":
+			for offset in [-48.0,48.0]:
+				var start=origin+aim.orthogonal()*offset
+				shapes.append({"type":"lane","a":start,"b":start+aim*400.0,"radius":19.0})
+		"dawn_rings":shapes.append({"type":"annulus","center":origin,"inner":85.0,"radius":235.0})
+		"eclipse_seals":
+			for i in range(4):shapes.append({"type":"circle","center":target+aim.rotated(i*PI/2)*74.0,"radius":43.0})
 		"melee","cleave","shield_bash":
 			var radius=108.0 if e.attack_pattern=="cleave" else (76.0 if e.attack_pattern=="shield_bash" else 55.0)
 			var half=acos(-0.2) if e.attack_pattern=="cleave" else (1.05 if e.attack_pattern=="shield_bash" else acos(0.2))
@@ -345,6 +370,8 @@ static func draw_cues(g, e: Dictionary):
 	if e.get("attack_state","idle") not in ["windup","active"]:return
 	var active=e.attack_state=="active"
 	var col=Color("ffe5ac") if active else Color("ff966f")
+	if int(e.get("boss_type",0))==4:col=Color("b9f3ff") if active else Color("f3d47d")
+	if int(e.get("boss_type",0))==5:col=Color("fff4ce") if active else Color("c799ff")
 	if e.attack_pattern=="hex_pool":col=Color("ebb5ff") if active else Color("bd88e8")
 	var fill=col;fill.a=0.22 if active else 0.1
 	var shapes=attack_shapes(e,true)

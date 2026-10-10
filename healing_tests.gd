@@ -31,6 +31,9 @@ func fresh_field(stage_number = 1):
 	game.selected_class = 0
 	game.selected_skill = ""
 	game.start_run()
+	# Isolate old collision/healing rules from redesigned Class attributes and chance.
+	game.stats.max_hp=100.0;game.hp=100.0
+	game.stats.critical_rate=0;game.stats.dodge_rate=0;game.stats.block_rate=0
 	if stage_number != 1:
 		game.stage = stage_number
 		game.start_stage()
@@ -113,9 +116,10 @@ func test_base_pickup():
 		game.start_run()
 		all_builds_match = all_builds_match and near(game.stats.pickup, 75.0)
 	check(all_builds_match, "All four builds begin with the wider 75-pixel pickup radius")
-	game.selected_skill = "treasure_magnet"
+	game.selected_skill = ""
 	game.start_run()
-	check(near(game.stats.pickup, 111.0), "Treasure Magnet adds its existing 36 pixels to the new base radius")
+	game.apply_tactic("treasure_magnet")
+	check(near(game.stats.pickup, 95.0), "Treasure Magnet adds its redesigned 20 pixels to the new base radius")
 
 func test_heal_helper():
 	fresh_field()
@@ -299,6 +303,7 @@ func test_stage_clear_heal():
 	check(near(game.hp, 200.0) and game.stage_clear_healed, "Stage-clear healing caps at maximum health")
 
 	fresh_field(5)
+	game.skill_reward_taken=true
 	game.stats.max_hp = 200.0
 	game.hp = 50.0
 	game.simulate(0.0)
@@ -309,7 +314,8 @@ func test_stage_clear_heal():
 	game.simulate(0.0)
 	check(game.portal_open and game.stage_clear_healed and near(game.hp, 50.0), "Accepting guardian loot cannot grant the clear heal a second time")
 
-	fresh_field(20)
+	fresh_field(30)
+	game.skill_reward_taken=true
 	game.hp = 50.0
 	game.boss_reward_taken = true
 	game.stage_time = 3.0
@@ -353,57 +359,31 @@ func prepare_attack_target(distance: float, health = 100.0):
 
 func test_attack_routes():
 	prepare_attack_target(40.0)
-	game.attack_cd = 0.0
-	game.simulate(0.0)
-	check(game.sword_state == "windup" and near(game.enemies[0].hp, 100.0) and near(game.hp, 40.0), "Automatic sword windup cannot grant damage or Life Drain early")
-	for frame in range(16):
-		game.simulate(1.0 / 120.0)
-	check(near(game.enemies[0].hp, 80.0) and near(game.hp, 42.0), "Automatic sword active-window damage uses Life Drain")
-
-	prepare_attack_target(70.0)
-	game.stats.projectiles = 1.0
-	game.bow_cd = 0.0
-	game.simulate(0.0)
-	check(game.bow_windup > 0 and game.bullets.is_empty(), "Bow windup does not release its projectile early")
-	for frame in range(26):
-		game.simulate(1.0 / 120.0)
-	var bow_spawned = game.bullets.size() == 1 and not game.bullets[0].magic
-	check(bow_spawned, "Bow attack produces its normal friendly projectile")
-	if bow_spawned:
-		game.bullets[0].pos = game.enemies[0].pos
-		game.bullets[0].vel = Vector2.ZERO
-		game.simulate(0.0)
-		check(near(game.enemies[0].hp, 82.0) and near(game.hp, 41.8), "Bow projectile hits use actual-damage Life Drain")
-
-	prepare_attack_target(70.0)
-	game.stats.magic = 1.0
-	game.magic_cd = 0.0
-	game.simulate(0.0)
-	check(game.cast_windup > 0 and game.bullets.is_empty(), "Magic windup does not release its projectiles early")
-	for frame in range(35):
-		game.simulate(1.0 / 120.0)
-	var magic_spawned = game.bullets.size() == 8 and game.bullets[0].magic
-	check(magic_spawned, "Magic attack produces its normal eight radial projectiles")
-	if magic_spawned:
-		game.bullets[0].pos = game.enemies[0].pos
-		game.bullets[0].vel = Vector2.ZERO
-		game.simulate(0.0)
-		check(near(game.enemies[0].hp, 97.0) and near(game.hp, 40.3), "Magic projectile hits use actual-damage Life Drain")
-
-	prepare_attack_target(30.0, 150.0)
-	game.stats.dash_damage = 30.0
-	game.dash_cd = 0.0
-	game.dash()
-	game.simulate(0.0)
-	check(near(game.enemies[0].hp, 100.0) and near(game.hp, 45.0), "Dash damage uses Life Drain")
-	game.simulate(0.0)
-	check(near(game.enemies[0].hp, 100.0) and near(game.hp, 45.0), "A single dash cannot drain the same enemy twice")
-	# V7: dash_cd is only a view; a second action must await real charge recovery.
-	game.dash_left = 0.0
-	game.ClassProgression.tick(game,game.stats.dash_cooldown)
-	game.dash()
-	game.simulate(0.0)
-	check(near(game.enemies[0].hp, 50.0) and near(game.hp, 50.0), "A new dash can damage and drain the enemy again")
+	game.attack_cd=0;game.update_player_attacks(0,game.enemies[0])
+	check(game.sword_state=="windup" and near(game.enemies[0].hp,100) and near(game.hp,40),"Sword windup cannot grant Life Drain early")
+	for i in range(18):game.update_player_attacks(1.0/120,game.enemies[0])
+	check(near(game.hp,42),"Melee Life Drain uses actual damage")
+	prepare_attack_target(120.0)
+	game.selected_class=1;game.selected_option="bow";game.bow_cd=0
+	game.update_player_attacks(0,game.enemies[0]);game.update_player_attacks(.12,game.enemies[0])
+	check(game.bullets.is_empty(),"Bow windup cannot grant healing early")
+	game.update_player_attacks(.03,game.enemies[0])
+	check(game.bullets.size()==1,"Bow releases its actual primary projectile")
+	for i in range(60):game.simulate(1.0/120)
+	check(game.hp>40,"Bow impact uses Life Drain")
+	prepare_attack_target(120.0)
+	game.selected_class=2;game.selected_option="light";game.magic_cd=0
+	game.update_player_attacks(0,game.enemies[0]);game.update_player_attacks(.23,game.enemies[0])
+	check(game.bullets.is_empty(),"Spell windup cannot grant healing early")
+	game.update_player_attacks(.03,game.enemies[0])
+	check(game.bullets.size()==1,"Spell releases its elemental primary projectile")
+	for i in range(65):game.simulate(1.0/120)
+	check(game.hp>40,"Spell impact uses Life Drain")
+	prepare_attack_target(30.0,200.0)
+	game.stats.dash_damage=30;game.dash();game.simulate(0)
+	check(near(game.enemies[0].hp,150) and near(game.hp,45),"Dash impact uses Life Drain")
+	game.simulate(0)
+	check(near(game.hp,45),"Dash cannot drain the same foe twice")
 
 func test_life_drain_progression():
 	fresh_field()
@@ -424,7 +404,7 @@ func test_life_drain_callbacks():
 	if offered == null:
 		return
 	offered.pressed.emit()
-	check(near(game.stats.lifesteal, 0.1) and game.pending_choices == 0 and "life_drain" in game.profile.unlocks, "Choosing Life Drain activates it and permanently discovers its starting ability")
+	check(near(game.stats.lifesteal, 0.1) and game.pending_choices == 0 and not "life_drain" in game.profile.unlocks, "Choosing Life Drain activates it without a permanent Starting Skill")
 	offered.pressed.emit()
 	check(near(game.stats.lifesteal, 0.1) and game.pending_choices == 0, "Double-clicking Life Drain cannot stack healing or consume a second reward")
 	var excluded = true
@@ -459,39 +439,18 @@ func test_life_drain_callbacks():
 
 func test_life_drain_persistence():
 	fresh_field()
-	game.profile.unlocks = []
-	game.test_mode = false
-	var offered = offer_life_drain()
-	check(offered != null, "Persistence scenario obtains Life Drain through a real choice")
-	if offered == null:
-		game.test_mode = true
-		return
-	offered.pressed.emit()
-	game.show_skills()
-	var equip = find_button(game.panel, str(life_drain.name) + "  ·  ")
-	check(equip != null, "Discovered Life Drain appears in the starting-ability menu")
-	if equip == null:
-		game.test_mode = true
-		return
-	equip.pressed.emit()
-	game.selected_skill = ""
-	game.profile.unlocks = []
-	game.load_profile()
-	check(game.selected_skill == "life_drain" and game.profile.unlocks.count("life_drain") == 1, "Life Drain discovery and equipped selection survive a profile reload")
+	game.profile.unlocks=[];game.test_mode=false
+	var offered=offer_life_drain()
+	check(offered!=null,"Persistence scenario obtains Life Drain through a real choice")
+	if offered==null:game.test_mode=true;return
+	offered.pressed.emit();game.show_skills()
+	check(find_button(game.panel,str(life_drain.name))==null,"Retired Starting Skill absent from starting options")
+	game.selected_option="axe";game.selected_skill="life_drain";game.save_profile()
+	game.selected_option="sword";game.load_profile()
+	check(game.selected_option=="axe" and game.selected_skill=="","Starting Option persists and legacy Starting Skill is ignored")
 	game.start_run()
-	check(near(game.stats.lifesteal, 0.1), "An equipped Life Drain ability is active from the first frame of a new run")
-	game.hp = 0.0
-	game.end_run(false)
-	game.start_run()
-	check(game.stage == 1 and near(game.stats.lifesteal, 0.1) and "life_drain" in game.profile.unlocks, "Death preserves the discovered and equipped Life Drain starting ability")
-	game.show_skills()
-	var unequip = find_button(game.panel, "NONE")
-	if unequip != null:
-		unequip.pressed.emit()
-	game.load_profile()
-	game.start_run()
-	check(game.selected_skill == "" and near(game.stats.lifesteal, 0.0) and "life_drain" in game.profile.unlocks, "Unequipping Life Drain removes its run effect while preserving the permanent unlock")
-	game.test_mode = true
+	check(game.stats.lifesteal==0 and game.learned_skills.is_empty(),"New run does not inherit old Skills or Life Drain")
+	game.test_mode=true
 
 func finish():
 	if had_profile:

@@ -80,8 +80,8 @@ func test_starting_selection():
 		check(game.selected_skill==ability and game.tactic_rank(ability)==1,"Class %d consumes one legal starting rank of %s"%[build,ability])
 		game.start_run();check(game.tactic_rank(ability)==1,"Class %d restarts without accumulating starting ranks"%build)
 	fresh(2)
-	check(near(game.hp,70) and near(game.stats.max_hp,70),"Moon Weaver begins at 70 health")
-	check(near(game.shield,35),"Moon Weaver begins with a distinct 35-point shield")
+	check(near(game.hp,70) and near(game.stats.max_hp,70),"Wizard begins at 70 health")
+	check(near(game.shield,35),"Wizard begins with a distinct 35-point shield")
 	for build in [0,1,3]:
 		fresh(build);check(near(game.hp,100) and near(game.shield,0),"Class %d preserves 100 HP and has no mana shield"%build)
 func test_offer_and_stack_caps():

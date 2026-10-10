@@ -3,9 +3,9 @@ extends "res://main.gd"
 # healing, timing, or movement rules are changed; this scene never saves.
 var measured_damage_taken = 0.0
 var measured_hits = 0
-func damage_player(amount: float):
+func damage_player(amount: float, category: String="melee"):
 	var before = hp
-	super.damage_player(amount)
+	super.damage_player(amount,category)
 	if hp < before:
 		measured_damage_taken += maxf(0,before) - maxf(0,hp)
 		measured_hits += 1

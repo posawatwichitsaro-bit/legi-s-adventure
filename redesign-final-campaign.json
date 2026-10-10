@@ -1,0 +1,3771 @@
+{
+  "method": {
+    "choices": "Wizard survival priorities select only actual offered Tactics, Equipment and Skills. No health resets or injected kills in the natural campaign.",
+    "controls": "Eight-direction physical-key input at 12 Hz, ordinary collision movement, AStarGrid2D obstacle routing, visible cue avoidance and emergency dash. Navigation bounds come from the actual arena.",
+    "damage_definition": "Sum of actual HP removed by accepted damage_player calls, after armor/invulnerability and capped at remaining HP on lethal hits; healing does not subtract from this counter.",
+    "limitations": "One automated seed/build, not a human win-rate estimate. Exact visible cue geometry favors the controller; navigation and cue avoidance are approximate. A 240-second stage limit includes wave downtime.",
+    "movement": "kite",
+    "outcomes": "Cleared, died, or still alive at the 240-second timeout. A timeout is not a death; clear-time medians exclude timeouts/deaths.",
+    "progression": "Natural full run: real attacks, XP, drops and healing; no injected kills or health resets. Automatic center-portal entry only after combat and all rewards.",
+    "simulation_hz": 120,
+    "stage_time_limit_seconds": 240.0
+  },
+  "rows": [
+    {
+      "active_enemies_remaining": 0,
+      "actual_kills": 13,
+      "arena_seed": null,
+      "boss_moves_released": {},
+      "boss_moves_started": {},
+      "build": "mage",
+      "clear_seconds": 20.3083333333328,
+      "cleared": true,
+      "damage_taken": 0.0,
+      "debug_navigation": {},
+      "end_hp": 55.0,
+      "end_position": [
+        539.129089355469,
+        514.097595214844
+      ],
+      "enemies_remaining": 0,
+      "entry_hp": 55.0,
+      "entry_level": 1,
+      "entry_setup": "natural_campaign",
+      "entry_stats": {
+        "armor": 0.0,
+        "attack_speed": 1.0,
+        "block_rate": 0.05,
+        "critical_damage": 0.5,
+        "critical_rate": 0.05,
+        "damage": 24.0,
+        "dash_cooldown": 3.0,
+        "dash_damage": 0.0,
+        "dodge_cooldown": 4.0,
+        "dodge_rate": 0.05,
+        "lifesteal": 0.0,
+        "mage_armor": 20.0,
+        "magic": 0.0,
+        "max_hp": 55.0,
+        "pickup": 75.0,
+        "projectiles": 0.0,
+        "range": 78.0,
+        "regen": 0.15,
+        "shield_regen": 5.0,
+        "speed": 140.0
+      },
+      "entry_weapon": "staff",
+      "entry_xp": 0,
+      "environment_hazard_contacts": 0,
+      "environment_hazards_released": 3,
+      "environment_hazards_spawned": 3,
+      "gear": [],
+      "hits_taken": 0,
+      "initial_enemies": 13,
+      "minimum_hp": 55.0,
+      "mode": "2:fire",
+      "movement": "kite",
+      "outcome": "cleared",
+      "peak_active_enemies": 6,
+      "queued_enemies_remaining": 0,
+      "remaining_enemy_details": [],
+      "seconds_observed": 20.3083333333328,
+      "seed": 1760,
+      "skills": [],
+      "stage": 1,
+      "strategy": "2:fire",
+      "survived": true,
+      "travel_pixels": 2465.91970205307,
+      "upgrades": []
+    },
+    {
+      "active_enemies_remaining": 0,
+      "actual_kills": 15,
+      "arena_seed": null,
+      "boss_moves_released": {},
+      "boss_moves_started": {},
+      "build": "mage",
+      "clear_seconds": 25.7166666666658,
+      "cleared": true,
+      "damage_taken": 0.0,
+      "debug_navigation": {},
+      "end_hp": 56.6,
+      "end_position": [
+        277.262847900391,
+        535.416809082031
+      ],
+      "enemies_remaining": 0,
+      "entry_hp": 56.6,
+      "entry_level": 3,
+      "entry_setup": "natural_campaign",
+      "entry_stats": {
+        "armor": 0.0,
+        "attack_speed": 1.0,
+        "block_rate": 0.05,
+        "critical_damage": 0.5,
+        "critical_rate": 0.05,
+        "damage": 25.7,
+        "dash_cooldown": 3.0,
+        "dash_damage": 0.0,
+        "dodge_cooldown": 4.0,
+        "dodge_rate": 0.05,
+        "lifesteal": 0.0,
+        "mage_armor": 20.9,
+        "magic": 0.0,
+        "max_hp": 56.6,
+        "pickup": 76.4,
+        "projectiles": 0.0,
+        "range": 78.0,
+        "regen": 0.15,
+        "shield_regen": 5.0,
+        "speed": 140.0
+      },
+      "entry_weapon": "staff",
+      "entry_xp": 5.0,
+      "environment_hazard_contacts": 0,
+      "environment_hazards_released": 3,
+      "environment_hazards_spawned": 4,
+      "gear": [],
+      "hits_taken": 0,
+      "initial_enemies": 15,
+      "minimum_hp": 56.6,
+      "mode": "2:fire",
+      "movement": "kite",
+      "outcome": "cleared",
+      "peak_active_enemies": 6,
+      "queued_enemies_remaining": 0,
+      "remaining_enemy_details": [],
+      "seconds_observed": 25.7166666666658,
+      "seed": 1760,
+      "skills": [],
+      "stage": 2,
+      "strategy": "2:fire",
+      "survived": true,
+      "travel_pixels": 3102.34218347073,
+      "upgrades": []
+    },
+    {
+      "active_enemies_remaining": 0,
+      "actual_kills": 18,
+      "arena_seed": null,
+      "boss_moves_released": {},
+      "boss_moves_started": {},
+      "build": "mage",
+      "clear_seconds": 35.1499999999986,
+      "cleared": true,
+      "damage_taken": 0.0,
+      "debug_navigation": {},
+      "end_hp": 66.2,
+      "end_position": [
+        1272.49206542969,
+        250.351211547852
+      ],
+      "enemies_remaining": 0,
+      "entry_hp": 66.2,
+      "entry_level": 5,
+      "entry_setup": "natural_campaign",
+      "entry_stats": {
+        "armor": 0.0,
+        "attack_speed": 1.0,
+        "block_rate": 0.05,
+        "critical_damage": 0.5,
+        "critical_rate": 0.05,
+        "damage": 29.4,
+        "dash_cooldown": 3.0,
+        "dash_damage": 0.0,
+        "dodge_cooldown": 4.0,
+        "dodge_rate": 0.05,
+        "lifesteal": 0.0,
+        "mage_armor": 21.8,
+        "magic": 0.0,
+        "max_hp": 66.2,
+        "pickup": 77.8,
+        "projectiles": 0.0,
+        "range": 78.0,
+        "regen": 0.15,
+        "shield_regen": 5.0,
+        "speed": 140.0
+      },
+      "entry_weapon": "staff",
+      "entry_xp": 2.0,
+      "environment_hazard_contacts": 0,
+      "environment_hazards_released": 6,
+      "environment_hazards_spawned": 6,
+      "gear": [],
+      "hits_taken": 0,
+      "initial_enemies": 18,
+      "minimum_hp": 66.2,
+      "mode": "2:fire",
+      "movement": "kite",
+      "outcome": "cleared",
+      "peak_active_enemies": 6,
+      "queued_enemies_remaining": 0,
+      "remaining_enemy_details": [],
+      "seconds_observed": 35.1499999999986,
+      "seed": 1760,
+      "skills": [],
+      "stage": 3,
+      "strategy": "2:fire",
+      "survived": true,
+      "travel_pixels": 3943.33558940887,
+      "upgrades": [
+        {
+          "id": "balanced_training",
+          "level": 5,
+          "source": "offered Tactic"
+        }
+      ]
+    },
+    {
+      "active_enemies_remaining": 0,
+      "actual_kills": 20,
+      "arena_seed": null,
+      "boss_moves_released": {},
+      "boss_moves_started": {},
+      "build": "mage",
+      "clear_seconds": 43.6166666666648,
+      "cleared": true,
+      "damage_taken": 0.0,
+      "debug_navigation": {},
+      "end_hp": 67.8,
+      "end_position": [
+        591.331787109375,
+        227.851531982422
+      ],
+      "enemies_remaining": 0,
+      "entry_hp": 67.0,
+      "entry_level": 6,
+      "entry_setup": "natural_campaign",
+      "entry_stats": {
+        "armor": 0.0,
+        "attack_speed": 1.0,
+        "block_rate": 0.05,
+        "critical_damage": 0.5,
+        "critical_rate": 0.05,
+        "damage": 30.25,
+        "dash_cooldown": 3.0,
+        "dash_damage": 0.0,
+        "dodge_cooldown": 4.0,
+        "dodge_rate": 0.05,
+        "lifesteal": 0.0,
+        "mage_armor": 22.25,
+        "magic": 0.0,
+        "max_hp": 67.0,
+        "pickup": 78.5,
+        "projectiles": 0.0,
+        "range": 78.0,
+        "regen": 0.15,
+        "shield_regen": 5.0,
+        "speed": 140.0
+      },
+      "entry_weapon": "staff",
+      "entry_xp": 17.0,
+      "environment_hazard_contacts": 0,
+      "environment_hazards_released": 7,
+      "environment_hazards_spawned": 7,
+      "gear": [],
+      "hits_taken": 0,
+      "initial_enemies": 20,
+      "minimum_hp": 67.0,
+      "mode": "2:fire",
+      "movement": "kite",
+      "outcome": "cleared",
+      "peak_active_enemies": 6,
+      "queued_enemies_remaining": 0,
+      "remaining_enemy_details": [],
+      "seconds_observed": 43.6166666666648,
+      "seed": 1760,
+      "skills": [],
+      "stage": 4,
+      "strategy": "2:fire",
+      "survived": true,
+      "travel_pixels": 5377.66049718857,
+      "upgrades": [
+        {
+          "id": "balanced_training",
+          "level": 5,
+          "source": "offered Tactic"
+        }
+      ]
+    },
+    {
+      "active_enemies_remaining": 0,
+      "actual_kills": 24,
+      "arena_seed": null,
+      "boss_moves_released": {
+        "charge": 2,
+        "rootline": 3,
+        "thornwheel": 1
+      },
+      "boss_moves_started": {
+        "charge": 3,
+        "rootline": 3,
+        "thornwheel": 1
+      },
+      "build": "mage",
+      "clear_seconds": 54.5166666666642,
+      "cleared": true,
+      "damage_taken": 0.0,
+      "debug_navigation": {},
+      "end_hp": 69.4,
+      "end_position": [
+        816.541748046875,
+        310.808441162109
+      ],
+      "enemies_remaining": 0,
+      "entry_hp": 68.6,
+      "entry_level": 8,
+      "entry_setup": "natural_campaign",
+      "entry_stats": {
+        "armor": 0.0,
+        "attack_speed": 1.0,
+        "block_rate": 0.05,
+        "critical_damage": 0.5,
+        "critical_rate": 0.05,
+        "damage": 31.95,
+        "dash_cooldown": 3.0,
+        "dash_damage": 0.0,
+        "dodge_cooldown": 4.0,
+        "dodge_rate": 0.05,
+        "lifesteal": 0.0,
+        "mage_armor": 23.15,
+        "magic": 0.0,
+        "max_hp": 68.6,
+        "pickup": 79.9,
+        "projectiles": 0.0,
+        "range": 78.0,
+        "regen": 0.15,
+        "shield_regen": 5.0,
+        "speed": 140.0
+      },
+      "entry_weapon": "staff",
+      "entry_xp": 6.0,
+      "environment_hazard_contacts": 0,
+      "environment_hazards_released": 9,
+      "environment_hazards_spawned": 9,
+      "gear": [],
+      "hits_taken": 0,
+      "initial_enemies": 24,
+      "minimum_hp": 68.6,
+      "mode": "2:fire",
+      "movement": "kite",
+      "outcome": "cleared",
+      "peak_active_enemies": 6,
+      "queued_enemies_remaining": 0,
+      "remaining_enemy_details": [],
+      "seconds_observed": 54.5166666666642,
+      "seed": 1760,
+      "skills": [],
+      "stage": 5,
+      "strategy": "2:fire",
+      "survived": true,
+      "travel_pixels": 6059.89270234108,
+      "upgrades": [
+        {
+          "id": "balanced_training",
+          "level": 5,
+          "source": "offered Tactic"
+        }
+      ]
+    },
+    {
+      "active_enemies_remaining": 0,
+      "actual_kills": 25,
+      "arena_seed": null,
+      "boss_moves_released": {},
+      "boss_moves_started": {},
+      "build": "mage",
+      "clear_seconds": 47.6749999999979,
+      "cleared": true,
+      "damage_taken": 0.0,
+      "debug_navigation": {},
+      "end_hp": 83.0,
+      "end_position": [
+        758.652648925781,
+        733.234924316406
+      ],
+      "enemies_remaining": 0,
+      "entry_hp": 82.2,
+      "entry_level": 10,
+      "entry_setup": "natural_campaign",
+      "entry_stats": {
+        "armor": 0.0,
+        "attack_speed": 1.17,
+        "block_rate": 0.05,
+        "critical_damage": 0.5,
+        "critical_rate": 0.05,
+        "damage": 33.65,
+        "dash_cooldown": 3.0,
+        "dash_damage": 0.0,
+        "dodge_cooldown": 4.0,
+        "dodge_rate": 0.05,
+        "lifesteal": 0.0,
+        "mage_armor": 24.05,
+        "magic": 0.0,
+        "max_hp": 82.2,
+        "pickup": 81.3,
+        "projectiles": 0.0,
+        "range": 78.0,
+        "regen": 0.25,
+        "shield_regen": 5.0,
+        "speed": 148.29
+      },
+      "entry_weapon": "staff",
+      "entry_xp": 13.0,
+      "environment_hazard_contacts": 0,
+      "environment_hazards_released": 8,
+      "environment_hazards_spawned": 8,
+      "gear": [
+        {
+          "description": "Lucky Acorn\n+0.2 attack speed / +8.3 speed",
+          "stage": 5
+        }
+      ],
+      "hits_taken": 0,
+      "initial_enemies": 25,
+      "minimum_hp": 82.2,
+      "mode": "2:fire",
+      "movement": "kite",
+      "outcome": "cleared",
+      "peak_active_enemies": 8,
+      "queued_enemies_remaining": 0,
+      "remaining_enemy_details": [],
+      "seconds_observed": 47.6749999999979,
+      "seed": 1760,
+      "skills": [
+        "mage_spread_1"
+      ],
+      "stage": 6,
+      "strategy": "2:fire",
+      "survived": true,
+      "travel_pixels": 6158.50358009338,
+      "upgrades": [
+        {
+          "id": "balanced_training",
+          "level": 5,
+          "source": "offered Tactic"
+        },
+        {
+          "id": "vitality",
+          "level": 10,
+          "source": "offered Tactic"
+        },
+        {
+          "id": "mage_spread_1",
+          "source": "offered Skill",
+          "stage": 5
+        }
+      ]
+    },
+    {
+      "active_enemies_remaining": 0,
+      "actual_kills": 28,
+      "arena_seed": null,
+      "boss_moves_released": {},
+      "boss_moves_started": {},
+      "build": "mage",
+      "clear_seconds": 49.5749999999978,
+      "cleared": true,
+      "damage_taken": 0.0,
+      "debug_navigation": {},
+      "end_hp": 84.6,
+      "end_position": [
+        79.5165710449219,
+        160.151611328125
+      ],
+      "enemies_remaining": 0,
+      "entry_hp": 83.8,
+      "entry_level": 12,
+      "entry_setup": "natural_campaign",
+      "entry_stats": {
+        "armor": 0.0,
+        "attack_speed": 1.17,
+        "block_rate": 0.05,
+        "critical_damage": 0.5,
+        "critical_rate": 0.05,
+        "damage": 35.35,
+        "dash_cooldown": 3.0,
+        "dash_damage": 0.0,
+        "dodge_cooldown": 4.0,
+        "dodge_rate": 0.05,
+        "lifesteal": 0.0,
+        "mage_armor": 24.95,
+        "magic": 0.0,
+        "max_hp": 83.8,
+        "pickup": 82.7,
+        "projectiles": 0.0,
+        "range": 78.0,
+        "regen": 0.25,
+        "shield_regen": 5.0,
+        "speed": 148.29
+      },
+      "entry_weapon": "staff",
+      "entry_xp": 13.0,
+      "environment_hazard_contacts": 0,
+      "environment_hazards_released": 8,
+      "environment_hazards_spawned": 9,
+      "gear": [
+        {
+          "description": "Lucky Acorn\n+0.2 attack speed / +8.3 speed",
+          "stage": 5
+        }
+      ],
+      "hits_taken": 0,
+      "initial_enemies": 28,
+      "minimum_hp": 83.8,
+      "mode": "2:fire",
+      "movement": "kite",
+      "outcome": "cleared",
+      "peak_active_enemies": 8,
+      "queued_enemies_remaining": 0,
+      "remaining_enemy_details": [],
+      "seconds_observed": 49.5749999999978,
+      "seed": 1760,
+      "skills": [
+        "mage_spread_1"
+      ],
+      "stage": 7,
+      "strategy": "2:fire",
+      "survived": true,
+      "travel_pixels": 6475.65497899055,
+      "upgrades": [
+        {
+          "id": "balanced_training",
+          "level": 5,
+          "source": "offered Tactic"
+        },
+        {
+          "id": "vitality",
+          "level": 10,
+          "source": "offered Tactic"
+        },
+        {
+          "id": "mage_spread_1",
+          "source": "offered Skill",
+          "stage": 5
+        }
+      ]
+    },
+    {
+      "active_enemies_remaining": 0,
+      "actual_kills": 30,
+      "arena_seed": null,
+      "boss_moves_released": {},
+      "boss_moves_started": {},
+      "build": "mage",
+      "clear_seconds": 57.966666666664,
+      "cleared": true,
+      "damage_taken": 0.0,
+      "debug_navigation": {},
+      "end_hp": 86.2,
+      "end_position": [
+        664.111267089844,
+        550.962646484375
+      ],
+      "enemies_remaining": 0,
+      "entry_hp": 85.4,
+      "entry_level": 14,
+      "entry_setup": "natural_campaign",
+      "entry_stats": {
+        "armor": 0.0,
+        "attack_speed": 1.17,
+        "block_rate": 0.05,
+        "critical_damage": 0.5,
+        "critical_rate": 0.05,
+        "damage": 37.05,
+        "dash_cooldown": 3.0,
+        "dash_damage": 0.0,
+        "dodge_cooldown": 4.0,
+        "dodge_rate": 0.05,
+        "lifesteal": 0.0,
+        "mage_armor": 25.85,
+        "magic": 0.0,
+        "max_hp": 85.4,
+        "pickup": 84.1,
+        "projectiles": 0.0,
+        "range": 78.0,
+        "regen": 0.25,
+        "shield_regen": 5.0,
+        "speed": 148.29
+      },
+      "entry_weapon": "staff",
+      "entry_xp": 10.0,
+      "environment_hazard_contacts": 0,
+      "environment_hazards_released": 9,
+      "environment_hazards_spawned": 10,
+      "gear": [
+        {
+          "description": "Lucky Acorn\n+0.2 attack speed / +8.3 speed",
+          "stage": 5
+        }
+      ],
+      "hits_taken": 0,
+      "initial_enemies": 30,
+      "minimum_hp": 85.4,
+      "mode": "2:fire",
+      "movement": "kite",
+      "outcome": "cleared",
+      "peak_active_enemies": 8,
+      "queued_enemies_remaining": 0,
+      "remaining_enemy_details": [],
+      "seconds_observed": 57.966666666664,
+      "seed": 1760,
+      "skills": [
+        "mage_spread_1"
+      ],
+      "stage": 8,
+      "strategy": "2:fire",
+      "survived": true,
+      "travel_pixels": 7091.0639693737,
+      "upgrades": [
+        {
+          "id": "balanced_training",
+          "level": 5,
+          "source": "offered Tactic"
+        },
+        {
+          "id": "vitality",
+          "level": 10,
+          "source": "offered Tactic"
+        },
+        {
+          "id": "mage_spread_1",
+          "source": "offered Skill",
+          "stage": 5
+        }
+      ]
+    },
+    {
+      "active_enemies_remaining": 0,
+      "actual_kills": 33,
+      "arena_seed": null,
+      "boss_moves_released": {},
+      "boss_moves_started": {},
+      "build": "mage",
+      "clear_seconds": 55.2333333333308,
+      "cleared": true,
+      "damage_taken": 0.0,
+      "debug_navigation": {},
+      "end_hp": 87.0,
+      "end_position": [
+        114.684661865234,
+        167.385589599609
+      ],
+      "enemies_remaining": 0,
+      "entry_hp": 87.0,
+      "entry_level": 16,
+      "entry_setup": "natural_campaign",
+      "entry_stats": {
+        "armor": 0.0,
+        "attack_speed": 1.17,
+        "block_rate": 0.05,
+        "critical_damage": 0.5,
+        "critical_rate": 0.05,
+        "damage": 38.75,
+        "dash_cooldown": 3.0,
+        "dash_damage": 0.0,
+        "dodge_cooldown": 4.0,
+        "dodge_rate": 0.05,
+        "lifesteal": 0.0,
+        "mage_armor": 26.75,
+        "magic": 0.0,
+        "max_hp": 87.0,
+        "pickup": 85.5,
+        "projectiles": 0.0,
+        "range": 78.0,
+        "regen": 0.55,
+        "shield_regen": 5.0,
+        "speed": 148.29
+      },
+      "entry_weapon": "staff",
+      "entry_xp": 1.0,
+      "environment_hazard_contacts": 0,
+      "environment_hazards_released": 9,
+      "environment_hazards_spawned": 9,
+      "gear": [
+        {
+          "description": "Lucky Acorn\n+0.2 attack speed / +8.3 speed",
+          "stage": 5
+        }
+      ],
+      "hits_taken": 0,
+      "initial_enemies": 33,
+      "minimum_hp": 87.0,
+      "mode": "2:fire",
+      "movement": "kite",
+      "outcome": "cleared",
+      "peak_active_enemies": 8,
+      "queued_enemies_remaining": 0,
+      "remaining_enemy_details": [],
+      "seconds_observed": 55.2333333333308,
+      "seed": 1760,
+      "skills": [
+        "mage_spread_1"
+      ],
+      "stage": 9,
+      "strategy": "2:fire",
+      "survived": true,
+      "travel_pixels": 7186.23845255375,
+      "upgrades": [
+        {
+          "id": "balanced_training",
+          "level": 5,
+          "source": "offered Tactic"
+        },
+        {
+          "id": "vitality",
+          "level": 10,
+          "source": "offered Tactic"
+        },
+        {
+          "id": "mage_spread_1",
+          "source": "offered Skill",
+          "stage": 5
+        },
+        {
+          "id": "spring_water",
+          "level": 15,
+          "source": "offered Tactic"
+        }
+      ]
+    },
+    {
+      "active_enemies_remaining": 0,
+      "actual_kills": 37,
+      "arena_seed": null,
+      "boss_moves_released": {
+        "blast": 2,
+        "cinder_cross": 1,
+        "ember_bloom": 1
+      },
+      "boss_moves_started": {
+        "blast": 2,
+        "cinder_cross": 2,
+        "ember_bloom": 1
+      },
+      "build": "mage",
+      "clear_seconds": 75.5000000000062,
+      "cleared": true,
+      "damage_taken": 0.0,
+      "debug_navigation": {},
+      "end_hp": 88.6,
+      "end_position": [
+        433.667785644531,
+        431.742126464844
+      ],
+      "enemies_remaining": 0,
+      "entry_hp": 87.8,
+      "entry_level": 17,
+      "entry_setup": "natural_campaign",
+      "entry_stats": {
+        "armor": 0.0,
+        "attack_speed": 1.17,
+        "block_rate": 0.05,
+        "critical_damage": 0.5,
+        "critical_rate": 0.05,
+        "damage": 39.6,
+        "dash_cooldown": 3.0,
+        "dash_damage": 0.0,
+        "dodge_cooldown": 4.0,
+        "dodge_rate": 0.05,
+        "lifesteal": 0.0,
+        "mage_armor": 27.2,
+        "magic": 0.0,
+        "max_hp": 87.8,
+        "pickup": 86.2,
+        "projectiles": 0.0,
+        "range": 78.0,
+        "regen": 0.55,
+        "shield_regen": 5.0,
+        "speed": 148.29
+      },
+      "entry_weapon": "staff",
+      "entry_xp": 46.0,
+      "environment_hazard_contacts": 0,
+      "environment_hazards_released": 13,
+      "environment_hazards_spawned": 13,
+      "gear": [
+        {
+          "description": "Lucky Acorn\n+0.2 attack speed / +8.3 speed",
+          "stage": 5
+        }
+      ],
+      "hits_taken": 0,
+      "initial_enemies": 37,
+      "minimum_hp": 87.8,
+      "mode": "2:fire",
+      "movement": "kite",
+      "outcome": "cleared",
+      "peak_active_enemies": 8,
+      "queued_enemies_remaining": 0,
+      "remaining_enemy_details": [],
+      "seconds_observed": 75.5000000000062,
+      "seed": 1760,
+      "skills": [
+        "mage_spread_1"
+      ],
+      "stage": 10,
+      "strategy": "2:fire",
+      "survived": true,
+      "travel_pixels": 9308.87748908997,
+      "upgrades": [
+        {
+          "id": "balanced_training",
+          "level": 5,
+          "source": "offered Tactic"
+        },
+        {
+          "id": "vitality",
+          "level": 10,
+          "source": "offered Tactic"
+        },
+        {
+          "id": "mage_spread_1",
+          "source": "offered Skill",
+          "stage": 5
+        },
+        {
+          "id": "spring_water",
+          "level": 15,
+          "source": "offered Tactic"
+        }
+      ]
+    },
+    {
+      "active_enemies_remaining": 0,
+      "actual_kills": 38,
+      "arena_seed": null,
+      "boss_moves_released": {},
+      "boss_moves_started": {},
+      "build": "mage",
+      "clear_seconds": 84.3666666666799,
+      "cleared": true,
+      "damage_taken": 0.0,
+      "debug_navigation": {},
+      "end_hp": 111.0,
+      "end_position": [
+        689.265808105469,
+        471.995391845703
+      ],
+      "enemies_remaining": 0,
+      "entry_hp": 110.2,
+      "entry_level": 20,
+      "entry_setup": "natural_campaign",
+      "entry_stats": {
+        "armor": 0.0,
+        "attack_speed": 1.17,
+        "block_rate": 0.05,
+        "critical_damage": 0.58,
+        "critical_rate": 0.05,
+        "damage": 42.15,
+        "dash_cooldown": 3.0,
+        "dash_damage": 0.0,
+        "dodge_cooldown": 4.0,
+        "dodge_rate": 0.05,
+        "lifesteal": 0.0,
+        "mage_armor": 28.55,
+        "magic": 0.0,
+        "max_hp": 110.2,
+        "pickup": 88.3000000000001,
+        "projectiles": 0.0,
+        "range": 87.39,
+        "regen": 0.55,
+        "shield_regen": 5.0,
+        "speed": 148.29
+      },
+      "entry_weapon": "staff",
+      "entry_xp": 10.0,
+      "environment_hazard_contacts": 0,
+      "environment_hazards_released": 30,
+      "environment_hazards_spawned": 30,
+      "gear": [
+        {
+          "description": "Lucky Acorn\n+0.2 attack speed / +8.3 speed",
+          "stage": 5
+        },
+        {
+          "description": "Windchime Charm\n+8.0% critical damage / +9.4 range",
+          "stage": 10
+        }
+      ],
+      "hits_taken": 0,
+      "initial_enemies": 38,
+      "minimum_hp": 110.2,
+      "mode": "2:fire",
+      "movement": "kite",
+      "outcome": "cleared",
+      "peak_active_enemies": 10,
+      "queued_enemies_remaining": 0,
+      "remaining_enemy_details": [],
+      "seconds_observed": 84.3666666666799,
+      "seed": 1760,
+      "skills": [
+        "mage_spread_1",
+        "mage_ward_1"
+      ],
+      "stage": 11,
+      "strategy": "2:fire",
+      "survived": true,
+      "travel_pixels": 10373.7258585691,
+      "upgrades": [
+        {
+          "id": "balanced_training",
+          "level": 5,
+          "source": "offered Tactic"
+        },
+        {
+          "id": "vitality",
+          "level": 10,
+          "source": "offered Tactic"
+        },
+        {
+          "id": "mage_spread_1",
+          "source": "offered Skill",
+          "stage": 5
+        },
+        {
+          "id": "spring_water",
+          "level": 15,
+          "source": "offered Tactic"
+        },
+        {
+          "id": "heartwood",
+          "level": 20,
+          "source": "offered Tactic"
+        },
+        {
+          "id": "mage_ward_1",
+          "source": "offered Skill",
+          "stage": 10
+        }
+      ]
+    },
+    {
+      "active_enemies_remaining": 0,
+      "actual_kills": 40,
+      "arena_seed": null,
+      "boss_moves_released": {},
+      "boss_moves_started": {},
+      "build": "mage",
+      "clear_seconds": 82.4750000000117,
+      "cleared": true,
+      "damage_taken": 10.52,
+      "debug_navigation": {},
+      "end_hp": 113.4,
+      "end_position": [
+        326.681427001953,
+        524.723999023438
+      ],
+      "enemies_remaining": 0,
+      "entry_hp": 111.8,
+      "entry_level": 22,
+      "entry_setup": "natural_campaign",
+      "entry_stats": {
+        "armor": 0.0,
+        "attack_speed": 1.17,
+        "block_rate": 0.05,
+        "critical_damage": 0.58,
+        "critical_rate": 0.05,
+        "damage": 43.85,
+        "dash_cooldown": 3.0,
+        "dash_damage": 0.0,
+        "dodge_cooldown": 4.0,
+        "dodge_rate": 0.05,
+        "lifesteal": 0.0,
+        "mage_armor": 29.45,
+        "magic": 0.0,
+        "max_hp": 111.8,
+        "pickup": 89.7000000000001,
+        "projectiles": 0.0,
+        "range": 87.39,
+        "regen": 0.55,
+        "shield_regen": 5.0,
+        "speed": 148.29
+      },
+      "entry_weapon": "staff",
+      "entry_xp": 27.0,
+      "environment_hazard_contacts": 0,
+      "environment_hazards_released": 30,
+      "environment_hazards_spawned": 30,
+      "gear": [
+        {
+          "description": "Lucky Acorn\n+0.2 attack speed / +8.3 speed",
+          "stage": 5
+        },
+        {
+          "description": "Windchime Charm\n+8.0% critical damage / +9.4 range",
+          "stage": 10
+        }
+      ],
+      "hits_taken": 2,
+      "initial_enemies": 40,
+      "minimum_hp": 102.86,
+      "mode": "2:fire",
+      "movement": "kite",
+      "outcome": "cleared",
+      "peak_active_enemies": 10,
+      "queued_enemies_remaining": 0,
+      "remaining_enemy_details": [],
+      "seconds_observed": 82.4750000000117,
+      "seed": 1760,
+      "skills": [
+        "mage_spread_1",
+        "mage_ward_1"
+      ],
+      "stage": 12,
+      "strategy": "2:fire",
+      "survived": true,
+      "travel_pixels": 9829.2750595808,
+      "upgrades": [
+        {
+          "id": "balanced_training",
+          "level": 5,
+          "source": "offered Tactic"
+        },
+        {
+          "id": "vitality",
+          "level": 10,
+          "source": "offered Tactic"
+        },
+        {
+          "id": "mage_spread_1",
+          "source": "offered Skill",
+          "stage": 5
+        },
+        {
+          "id": "spring_water",
+          "level": 15,
+          "source": "offered Tactic"
+        },
+        {
+          "id": "heartwood",
+          "level": 20,
+          "source": "offered Tactic"
+        },
+        {
+          "id": "mage_ward_1",
+          "source": "offered Skill",
+          "stage": 10
+        }
+      ]
+    },
+    {
+      "active_enemies_remaining": 0,
+      "actual_kills": 43,
+      "arena_seed": null,
+      "boss_moves_released": {},
+      "boss_moves_started": {},
+      "build": "mage",
+      "clear_seconds": 100.250000000026,
+      "cleared": true,
+      "damage_taken": 0.0,
+      "debug_navigation": {},
+      "end_hp": 124.2,
+      "end_position": [
+        655.579284667969,
+        200.475311279297
+      ],
+      "enemies_remaining": 0,
+      "entry_hp": 113.4,
+      "entry_level": 24,
+      "entry_setup": "natural_campaign",
+      "entry_stats": {
+        "armor": 0.0,
+        "attack_speed": 1.17,
+        "block_rate": 0.05,
+        "critical_damage": 0.58,
+        "critical_rate": 0.05,
+        "damage": 45.55,
+        "dash_cooldown": 3.0,
+        "dash_damage": 0.0,
+        "dodge_cooldown": 4.0,
+        "dodge_rate": 0.05,
+        "lifesteal": 0.0,
+        "mage_armor": 30.35,
+        "magic": 0.0,
+        "max_hp": 113.4,
+        "pickup": 91.1000000000001,
+        "projectiles": 0.0,
+        "range": 87.39,
+        "regen": 0.55,
+        "shield_regen": 5.0,
+        "speed": 148.29
+      },
+      "entry_weapon": "staff",
+      "entry_xp": 40.0,
+      "environment_hazard_contacts": 0,
+      "environment_hazards_released": 36,
+      "environment_hazards_spawned": 38,
+      "gear": [
+        {
+          "description": "Lucky Acorn\n+0.2 attack speed / +8.3 speed",
+          "stage": 5
+        },
+        {
+          "description": "Windchime Charm\n+8.0% critical damage / +9.4 range",
+          "stage": 10
+        }
+      ],
+      "hits_taken": 0,
+      "initial_enemies": 43,
+      "minimum_hp": 113.4,
+      "mode": "2:fire",
+      "movement": "kite",
+      "outcome": "cleared",
+      "peak_active_enemies": 10,
+      "queued_enemies_remaining": 0,
+      "remaining_enemy_details": [],
+      "seconds_observed": 100.250000000026,
+      "seed": 1760,
+      "skills": [
+        "mage_spread_1",
+        "mage_ward_1"
+      ],
+      "stage": 13,
+      "strategy": "2:fire",
+      "survived": true,
+      "travel_pixels": 11450.7479910851,
+      "upgrades": [
+        {
+          "id": "balanced_training",
+          "level": 5,
+          "source": "offered Tactic"
+        },
+        {
+          "id": "vitality",
+          "level": 10,
+          "source": "offered Tactic"
+        },
+        {
+          "id": "mage_spread_1",
+          "source": "offered Skill",
+          "stage": 5
+        },
+        {
+          "id": "spring_water",
+          "level": 15,
+          "source": "offered Tactic"
+        },
+        {
+          "id": "heartwood",
+          "level": 20,
+          "source": "offered Tactic"
+        },
+        {
+          "id": "mage_ward_1",
+          "source": "offered Skill",
+          "stage": 10
+        }
+      ]
+    },
+    {
+      "active_enemies_remaining": 0,
+      "actual_kills": 45,
+      "arena_seed": null,
+      "boss_moves_released": {},
+      "boss_moves_started": {},
+      "build": "mage",
+      "clear_seconds": 96.625000000023,
+      "cleared": true,
+      "damage_taken": 0.0,
+      "debug_navigation": {},
+      "end_hp": 125.8,
+      "end_position": [
+        643.085205078125,
+        618.291259765625
+      ],
+      "enemies_remaining": 0,
+      "entry_hp": 125.0,
+      "entry_level": 26,
+      "entry_setup": "natural_campaign",
+      "entry_stats": {
+        "armor": 0.0,
+        "attack_speed": 1.17,
+        "block_rate": 0.05,
+        "critical_damage": 0.58,
+        "critical_rate": 0.05,
+        "damage": 47.25,
+        "dash_cooldown": 3.0,
+        "dash_damage": 0.0,
+        "dodge_cooldown": 4.0,
+        "dodge_rate": 0.065,
+        "lifesteal": 0.0,
+        "mage_armor": 31.25,
+        "magic": 0.0,
+        "max_hp": 125.0,
+        "pickup": 92.5000000000001,
+        "projectiles": 0.0,
+        "range": 87.39,
+        "regen": 0.55,
+        "shield_regen": 5.0,
+        "speed": 148.29
+      },
+      "entry_weapon": "staff",
+      "entry_xp": 53.0,
+      "environment_hazard_contacts": 0,
+      "environment_hazards_released": 36,
+      "environment_hazards_spawned": 36,
+      "gear": [
+        {
+          "description": "Lucky Acorn\n+0.2 attack speed / +8.3 speed",
+          "stage": 5
+        },
+        {
+          "description": "Windchime Charm\n+8.0% critical damage / +9.4 range",
+          "stage": 10
+        }
+      ],
+      "hits_taken": 0,
+      "initial_enemies": 45,
+      "minimum_hp": 125.0,
+      "mode": "2:fire",
+      "movement": "kite",
+      "outcome": "cleared",
+      "peak_active_enemies": 10,
+      "queued_enemies_remaining": 0,
+      "remaining_enemy_details": [],
+      "seconds_observed": 96.625000000023,
+      "seed": 1760,
+      "skills": [
+        "mage_spread_1",
+        "mage_ward_1"
+      ],
+      "stage": 14,
+      "strategy": "2:fire",
+      "survived": true,
+      "travel_pixels": 11671.8077181578,
+      "upgrades": [
+        {
+          "id": "balanced_training",
+          "level": 5,
+          "source": "offered Tactic"
+        },
+        {
+          "id": "vitality",
+          "level": 10,
+          "source": "offered Tactic"
+        },
+        {
+          "id": "mage_spread_1",
+          "source": "offered Skill",
+          "stage": 5
+        },
+        {
+          "id": "spring_water",
+          "level": 15,
+          "source": "offered Tactic"
+        },
+        {
+          "id": "heartwood",
+          "level": 20,
+          "source": "offered Tactic"
+        },
+        {
+          "id": "mage_ward_1",
+          "source": "offered Skill",
+          "stage": 10
+        },
+        {
+          "id": "agile_heart",
+          "level": 25,
+          "source": "offered Tactic"
+        }
+      ]
+    },
+    {
+      "active_enemies_remaining": 0,
+      "actual_kills": 49,
+      "arena_seed": null,
+      "boss_moves_released": {
+        "crystal_spokes": 1,
+        "fan": 2,
+        "prism_lance": 2,
+        "ring": 2
+      },
+      "boss_moves_started": {
+        "crystal_spokes": 1,
+        "fan": 2,
+        "prism_lance": 2,
+        "ring": 2
+      },
+      "build": "mage",
+      "clear_seconds": 115.475000000038,
+      "cleared": true,
+      "damage_taken": 1.80000000000008,
+      "debug_navigation": {},
+      "end_hp": 140.2,
+      "end_position": [
+        1010.56182861328,
+        601.121948242188
+      ],
+      "enemies_remaining": 0,
+      "entry_hp": 126.6,
+      "entry_level": 28,
+      "entry_setup": "natural_campaign",
+      "entry_stats": {
+        "armor": 0.0,
+        "attack_speed": 1.17,
+        "block_rate": 0.05,
+        "critical_damage": 0.58,
+        "critical_rate": 0.05,
+        "damage": 48.95,
+        "dash_cooldown": 3.0,
+        "dash_damage": 0.0,
+        "dodge_cooldown": 4.0,
+        "dodge_rate": 0.065,
+        "lifesteal": 0.0,
+        "mage_armor": 32.15,
+        "magic": 0.0,
+        "max_hp": 126.6,
+        "pickup": 93.9000000000001,
+        "projectiles": 0.0,
+        "range": 87.39,
+        "regen": 0.55,
+        "shield_regen": 5.0,
+        "speed": 148.29
+      },
+      "entry_weapon": "staff",
+      "entry_xp": 62.0,
+      "environment_hazard_contacts": 0,
+      "environment_hazards_released": 44,
+      "environment_hazards_spawned": 44,
+      "gear": [
+        {
+          "description": "Lucky Acorn\n+0.2 attack speed / +8.3 speed",
+          "stage": 5
+        },
+        {
+          "description": "Windchime Charm\n+8.0% critical damage / +9.4 range",
+          "stage": 10
+        }
+      ],
+      "hits_taken": 2,
+      "initial_enemies": 49,
+      "minimum_hp": 125.25,
+      "mode": "2:fire",
+      "movement": "kite",
+      "outcome": "cleared",
+      "peak_active_enemies": 10,
+      "queued_enemies_remaining": 0,
+      "remaining_enemy_details": [],
+      "seconds_observed": 115.475000000038,
+      "seed": 1760,
+      "skills": [
+        "mage_spread_1",
+        "mage_ward_1"
+      ],
+      "stage": 15,
+      "strategy": "2:fire",
+      "survived": true,
+      "travel_pixels": 13750.3313425779,
+      "upgrades": [
+        {
+          "id": "balanced_training",
+          "level": 5,
+          "source": "offered Tactic"
+        },
+        {
+          "id": "vitality",
+          "level": 10,
+          "source": "offered Tactic"
+        },
+        {
+          "id": "mage_spread_1",
+          "source": "offered Skill",
+          "stage": 5
+        },
+        {
+          "id": "spring_water",
+          "level": 15,
+          "source": "offered Tactic"
+        },
+        {
+          "id": "heartwood",
+          "level": 20,
+          "source": "offered Tactic"
+        },
+        {
+          "id": "mage_ward_1",
+          "source": "offered Skill",
+          "stage": 10
+        },
+        {
+          "id": "agile_heart",
+          "level": 25,
+          "source": "offered Tactic"
+        }
+      ]
+    },
+    {
+      "active_enemies_remaining": 0,
+      "actual_kills": 50,
+      "arena_seed": null,
+      "boss_moves_released": {},
+      "boss_moves_started": {},
+      "build": "mage",
+      "clear_seconds": 89.4500000000173,
+      "cleared": true,
+      "damage_taken": 25.14,
+      "debug_navigation": {},
+      "end_hp": 141.8,
+      "end_position": [
+        470.289276123047,
+        446.394836425781
+      ],
+      "enemies_remaining": 0,
+      "entry_hp": 141.0,
+      "entry_level": 31,
+      "entry_setup": "natural_campaign",
+      "entry_stats": {
+        "armor": 0.0,
+        "attack_speed": 1.17,
+        "block_rate": 0.05,
+        "critical_damage": 0.68,
+        "critical_rate": 0.05,
+        "damage": 51.5,
+        "dash_cooldown": 3.0,
+        "dash_damage": 0.0,
+        "dodge_cooldown": 4.0,
+        "dodge_rate": 0.065,
+        "lifesteal": 0.0,
+        "mage_armor": 33.5,
+        "magic": 0.0,
+        "max_hp": 141.0,
+        "pickup": 96.0000000000001,
+        "projectiles": 0.0,
+        "range": 87.39,
+        "regen": 1.07,
+        "shield_regen": 5.0,
+        "speed": 148.29
+      },
+      "entry_weapon": "staff",
+      "entry_xp": 23.0,
+      "environment_hazard_contacts": 0,
+      "environment_hazards_released": 34,
+      "environment_hazards_spawned": 36,
+      "gear": [
+        {
+          "description": "Lucky Acorn\n+0.2 attack speed / +8.3 speed",
+          "stage": 5
+        },
+        {
+          "description": "Windchime Charm\n+8.0% critical damage / +9.4 range",
+          "stage": 10
+        },
+        {
+          "description": "Heartwood Buckler\n+0.4 regen / +10.0% critical damage",
+          "stage": 15
+        }
+      ],
+      "hits_taken": 2,
+      "initial_enemies": 50,
+      "minimum_hp": 118.12,
+      "mode": "2:fire",
+      "movement": "kite",
+      "outcome": "cleared",
+      "peak_active_enemies": 12,
+      "queued_enemies_remaining": 0,
+      "remaining_enemy_details": [],
+      "seconds_observed": 89.4500000000173,
+      "seed": 1760,
+      "skills": [
+        "mage_spread_1",
+        "mage_ward_1",
+        "mage_familiar_1"
+      ],
+      "stage": 16,
+      "strategy": "2:fire",
+      "survived": true,
+      "travel_pixels": 10734.5307620764,
+      "upgrades": [
+        {
+          "id": "balanced_training",
+          "level": 5,
+          "source": "offered Tactic"
+        },
+        {
+          "id": "vitality",
+          "level": 10,
+          "source": "offered Tactic"
+        },
+        {
+          "id": "mage_spread_1",
+          "source": "offered Skill",
+          "stage": 5
+        },
+        {
+          "id": "spring_water",
+          "level": 15,
+          "source": "offered Tactic"
+        },
+        {
+          "id": "heartwood",
+          "level": 20,
+          "source": "offered Tactic"
+        },
+        {
+          "id": "mage_ward_1",
+          "source": "offered Skill",
+          "stage": 10
+        },
+        {
+          "id": "agile_heart",
+          "level": 25,
+          "source": "offered Tactic"
+        },
+        {
+          "id": "vitality",
+          "level": 30,
+          "source": "offered Tactic"
+        },
+        {
+          "id": "mage_familiar_1",
+          "source": "offered Skill",
+          "stage": 15
+        }
+      ]
+    },
+    {
+      "active_enemies_remaining": 0,
+      "actual_kills": 53,
+      "arena_seed": null,
+      "boss_moves_released": {},
+      "boss_moves_started": {},
+      "build": "mage",
+      "clear_seconds": 84.3000000000132,
+      "cleared": true,
+      "damage_taken": 17.0650000000001,
+      "debug_navigation": {},
+      "end_hp": 164.2,
+      "end_position": [
+        1035.23352050781,
+        608.069458007813
+      ],
+      "enemies_remaining": 0,
+      "entry_hp": 142.6,
+      "entry_level": 33,
+      "entry_setup": "natural_campaign",
+      "entry_stats": {
+        "armor": 0.0,
+        "attack_speed": 1.17,
+        "block_rate": 0.05,
+        "critical_damage": 0.68,
+        "critical_rate": 0.05,
+        "damage": 53.2,
+        "dash_cooldown": 3.0,
+        "dash_damage": 0.0,
+        "dodge_cooldown": 4.0,
+        "dodge_rate": 0.065,
+        "lifesteal": 0.0,
+        "mage_armor": 34.4,
+        "magic": 0.0,
+        "max_hp": 142.6,
+        "pickup": 97.4000000000001,
+        "projectiles": 0.0,
+        "range": 87.39,
+        "regen": 1.07,
+        "shield_regen": 5.0,
+        "speed": 148.29
+      },
+      "entry_weapon": "staff",
+      "entry_xp": 72.0,
+      "environment_hazard_contacts": 0,
+      "environment_hazards_released": 32,
+      "environment_hazards_spawned": 34,
+      "gear": [
+        {
+          "description": "Lucky Acorn\n+0.2 attack speed / +8.3 speed",
+          "stage": 5
+        },
+        {
+          "description": "Windchime Charm\n+8.0% critical damage / +9.4 range",
+          "stage": 10
+        },
+        {
+          "description": "Heartwood Buckler\n+0.4 regen / +10.0% critical damage",
+          "stage": 15
+        }
+      ],
+      "hits_taken": 2,
+      "initial_enemies": 53,
+      "minimum_hp": 129.005,
+      "mode": "2:fire",
+      "movement": "kite",
+      "outcome": "cleared",
+      "peak_active_enemies": 12,
+      "queued_enemies_remaining": 0,
+      "remaining_enemy_details": [],
+      "seconds_observed": 84.3000000000132,
+      "seed": 1760,
+      "skills": [
+        "mage_spread_1",
+        "mage_ward_1",
+        "mage_familiar_1"
+      ],
+      "stage": 17,
+      "strategy": "2:fire",
+      "survived": true,
+      "travel_pixels": 9577.40913915634,
+      "upgrades": [
+        {
+          "id": "balanced_training",
+          "level": 5,
+          "source": "offered Tactic"
+        },
+        {
+          "id": "vitality",
+          "level": 10,
+          "source": "offered Tactic"
+        },
+        {
+          "id": "mage_spread_1",
+          "source": "offered Skill",
+          "stage": 5
+        },
+        {
+          "id": "spring_water",
+          "level": 15,
+          "source": "offered Tactic"
+        },
+        {
+          "id": "heartwood",
+          "level": 20,
+          "source": "offered Tactic"
+        },
+        {
+          "id": "mage_ward_1",
+          "source": "offered Skill",
+          "stage": 10
+        },
+        {
+          "id": "agile_heart",
+          "level": 25,
+          "source": "offered Tactic"
+        },
+        {
+          "id": "vitality",
+          "level": 30,
+          "source": "offered Tactic"
+        },
+        {
+          "id": "mage_familiar_1",
+          "source": "offered Skill",
+          "stage": 15
+        }
+      ]
+    },
+    {
+      "active_enemies_remaining": 0,
+      "actual_kills": 55,
+      "arena_seed": null,
+      "boss_moves_released": {},
+      "boss_moves_started": {},
+      "build": "mage",
+      "clear_seconds": 94.9500000000216,
+      "cleared": true,
+      "damage_taken": 26.248,
+      "debug_navigation": {},
+      "end_hp": 166.224249999996,
+      "end_position": [
+        471.056732177734,
+        589.178649902344
+      ],
+      "enemies_remaining": 0,
+      "entry_hp": 165.0,
+      "entry_level": 36,
+      "entry_setup": "natural_campaign",
+      "entry_stats": {
+        "armor": 0.0,
+        "attack_speed": 1.17,
+        "block_rate": 0.05,
+        "critical_damage": 0.68,
+        "critical_rate": 0.05,
+        "damage": 55.7500000000001,
+        "dash_cooldown": 3.0,
+        "dash_damage": 0.0,
+        "dodge_cooldown": 4.0,
+        "dodge_rate": 0.065,
+        "lifesteal": 0.0,
+        "mage_armor": 35.75,
+        "magic": 0.0,
+        "max_hp": 165.0,
+        "pickup": 99.5000000000001,
+        "projectiles": 0.0,
+        "range": 87.39,
+        "regen": 1.07,
+        "shield_regen": 5.0,
+        "speed": 148.29
+      },
+      "entry_weapon": "staff",
+      "entry_xp": 13.0,
+      "environment_hazard_contacts": 0,
+      "environment_hazards_released": 38,
+      "environment_hazards_spawned": 40,
+      "gear": [
+        {
+          "description": "Lucky Acorn\n+0.2 attack speed / +8.3 speed",
+          "stage": 5
+        },
+        {
+          "description": "Windchime Charm\n+8.0% critical damage / +9.4 range",
+          "stage": 10
+        },
+        {
+          "description": "Heartwood Buckler\n+0.4 regen / +10.0% critical damage",
+          "stage": 15
+        }
+      ],
+      "hits_taken": 2,
+      "initial_enemies": 55,
+      "minimum_hp": 147.076,
+      "mode": "2:fire",
+      "movement": "kite",
+      "outcome": "cleared",
+      "peak_active_enemies": 12,
+      "queued_enemies_remaining": 0,
+      "remaining_enemy_details": [],
+      "seconds_observed": 94.9500000000216,
+      "seed": 1760,
+      "skills": [
+        "mage_spread_1",
+        "mage_ward_1",
+        "mage_familiar_1"
+      ],
+      "stage": 18,
+      "strategy": "2:fire",
+      "survived": true,
+      "travel_pixels": 11464.2998919487,
+      "upgrades": [
+        {
+          "id": "balanced_training",
+          "level": 5,
+          "source": "offered Tactic"
+        },
+        {
+          "id": "vitality",
+          "level": 10,
+          "source": "offered Tactic"
+        },
+        {
+          "id": "mage_spread_1",
+          "source": "offered Skill",
+          "stage": 5
+        },
+        {
+          "id": "spring_water",
+          "level": 15,
+          "source": "offered Tactic"
+        },
+        {
+          "id": "heartwood",
+          "level": 20,
+          "source": "offered Tactic"
+        },
+        {
+          "id": "mage_ward_1",
+          "source": "offered Skill",
+          "stage": 10
+        },
+        {
+          "id": "agile_heart",
+          "level": 25,
+          "source": "offered Tactic"
+        },
+        {
+          "id": "vitality",
+          "level": 30,
+          "source": "offered Tactic"
+        },
+        {
+          "id": "mage_familiar_1",
+          "source": "offered Skill",
+          "stage": 15
+        },
+        {
+          "id": "heartwood",
+          "level": 35,
+          "source": "offered Tactic"
+        }
+      ]
+    },
+    {
+      "active_enemies_remaining": 0,
+      "actual_kills": 58,
+      "arena_seed": null,
+      "boss_moves_released": {},
+      "boss_moves_started": {},
+      "build": "mage",
+      "clear_seconds": 99.1583333333583,
+      "cleared": true,
+      "damage_taken": 0.0,
+      "debug_navigation": {},
+      "end_hp": 167.4,
+      "end_position": [
+        772.643249511719,
+        321.006713867188
+      ],
+      "enemies_remaining": 0,
+      "entry_hp": 166.6,
+      "entry_level": 38,
+      "entry_setup": "natural_campaign",
+      "entry_stats": {
+        "armor": 0.0,
+        "attack_speed": 1.17,
+        "block_rate": 0.05,
+        "critical_damage": 0.68,
+        "critical_rate": 0.05,
+        "damage": 57.4500000000001,
+        "dash_cooldown": 3.0,
+        "dash_damage": 0.0,
+        "dodge_cooldown": 4.0,
+        "dodge_rate": 0.065,
+        "lifesteal": 0.0,
+        "mage_armor": 36.65,
+        "magic": 0.0,
+        "max_hp": 166.6,
+        "pickup": 100.9,
+        "projectiles": 0.0,
+        "range": 87.39,
+        "regen": 1.07,
+        "shield_regen": 5.0,
+        "speed": 148.29
+      },
+      "entry_weapon": "staff",
+      "entry_xp": 57.0,
+      "environment_hazard_contacts": 0,
+      "environment_hazards_released": 40,
+      "environment_hazards_spawned": 42,
+      "gear": [
+        {
+          "description": "Lucky Acorn\n+0.2 attack speed / +8.3 speed",
+          "stage": 5
+        },
+        {
+          "description": "Windchime Charm\n+8.0% critical damage / +9.4 range",
+          "stage": 10
+        },
+        {
+          "description": "Heartwood Buckler\n+0.4 regen / +10.0% critical damage",
+          "stage": 15
+        }
+      ],
+      "hits_taken": 0,
+      "initial_enemies": 58,
+      "minimum_hp": 166.6,
+      "mode": "2:fire",
+      "movement": "kite",
+      "outcome": "cleared",
+      "peak_active_enemies": 12,
+      "queued_enemies_remaining": 0,
+      "remaining_enemy_details": [],
+      "seconds_observed": 99.1583333333583,
+      "seed": 1760,
+      "skills": [
+        "mage_spread_1",
+        "mage_ward_1",
+        "mage_familiar_1"
+      ],
+      "stage": 19,
+      "strategy": "2:fire",
+      "survived": true,
+      "travel_pixels": 13098.3171312809,
+      "upgrades": [
+        {
+          "id": "balanced_training",
+          "level": 5,
+          "source": "offered Tactic"
+        },
+        {
+          "id": "vitality",
+          "level": 10,
+          "source": "offered Tactic"
+        },
+        {
+          "id": "mage_spread_1",
+          "source": "offered Skill",
+          "stage": 5
+        },
+        {
+          "id": "spring_water",
+          "level": 15,
+          "source": "offered Tactic"
+        },
+        {
+          "id": "heartwood",
+          "level": 20,
+          "source": "offered Tactic"
+        },
+        {
+          "id": "mage_ward_1",
+          "source": "offered Skill",
+          "stage": 10
+        },
+        {
+          "id": "agile_heart",
+          "level": 25,
+          "source": "offered Tactic"
+        },
+        {
+          "id": "vitality",
+          "level": 30,
+          "source": "offered Tactic"
+        },
+        {
+          "id": "mage_familiar_1",
+          "source": "offered Skill",
+          "stage": 15
+        },
+        {
+          "id": "heartwood",
+          "level": 35,
+          "source": "offered Tactic"
+        }
+      ]
+    },
+    {
+      "active_enemies_remaining": 0,
+      "actual_kills": 62,
+      "arena_seed": null,
+      "boss_moves_released": {
+        "blast": 2,
+        "charge": 4,
+        "eclipse": 1,
+        "nightfall": 4
+      },
+      "boss_moves_started": {
+        "blast": 2,
+        "charge": 4,
+        "eclipse": 1,
+        "nightfall": 4
+      },
+      "build": "mage",
+      "clear_seconds": 125.408333333379,
+      "cleared": true,
+      "damage_taken": 21.1,
+      "debug_navigation": {},
+      "end_hp": 169.8,
+      "end_position": [
+        326.800476074219,
+        335.757690429688
+      ],
+      "enemies_remaining": 0,
+      "entry_hp": 168.2,
+      "entry_level": 40,
+      "entry_setup": "natural_campaign",
+      "entry_stats": {
+        "armor": 0.0,
+        "attack_speed": 1.17,
+        "block_rate": 0.07,
+        "critical_damage": 0.68,
+        "critical_rate": 0.06,
+        "damage": 59.1500000000001,
+        "dash_cooldown": 3.0,
+        "dash_damage": 0.0,
+        "dodge_cooldown": 4.0,
+        "dodge_rate": 0.065,
+        "lifesteal": 0.0,
+        "mage_armor": 37.55,
+        "magic": 0.0,
+        "max_hp": 168.2,
+        "pickup": 102.3,
+        "projectiles": 0.0,
+        "range": 87.39,
+        "regen": 1.07,
+        "shield_regen": 5.0,
+        "speed": 148.29
+      },
+      "entry_weapon": "staff",
+      "entry_xp": 104.0,
+      "environment_hazard_contacts": 0,
+      "environment_hazards_released": 52,
+      "environment_hazards_spawned": 54,
+      "gear": [
+        {
+          "description": "Lucky Acorn\n+0.2 attack speed / +8.3 speed",
+          "stage": 5
+        },
+        {
+          "description": "Windchime Charm\n+8.0% critical damage / +9.4 range",
+          "stage": 10
+        },
+        {
+          "description": "Heartwood Buckler\n+0.4 regen / +10.0% critical damage",
+          "stage": 15
+        }
+      ],
+      "hits_taken": 1,
+      "initial_enemies": 62,
+      "minimum_hp": 148.7,
+      "mode": "2:fire",
+      "movement": "kite",
+      "outcome": "cleared",
+      "peak_active_enemies": 12,
+      "queued_enemies_remaining": 0,
+      "remaining_enemy_details": [],
+      "seconds_observed": 125.408333333379,
+      "seed": 1760,
+      "skills": [
+        "mage_spread_1",
+        "mage_ward_1",
+        "mage_familiar_1"
+      ],
+      "stage": 20,
+      "strategy": "2:fire",
+      "survived": true,
+      "travel_pixels": 15117.2290034294,
+      "upgrades": [
+        {
+          "id": "balanced_training",
+          "level": 5,
+          "source": "offered Tactic"
+        },
+        {
+          "id": "vitality",
+          "level": 10,
+          "source": "offered Tactic"
+        },
+        {
+          "id": "mage_spread_1",
+          "source": "offered Skill",
+          "stage": 5
+        },
+        {
+          "id": "spring_water",
+          "level": 15,
+          "source": "offered Tactic"
+        },
+        {
+          "id": "heartwood",
+          "level": 20,
+          "source": "offered Tactic"
+        },
+        {
+          "id": "mage_ward_1",
+          "source": "offered Skill",
+          "stage": 10
+        },
+        {
+          "id": "agile_heart",
+          "level": 25,
+          "source": "offered Tactic"
+        },
+        {
+          "id": "vitality",
+          "level": 30,
+          "source": "offered Tactic"
+        },
+        {
+          "id": "mage_familiar_1",
+          "source": "offered Skill",
+          "stage": 15
+        },
+        {
+          "id": "heartwood",
+          "level": 35,
+          "source": "offered Tactic"
+        },
+        {
+          "id": "critical_guard",
+          "level": 40,
+          "source": "offered Tactic"
+        }
+      ]
+    },
+    {
+      "active_enemies_remaining": 0,
+      "actual_kills": 63,
+      "arena_seed": null,
+      "boss_moves_released": {},
+      "boss_moves_started": {},
+      "build": "mage",
+      "clear_seconds": 102.875000000028,
+      "cleared": true,
+      "damage_taken": 132.522666666668,
+      "debug_navigation": {},
+      "end_hp": 176.824999999976,
+      "end_position": [
+        1103.28784179688,
+        456.29931640625
+      ],
+      "enemies_remaining": 0,
+      "entry_hp": 193.61,
+      "entry_level": 43,
+      "entry_setup": "natural_campaign",
+      "entry_stats": {
+        "armor": 0.0,
+        "attack_speed": 1.17,
+        "block_rate": 0.07,
+        "critical_damage": 0.8,
+        "critical_rate": 0.06,
+        "damage": 61.7000000000001,
+        "dash_cooldown": 3.0,
+        "dash_damage": 0.0,
+        "dodge_cooldown": 4.0,
+        "dodge_rate": 0.065,
+        "lifesteal": 0.0,
+        "mage_armor": 38.9,
+        "magic": 0.0,
+        "max_hp": 193.61,
+        "pickup": 104.4,
+        "projectiles": 0.0,
+        "range": 87.39,
+        "regen": 1.07,
+        "shield_regen": 5.0,
+        "speed": 148.29
+      },
+      "entry_weapon": "staff",
+      "entry_xp": 82.0,
+      "environment_hazard_contacts": 1,
+      "environment_hazards_released": 44,
+      "environment_hazards_spawned": 46,
+      "gear": [
+        {
+          "description": "Lucky Acorn\n+0.2 attack speed / +8.3 speed",
+          "stage": 5
+        },
+        {
+          "description": "Windchime Charm\n+8.0% critical damage / +9.4 range",
+          "stage": 10
+        },
+        {
+          "description": "Heartwood Buckler\n+0.4 regen / +10.0% critical damage",
+          "stage": 15
+        },
+        {
+          "description": "Lucky Acorn\n+12.0% critical damage / +23.0 max hp",
+          "stage": 20
+        }
+      ],
+      "hits_taken": 6,
+      "initial_enemies": 63,
+      "minimum_hp": 107.605499999997,
+      "mode": "2:fire",
+      "movement": "kite",
+      "outcome": "cleared",
+      "peak_active_enemies": 14,
+      "queued_enemies_remaining": 0,
+      "remaining_enemy_details": [],
+      "seconds_observed": 102.875000000028,
+      "seed": 1760,
+      "skills": [
+        "mage_spread_1",
+        "mage_ward_1",
+        "mage_familiar_1",
+        "mage_ward_2"
+      ],
+      "stage": 21,
+      "strategy": "2:fire",
+      "survived": true,
+      "travel_pixels": 12472.7197995186,
+      "upgrades": [
+        {
+          "id": "balanced_training",
+          "level": 5,
+          "source": "offered Tactic"
+        },
+        {
+          "id": "vitality",
+          "level": 10,
+          "source": "offered Tactic"
+        },
+        {
+          "id": "mage_spread_1",
+          "source": "offered Skill",
+          "stage": 5
+        },
+        {
+          "id": "spring_water",
+          "level": 15,
+          "source": "offered Tactic"
+        },
+        {
+          "id": "heartwood",
+          "level": 20,
+          "source": "offered Tactic"
+        },
+        {
+          "id": "mage_ward_1",
+          "source": "offered Skill",
+          "stage": 10
+        },
+        {
+          "id": "agile_heart",
+          "level": 25,
+          "source": "offered Tactic"
+        },
+        {
+          "id": "vitality",
+          "level": 30,
+          "source": "offered Tactic"
+        },
+        {
+          "id": "mage_familiar_1",
+          "source": "offered Skill",
+          "stage": 15
+        },
+        {
+          "id": "heartwood",
+          "level": 35,
+          "source": "offered Tactic"
+        },
+        {
+          "id": "critical_guard",
+          "level": 40,
+          "source": "offered Tactic"
+        },
+        {
+          "id": "mage_ward_2",
+          "source": "offered Skill",
+          "stage": 20
+        }
+      ]
+    },
+    {
+      "active_enemies_remaining": 0,
+      "actual_kills": 65,
+      "arena_seed": null,
+      "boss_moves_released": {},
+      "boss_moves_started": {},
+      "build": "mage",
+      "clear_seconds": 121.908333333376,
+      "cleared": true,
+      "damage_taken": 0.0,
+      "debug_navigation": {},
+      "end_hp": 217.61,
+      "end_position": [
+        894.676025390625,
+        352.920928955078
+      ],
+      "enemies_remaining": 0,
+      "entry_hp": 206.374916666642,
+      "entry_level": 46,
+      "entry_setup": "natural_campaign",
+      "entry_stats": {
+        "armor": 0.0,
+        "attack_speed": 1.17,
+        "block_rate": 0.07,
+        "critical_damage": 0.8,
+        "critical_rate": 0.06,
+        "damage": 64.2500000000001,
+        "dash_cooldown": 3.0,
+        "dash_damage": 0.0,
+        "dodge_cooldown": 4.0,
+        "dodge_rate": 0.065,
+        "lifesteal": 0.0,
+        "mage_armor": 40.25,
+        "magic": 0.0,
+        "max_hp": 216.01,
+        "pickup": 106.5,
+        "projectiles": 0.0,
+        "range": 87.39,
+        "regen": 1.07,
+        "shield_regen": 5.0,
+        "speed": 148.29
+      },
+      "entry_weapon": "staff",
+      "entry_xp": 46.0,
+      "environment_hazard_contacts": 1,
+      "environment_hazards_released": 52,
+      "environment_hazards_spawned": 54,
+      "gear": [
+        {
+          "description": "Lucky Acorn\n+0.2 attack speed / +8.3 speed",
+          "stage": 5
+        },
+        {
+          "description": "Windchime Charm\n+8.0% critical damage / +9.4 range",
+          "stage": 10
+        },
+        {
+          "description": "Heartwood Buckler\n+0.4 regen / +10.0% critical damage",
+          "stage": 15
+        },
+        {
+          "description": "Lucky Acorn\n+12.0% critical damage / +23.0 max hp",
+          "stage": 20
+        }
+      ],
+      "hits_taken": 0,
+      "initial_enemies": 65,
+      "minimum_hp": 206.374916666642,
+      "mode": "2:fire",
+      "movement": "kite",
+      "outcome": "cleared",
+      "peak_active_enemies": 14,
+      "queued_enemies_remaining": 0,
+      "remaining_enemy_details": [],
+      "seconds_observed": 121.908333333376,
+      "seed": 1760,
+      "skills": [
+        "mage_spread_1",
+        "mage_ward_1",
+        "mage_familiar_1",
+        "mage_ward_2"
+      ],
+      "stage": 22,
+      "strategy": "2:fire",
+      "survived": true,
+      "travel_pixels": 15040.2180991173,
+      "upgrades": [
+        {
+          "id": "balanced_training",
+          "level": 5,
+          "source": "offered Tactic"
+        },
+        {
+          "id": "vitality",
+          "level": 10,
+          "source": "offered Tactic"
+        },
+        {
+          "id": "mage_spread_1",
+          "source": "offered Skill",
+          "stage": 5
+        },
+        {
+          "id": "spring_water",
+          "level": 15,
+          "source": "offered Tactic"
+        },
+        {
+          "id": "heartwood",
+          "level": 20,
+          "source": "offered Tactic"
+        },
+        {
+          "id": "mage_ward_1",
+          "source": "offered Skill",
+          "stage": 10
+        },
+        {
+          "id": "agile_heart",
+          "level": 25,
+          "source": "offered Tactic"
+        },
+        {
+          "id": "vitality",
+          "level": 30,
+          "source": "offered Tactic"
+        },
+        {
+          "id": "mage_familiar_1",
+          "source": "offered Skill",
+          "stage": 15
+        },
+        {
+          "id": "heartwood",
+          "level": 35,
+          "source": "offered Tactic"
+        },
+        {
+          "id": "critical_guard",
+          "level": 40,
+          "source": "offered Tactic"
+        },
+        {
+          "id": "mage_ward_2",
+          "source": "offered Skill",
+          "stage": 20
+        },
+        {
+          "id": "heartwood",
+          "level": 45,
+          "source": "offered Tactic"
+        }
+      ]
+    },
+    {
+      "active_enemies_remaining": 0,
+      "actual_kills": 68,
+      "arena_seed": null,
+      "boss_moves_released": {},
+      "boss_moves_started": {},
+      "build": "mage",
+      "clear_seconds": 123.200000000044,
+      "cleared": true,
+      "damage_taken": 0.0,
+      "debug_navigation": {},
+      "end_hp": 220.01,
+      "end_position": [
+        639.245971679688,
+        668.241882324219
+      ],
+      "enemies_remaining": 0,
+      "entry_hp": 217.61,
+      "entry_level": 48,
+      "entry_setup": "natural_campaign",
+      "entry_stats": {
+        "armor": 0.0,
+        "attack_speed": 1.17,
+        "block_rate": 0.07,
+        "critical_damage": 0.8,
+        "critical_rate": 0.06,
+        "damage": 65.95,
+        "dash_cooldown": 3.0,
+        "dash_damage": 0.0,
+        "dodge_cooldown": 4.0,
+        "dodge_rate": 0.065,
+        "lifesteal": 0.0,
+        "mage_armor": 41.15,
+        "magic": 0.0,
+        "max_hp": 217.61,
+        "pickup": 107.9,
+        "projectiles": 0.0,
+        "range": 87.39,
+        "regen": 1.07,
+        "shield_regen": 5.0,
+        "speed": 148.29
+      },
+      "entry_weapon": "staff",
+      "entry_xp": 145.0,
+      "environment_hazard_contacts": 0,
+      "environment_hazards_released": 54,
+      "environment_hazards_spawned": 54,
+      "gear": [
+        {
+          "description": "Lucky Acorn\n+0.2 attack speed / +8.3 speed",
+          "stage": 5
+        },
+        {
+          "description": "Windchime Charm\n+8.0% critical damage / +9.4 range",
+          "stage": 10
+        },
+        {
+          "description": "Heartwood Buckler\n+0.4 regen / +10.0% critical damage",
+          "stage": 15
+        },
+        {
+          "description": "Lucky Acorn\n+12.0% critical damage / +23.0 max hp",
+          "stage": 20
+        }
+      ],
+      "hits_taken": 0,
+      "initial_enemies": 68,
+      "minimum_hp": 217.61,
+      "mode": "2:fire",
+      "movement": "kite",
+      "outcome": "cleared",
+      "peak_active_enemies": 14,
+      "queued_enemies_remaining": 0,
+      "remaining_enemy_details": [],
+      "seconds_observed": 123.200000000044,
+      "seed": 1760,
+      "skills": [
+        "mage_spread_1",
+        "mage_ward_1",
+        "mage_familiar_1",
+        "mage_ward_2"
+      ],
+      "stage": 23,
+      "strategy": "2:fire",
+      "survived": true,
+      "travel_pixels": 16351.3882546425,
+      "upgrades": [
+        {
+          "id": "balanced_training",
+          "level": 5,
+          "source": "offered Tactic"
+        },
+        {
+          "id": "vitality",
+          "level": 10,
+          "source": "offered Tactic"
+        },
+        {
+          "id": "mage_spread_1",
+          "source": "offered Skill",
+          "stage": 5
+        },
+        {
+          "id": "spring_water",
+          "level": 15,
+          "source": "offered Tactic"
+        },
+        {
+          "id": "heartwood",
+          "level": 20,
+          "source": "offered Tactic"
+        },
+        {
+          "id": "mage_ward_1",
+          "source": "offered Skill",
+          "stage": 10
+        },
+        {
+          "id": "agile_heart",
+          "level": 25,
+          "source": "offered Tactic"
+        },
+        {
+          "id": "vitality",
+          "level": 30,
+          "source": "offered Tactic"
+        },
+        {
+          "id": "mage_familiar_1",
+          "source": "offered Skill",
+          "stage": 15
+        },
+        {
+          "id": "heartwood",
+          "level": 35,
+          "source": "offered Tactic"
+        },
+        {
+          "id": "critical_guard",
+          "level": 40,
+          "source": "offered Tactic"
+        },
+        {
+          "id": "mage_ward_2",
+          "source": "offered Skill",
+          "stage": 20
+        },
+        {
+          "id": "heartwood",
+          "level": 45,
+          "source": "offered Tactic"
+        }
+      ]
+    },
+    {
+      "active_enemies_remaining": 0,
+      "actual_kills": 70,
+      "arena_seed": null,
+      "boss_moves_released": {},
+      "boss_moves_started": {},
+      "build": "mage",
+      "clear_seconds": 129.241666666713,
+      "cleared": true,
+      "damage_taken": 129.664018333333,
+      "debug_navigation": {},
+      "end_hp": 168.056564999981,
+      "end_position": [
+        404.281890869141,
+        520.367004394531
+      ],
+      "enemies_remaining": 0,
+      "entry_hp": 220.01,
+      "entry_level": 51,
+      "entry_setup": "natural_campaign",
+      "entry_stats": {
+        "armor": 0.0,
+        "attack_speed": 1.17,
+        "block_rate": 0.07,
+        "critical_damage": 0.8,
+        "critical_rate": 0.06,
+        "damage": 68.5,
+        "dash_cooldown": 3.0,
+        "dash_damage": 0.0,
+        "dodge_cooldown": 3.92,
+        "dodge_rate": 0.085,
+        "lifesteal": 0.0,
+        "mage_armor": 42.5000000000001,
+        "magic": 0.0,
+        "max_hp": 220.01,
+        "pickup": 110.0,
+        "projectiles": 0.0,
+        "range": 87.39,
+        "regen": 1.07,
+        "shield_regen": 5.0,
+        "speed": 148.29
+      },
+      "entry_weapon": "staff",
+      "entry_xp": 94.0,
+      "environment_hazard_contacts": 0,
+      "environment_hazards_released": 58,
+      "environment_hazards_spawned": 58,
+      "gear": [
+        {
+          "description": "Lucky Acorn\n+0.2 attack speed / +8.3 speed",
+          "stage": 5
+        },
+        {
+          "description": "Windchime Charm\n+8.0% critical damage / +9.4 range",
+          "stage": 10
+        },
+        {
+          "description": "Heartwood Buckler\n+0.4 regen / +10.0% critical damage",
+          "stage": 15
+        },
+        {
+          "description": "Lucky Acorn\n+12.0% critical damage / +23.0 max hp",
+          "stage": 20
+        }
+      ],
+      "hits_taken": 9,
+      "initial_enemies": 70,
+      "minimum_hp": 115.040708333328,
+      "mode": "2:fire",
+      "movement": "kite",
+      "outcome": "cleared",
+      "peak_active_enemies": 14,
+      "queued_enemies_remaining": 0,
+      "remaining_enemy_details": [],
+      "seconds_observed": 129.241666666713,
+      "seed": 1760,
+      "skills": [
+        "mage_spread_1",
+        "mage_ward_1",
+        "mage_familiar_1",
+        "mage_ward_2"
+      ],
+      "stage": 24,
+      "strategy": "2:fire",
+      "survived": true,
+      "travel_pixels": 15469.7453386784,
+      "upgrades": [
+        {
+          "id": "balanced_training",
+          "level": 5,
+          "source": "offered Tactic"
+        },
+        {
+          "id": "vitality",
+          "level": 10,
+          "source": "offered Tactic"
+        },
+        {
+          "id": "mage_spread_1",
+          "source": "offered Skill",
+          "stage": 5
+        },
+        {
+          "id": "spring_water",
+          "level": 15,
+          "source": "offered Tactic"
+        },
+        {
+          "id": "heartwood",
+          "level": 20,
+          "source": "offered Tactic"
+        },
+        {
+          "id": "mage_ward_1",
+          "source": "offered Skill",
+          "stage": 10
+        },
+        {
+          "id": "agile_heart",
+          "level": 25,
+          "source": "offered Tactic"
+        },
+        {
+          "id": "vitality",
+          "level": 30,
+          "source": "offered Tactic"
+        },
+        {
+          "id": "mage_familiar_1",
+          "source": "offered Skill",
+          "stage": 15
+        },
+        {
+          "id": "heartwood",
+          "level": 35,
+          "source": "offered Tactic"
+        },
+        {
+          "id": "critical_guard",
+          "level": 40,
+          "source": "offered Tactic"
+        },
+        {
+          "id": "mage_ward_2",
+          "source": "offered Skill",
+          "stage": 20
+        },
+        {
+          "id": "heartwood",
+          "level": 45,
+          "source": "offered Tactic"
+        },
+        {
+          "id": "dodge_focus",
+          "level": 50,
+          "source": "offered Tactic"
+        }
+      ]
+    },
+    {
+      "active_enemies_remaining": 0,
+      "actual_kills": 74,
+      "arena_seed": null,
+      "boss_moves_released": {
+        "fan": 3,
+        "ring": 1,
+        "storm_lanes": 2,
+        "thunder_crown": 2
+      },
+      "boss_moves_started": {
+        "fan": 3,
+        "ring": 1,
+        "storm_lanes": 2,
+        "thunder_crown": 2
+      },
+      "build": "mage",
+      "clear_seconds": 152.891666666692,
+      "cleared": true,
+      "damage_taken": 143.1966875,
+      "debug_navigation": {},
+      "end_hp": 156.490116666652,
+      "end_position": [
+        863.852478027344,
+        450.264617919922
+      ],
+      "enemies_remaining": 0,
+      "entry_hp": 199.68206499998,
+      "entry_level": 54,
+      "entry_setup": "natural_campaign",
+      "entry_stats": {
+        "armor": 0.0,
+        "attack_speed": 1.17,
+        "block_rate": 0.07,
+        "critical_damage": 0.8,
+        "critical_rate": 0.06,
+        "damage": 71.05,
+        "dash_cooldown": 3.0,
+        "dash_damage": 0.0,
+        "dodge_cooldown": 3.92,
+        "dodge_rate": 0.085,
+        "lifesteal": 0.0,
+        "mage_armor": 43.8500000000001,
+        "magic": 0.0,
+        "max_hp": 222.41,
+        "pickup": 112.1,
+        "projectiles": 0.0,
+        "range": 87.39,
+        "regen": 1.07,
+        "shield_regen": 5.0,
+        "speed": 148.29
+      },
+      "entry_weapon": "staff",
+      "entry_xp": 28.0,
+      "environment_hazard_contacts": 0,
+      "environment_hazards_released": 70,
+      "environment_hazards_spawned": 72,
+      "gear": [
+        {
+          "description": "Lucky Acorn\n+0.2 attack speed / +8.3 speed",
+          "stage": 5
+        },
+        {
+          "description": "Windchime Charm\n+8.0% critical damage / +9.4 range",
+          "stage": 10
+        },
+        {
+          "description": "Heartwood Buckler\n+0.4 regen / +10.0% critical damage",
+          "stage": 15
+        },
+        {
+          "description": "Lucky Acorn\n+12.0% critical damage / +23.0 max hp",
+          "stage": 20
+        }
+      ],
+      "hits_taken": 8,
+      "initial_enemies": 74,
+      "minimum_hp": 121.721166666663,
+      "mode": "2:fire",
+      "movement": "kite",
+      "outcome": "cleared",
+      "peak_active_enemies": 14,
+      "queued_enemies_remaining": 0,
+      "remaining_enemy_details": [],
+      "seconds_observed": 152.891666666692,
+      "seed": 1760,
+      "skills": [
+        "mage_spread_1",
+        "mage_ward_1",
+        "mage_familiar_1",
+        "mage_ward_2"
+      ],
+      "stage": 25,
+      "strategy": "2:fire",
+      "survived": true,
+      "travel_pixels": 19241.6749571562,
+      "upgrades": [
+        {
+          "id": "balanced_training",
+          "level": 5,
+          "source": "offered Tactic"
+        },
+        {
+          "id": "vitality",
+          "level": 10,
+          "source": "offered Tactic"
+        },
+        {
+          "id": "mage_spread_1",
+          "source": "offered Skill",
+          "stage": 5
+        },
+        {
+          "id": "spring_water",
+          "level": 15,
+          "source": "offered Tactic"
+        },
+        {
+          "id": "heartwood",
+          "level": 20,
+          "source": "offered Tactic"
+        },
+        {
+          "id": "mage_ward_1",
+          "source": "offered Skill",
+          "stage": 10
+        },
+        {
+          "id": "agile_heart",
+          "level": 25,
+          "source": "offered Tactic"
+        },
+        {
+          "id": "vitality",
+          "level": 30,
+          "source": "offered Tactic"
+        },
+        {
+          "id": "mage_familiar_1",
+          "source": "offered Skill",
+          "stage": 15
+        },
+        {
+          "id": "heartwood",
+          "level": 35,
+          "source": "offered Tactic"
+        },
+        {
+          "id": "critical_guard",
+          "level": 40,
+          "source": "offered Tactic"
+        },
+        {
+          "id": "mage_ward_2",
+          "source": "offered Skill",
+          "stage": 20
+        },
+        {
+          "id": "heartwood",
+          "level": 45,
+          "source": "offered Tactic"
+        },
+        {
+          "id": "dodge_focus",
+          "level": 50,
+          "source": "offered Tactic"
+        }
+      ]
+    },
+    {
+      "active_enemies_remaining": 0,
+      "actual_kills": 75,
+      "arena_seed": null,
+      "boss_moves_released": {},
+      "boss_moves_started": {},
+      "build": "mage",
+      "clear_seconds": 110.808333333368,
+      "cleared": true,
+      "damage_taken": 1.88599999999997,
+      "debug_navigation": {},
+      "end_hp": 253.03,
+      "end_position": [
+        962.526000976563,
+        331.484344482422
+      ],
+      "enemies_remaining": 0,
+      "entry_hp": 215.234116666651,
+      "entry_level": 57,
+      "entry_setup": "natural_campaign",
+      "entry_stats": {
+        "armor": 0.0,
+        "attack_speed": 1.17,
+        "block_rate": 0.07,
+        "critical_damage": 0.8,
+        "critical_rate": 0.06,
+        "damage": 73.6,
+        "dash_cooldown": 3.0,
+        "dash_damage": 0.0,
+        "dodge_cooldown": 3.92,
+        "dodge_rate": 0.085,
+        "lifesteal": 0.0,
+        "mage_armor": 45.2000000000001,
+        "magic": 0.0,
+        "max_hp": 251.43,
+        "pickup": 114.2,
+        "projectiles": 0.0,
+        "range": 87.39,
+        "regen": 1.79,
+        "shield_regen": 5.0,
+        "speed": 148.29
+      },
+      "entry_weapon": "staff",
+      "entry_xp": 25.0,
+      "environment_hazard_contacts": 0,
+      "environment_hazards_released": 52,
+      "environment_hazards_spawned": 52,
+      "gear": [
+        {
+          "description": "Lucky Acorn\n+0.2 attack speed / +8.3 speed",
+          "stage": 5
+        },
+        {
+          "description": "Windchime Charm\n+8.0% critical damage / +9.4 range",
+          "stage": 10
+        },
+        {
+          "description": "Heartwood Buckler\n+0.4 regen / +10.0% critical damage",
+          "stage": 15
+        },
+        {
+          "description": "Lucky Acorn\n+12.0% critical damage / +23.0 max hp",
+          "stage": 20
+        },
+        {
+          "description": "Bramble Bow\n+26.6 max hp / +0.4 regen",
+          "stage": 25
+        }
+      ],
+      "hits_taken": 1,
+      "initial_enemies": 75,
+      "minimum_hp": 215.234116666651,
+      "mode": "2:fire",
+      "movement": "kite",
+      "outcome": "cleared",
+      "peak_active_enemies": 15,
+      "queued_enemies_remaining": 0,
+      "remaining_enemy_details": [],
+      "seconds_observed": 110.808333333368,
+      "seed": 1760,
+      "skills": [
+        "mage_spread_1",
+        "mage_ward_1",
+        "mage_familiar_1",
+        "mage_ward_2",
+        "mage_spread_2"
+      ],
+      "stage": 26,
+      "strategy": "2:fire",
+      "survived": true,
+      "travel_pixels": 14733.3156661987,
+      "upgrades": [
+        {
+          "id": "balanced_training",
+          "level": 5,
+          "source": "offered Tactic"
+        },
+        {
+          "id": "vitality",
+          "level": 10,
+          "source": "offered Tactic"
+        },
+        {
+          "id": "mage_spread_1",
+          "source": "offered Skill",
+          "stage": 5
+        },
+        {
+          "id": "spring_water",
+          "level": 15,
+          "source": "offered Tactic"
+        },
+        {
+          "id": "heartwood",
+          "level": 20,
+          "source": "offered Tactic"
+        },
+        {
+          "id": "mage_ward_1",
+          "source": "offered Skill",
+          "stage": 10
+        },
+        {
+          "id": "agile_heart",
+          "level": 25,
+          "source": "offered Tactic"
+        },
+        {
+          "id": "vitality",
+          "level": 30,
+          "source": "offered Tactic"
+        },
+        {
+          "id": "mage_familiar_1",
+          "source": "offered Skill",
+          "stage": 15
+        },
+        {
+          "id": "heartwood",
+          "level": 35,
+          "source": "offered Tactic"
+        },
+        {
+          "id": "critical_guard",
+          "level": 40,
+          "source": "offered Tactic"
+        },
+        {
+          "id": "mage_ward_2",
+          "source": "offered Skill",
+          "stage": 20
+        },
+        {
+          "id": "heartwood",
+          "level": 45,
+          "source": "offered Tactic"
+        },
+        {
+          "id": "dodge_focus",
+          "level": 50,
+          "source": "offered Tactic"
+        },
+        {
+          "id": "spring_water",
+          "level": 55,
+          "source": "offered Tactic"
+        },
+        {
+          "id": "mage_spread_2",
+          "source": "offered Skill",
+          "stage": 25
+        }
+      ]
+    },
+    {
+      "active_enemies_remaining": 0,
+      "actual_kills": 78,
+      "arena_seed": null,
+      "boss_moves_released": {},
+      "boss_moves_started": {},
+      "build": "mage",
+      "clear_seconds": 100.250000000026,
+      "cleared": true,
+      "damage_taken": 48.6687499999998,
+      "debug_navigation": {},
+      "end_hp": 255.43,
+      "end_position": [
+        963.651245117188,
+        487.961151123047
+      ],
+      "enemies_remaining": 0,
+      "entry_hp": 253.83,
+      "entry_level": 60,
+      "entry_setup": "natural_campaign",
+      "entry_stats": {
+        "armor": 0.0,
+        "attack_speed": 1.17,
+        "block_rate": 0.07,
+        "critical_damage": 0.8,
+        "critical_rate": 0.085,
+        "damage": 76.15,
+        "dash_cooldown": 3.0,
+        "dash_damage": 0.0,
+        "dodge_cooldown": 3.92,
+        "dodge_rate": 0.085,
+        "lifesteal": 0.0,
+        "mage_armor": 46.5500000000001,
+        "magic": 0.0,
+        "max_hp": 253.83,
+        "pickup": 116.3,
+        "projectiles": 0.0,
+        "range": 87.39,
+        "regen": 1.79,
+        "shield_regen": 5.0,
+        "speed": 148.29
+      },
+      "entry_weapon": "staff",
+      "entry_xp": 10.0,
+      "environment_hazard_contacts": 0,
+      "environment_hazards_released": 46,
+      "environment_hazards_spawned": 46,
+      "gear": [
+        {
+          "description": "Lucky Acorn\n+0.2 attack speed / +8.3 speed",
+          "stage": 5
+        },
+        {
+          "description": "Windchime Charm\n+8.0% critical damage / +9.4 range",
+          "stage": 10
+        },
+        {
+          "description": "Heartwood Buckler\n+0.4 regen / +10.0% critical damage",
+          "stage": 15
+        },
+        {
+          "description": "Lucky Acorn\n+12.0% critical damage / +23.0 max hp",
+          "stage": 20
+        },
+        {
+          "description": "Bramble Bow\n+26.6 max hp / +0.4 regen",
+          "stage": 25
+        }
+      ],
+      "hits_taken": 3,
+      "initial_enemies": 78,
+      "minimum_hp": 211.67925,
+      "mode": "2:fire",
+      "movement": "kite",
+      "outcome": "cleared",
+      "peak_active_enemies": 15,
+      "queued_enemies_remaining": 0,
+      "remaining_enemy_details": [],
+      "seconds_observed": 100.250000000026,
+      "seed": 1760,
+      "skills": [
+        "mage_spread_1",
+        "mage_ward_1",
+        "mage_familiar_1",
+        "mage_ward_2",
+        "mage_spread_2"
+      ],
+      "stage": 27,
+      "strategy": "2:fire",
+      "survived": true,
+      "travel_pixels": 13194.1381150484,
+      "upgrades": [
+        {
+          "id": "balanced_training",
+          "level": 5,
+          "source": "offered Tactic"
+        },
+        {
+          "id": "vitality",
+          "level": 10,
+          "source": "offered Tactic"
+        },
+        {
+          "id": "mage_spread_1",
+          "source": "offered Skill",
+          "stage": 5
+        },
+        {
+          "id": "spring_water",
+          "level": 15,
+          "source": "offered Tactic"
+        },
+        {
+          "id": "heartwood",
+          "level": 20,
+          "source": "offered Tactic"
+        },
+        {
+          "id": "mage_ward_1",
+          "source": "offered Skill",
+          "stage": 10
+        },
+        {
+          "id": "agile_heart",
+          "level": 25,
+          "source": "offered Tactic"
+        },
+        {
+          "id": "vitality",
+          "level": 30,
+          "source": "offered Tactic"
+        },
+        {
+          "id": "mage_familiar_1",
+          "source": "offered Skill",
+          "stage": 15
+        },
+        {
+          "id": "heartwood",
+          "level": 35,
+          "source": "offered Tactic"
+        },
+        {
+          "id": "critical_guard",
+          "level": 40,
+          "source": "offered Tactic"
+        },
+        {
+          "id": "mage_ward_2",
+          "source": "offered Skill",
+          "stage": 20
+        },
+        {
+          "id": "heartwood",
+          "level": 45,
+          "source": "offered Tactic"
+        },
+        {
+          "id": "dodge_focus",
+          "level": 50,
+          "source": "offered Tactic"
+        },
+        {
+          "id": "spring_water",
+          "level": 55,
+          "source": "offered Tactic"
+        },
+        {
+          "id": "mage_spread_2",
+          "source": "offered Skill",
+          "stage": 25
+        },
+        {
+          "id": "critical_eye",
+          "level": 60,
+          "source": "offered Tactic"
+        }
+      ]
+    },
+    {
+      "active_enemies_remaining": 0,
+      "actual_kills": 80,
+      "arena_seed": null,
+      "boss_moves_released": {},
+      "boss_moves_started": {},
+      "build": "mage",
+      "clear_seconds": 114.991666666704,
+      "cleared": true,
+      "damage_taken": 27.2635666666695,
+      "debug_navigation": {},
+      "end_hp": 257.83,
+      "end_position": [
+        441.377960205078,
+        561.370483398438
+      ],
+      "enemies_remaining": 0,
+      "entry_hp": 255.43,
+      "entry_level": 62,
+      "entry_setup": "natural_campaign",
+      "entry_stats": {
+        "armor": 0.0,
+        "attack_speed": 1.17,
+        "block_rate": 0.07,
+        "critical_damage": 0.8,
+        "critical_rate": 0.085,
+        "damage": 77.85,
+        "dash_cooldown": 3.0,
+        "dash_damage": 0.0,
+        "dodge_cooldown": 3.92,
+        "dodge_rate": 0.085,
+        "lifesteal": 0.0,
+        "mage_armor": 47.4500000000001,
+        "magic": 0.0,
+        "max_hp": 255.43,
+        "pickup": 117.7,
+        "projectiles": 0.0,
+        "range": 87.39,
+        "regen": 1.79,
+        "shield_regen": 5.0,
+        "speed": 148.29
+      },
+      "entry_weapon": "staff",
+      "entry_xp": 181.0,
+      "environment_hazard_contacts": 1,
+      "environment_hazards_released": 54,
+      "environment_hazards_spawned": 56,
+      "gear": [
+        {
+          "description": "Lucky Acorn\n+0.2 attack speed / +8.3 speed",
+          "stage": 5
+        },
+        {
+          "description": "Windchime Charm\n+8.0% critical damage / +9.4 range",
+          "stage": 10
+        },
+        {
+          "description": "Heartwood Buckler\n+0.4 regen / +10.0% critical damage",
+          "stage": 15
+        },
+        {
+          "description": "Lucky Acorn\n+12.0% critical damage / +23.0 max hp",
+          "stage": 20
+        },
+        {
+          "description": "Bramble Bow\n+26.6 max hp / +0.4 regen",
+          "stage": 25
+        }
+      ],
+      "hits_taken": 3,
+      "initial_enemies": 80,
+      "minimum_hp": 246.766333333334,
+      "mode": "2:fire",
+      "movement": "kite",
+      "outcome": "cleared",
+      "peak_active_enemies": 15,
+      "queued_enemies_remaining": 0,
+      "remaining_enemy_details": [],
+      "seconds_observed": 114.991666666704,
+      "seed": 1760,
+      "skills": [
+        "mage_spread_1",
+        "mage_ward_1",
+        "mage_familiar_1",
+        "mage_ward_2",
+        "mage_spread_2"
+      ],
+      "stage": 28,
+      "strategy": "2:fire",
+      "survived": true,
+      "travel_pixels": 14083.6671844721,
+      "upgrades": [
+        {
+          "id": "balanced_training",
+          "level": 5,
+          "source": "offered Tactic"
+        },
+        {
+          "id": "vitality",
+          "level": 10,
+          "source": "offered Tactic"
+        },
+        {
+          "id": "mage_spread_1",
+          "source": "offered Skill",
+          "stage": 5
+        },
+        {
+          "id": "spring_water",
+          "level": 15,
+          "source": "offered Tactic"
+        },
+        {
+          "id": "heartwood",
+          "level": 20,
+          "source": "offered Tactic"
+        },
+        {
+          "id": "mage_ward_1",
+          "source": "offered Skill",
+          "stage": 10
+        },
+        {
+          "id": "agile_heart",
+          "level": 25,
+          "source": "offered Tactic"
+        },
+        {
+          "id": "vitality",
+          "level": 30,
+          "source": "offered Tactic"
+        },
+        {
+          "id": "mage_familiar_1",
+          "source": "offered Skill",
+          "stage": 15
+        },
+        {
+          "id": "heartwood",
+          "level": 35,
+          "source": "offered Tactic"
+        },
+        {
+          "id": "critical_guard",
+          "level": 40,
+          "source": "offered Tactic"
+        },
+        {
+          "id": "mage_ward_2",
+          "source": "offered Skill",
+          "stage": 20
+        },
+        {
+          "id": "heartwood",
+          "level": 45,
+          "source": "offered Tactic"
+        },
+        {
+          "id": "dodge_focus",
+          "level": 50,
+          "source": "offered Tactic"
+        },
+        {
+          "id": "spring_water",
+          "level": 55,
+          "source": "offered Tactic"
+        },
+        {
+          "id": "mage_spread_2",
+          "source": "offered Skill",
+          "stage": 25
+        },
+        {
+          "id": "critical_eye",
+          "level": 60,
+          "source": "offered Tactic"
+        }
+      ]
+    },
+    {
+      "active_enemies_remaining": 0,
+      "actual_kills": 83,
+      "arena_seed": null,
+      "boss_moves_released": {},
+      "boss_moves_started": {},
+      "build": "mage",
+      "clear_seconds": 129.041666666714,
+      "cleared": true,
+      "damage_taken": 119.18425,
+      "debug_navigation": {},
+      "end_hp": 259.43,
+      "end_position": [
+        544.391418457031,
+        617.420959472656
+      ],
+      "enemies_remaining": 0,
+      "entry_hp": 257.83,
+      "entry_level": 65,
+      "entry_setup": "natural_campaign",
+      "entry_stats": {
+        "armor": 0.0,
+        "attack_speed": 1.17,
+        "block_rate": 0.07,
+        "critical_damage": 0.8,
+        "critical_rate": 0.085,
+        "damage": 80.3999999999999,
+        "dash_cooldown": 3.0,
+        "dash_damage": 0.0,
+        "dodge_cooldown": 3.92,
+        "dodge_rate": 0.085,
+        "lifesteal": 0.0,
+        "mage_armor": 58.8000000000001,
+        "magic": 0.0,
+        "max_hp": 257.83,
+        "pickup": 119.8,
+        "projectiles": 0.0,
+        "range": 87.39,
+        "regen": 1.79,
+        "shield_regen": 5.0,
+        "speed": 148.29
+      },
+      "entry_weapon": "staff",
+      "entry_xp": 156.0,
+      "environment_hazard_contacts": 0,
+      "environment_hazards_released": 62,
+      "environment_hazards_spawned": 62,
+      "gear": [
+        {
+          "description": "Lucky Acorn\n+0.2 attack speed / +8.3 speed",
+          "stage": 5
+        },
+        {
+          "description": "Windchime Charm\n+8.0% critical damage / +9.4 range",
+          "stage": 10
+        },
+        {
+          "description": "Heartwood Buckler\n+0.4 regen / +10.0% critical damage",
+          "stage": 15
+        },
+        {
+          "description": "Lucky Acorn\n+12.0% critical damage / +23.0 max hp",
+          "stage": 20
+        },
+        {
+          "description": "Bramble Bow\n+26.6 max hp / +0.4 regen",
+          "stage": 25
+        }
+      ],
+      "hits_taken": 3,
+      "initial_enemies": 83,
+      "minimum_hp": 172.014583333333,
+      "mode": "2:fire",
+      "movement": "kite",
+      "outcome": "cleared",
+      "peak_active_enemies": 15,
+      "queued_enemies_remaining": 0,
+      "remaining_enemy_details": [],
+      "seconds_observed": 129.041666666714,
+      "seed": 1760,
+      "skills": [
+        "mage_spread_1",
+        "mage_ward_1",
+        "mage_familiar_1",
+        "mage_ward_2",
+        "mage_spread_2"
+      ],
+      "stage": 29,
+      "strategy": "2:fire",
+      "survived": true,
+      "travel_pixels": 16463.0488961935,
+      "upgrades": [
+        {
+          "id": "balanced_training",
+          "level": 5,
+          "source": "offered Tactic"
+        },
+        {
+          "id": "vitality",
+          "level": 10,
+          "source": "offered Tactic"
+        },
+        {
+          "id": "mage_spread_1",
+          "source": "offered Skill",
+          "stage": 5
+        },
+        {
+          "id": "spring_water",
+          "level": 15,
+          "source": "offered Tactic"
+        },
+        {
+          "id": "heartwood",
+          "level": 20,
+          "source": "offered Tactic"
+        },
+        {
+          "id": "mage_ward_1",
+          "source": "offered Skill",
+          "stage": 10
+        },
+        {
+          "id": "agile_heart",
+          "level": 25,
+          "source": "offered Tactic"
+        },
+        {
+          "id": "vitality",
+          "level": 30,
+          "source": "offered Tactic"
+        },
+        {
+          "id": "mage_familiar_1",
+          "source": "offered Skill",
+          "stage": 15
+        },
+        {
+          "id": "heartwood",
+          "level": 35,
+          "source": "offered Tactic"
+        },
+        {
+          "id": "critical_guard",
+          "level": 40,
+          "source": "offered Tactic"
+        },
+        {
+          "id": "mage_ward_2",
+          "source": "offered Skill",
+          "stage": 20
+        },
+        {
+          "id": "heartwood",
+          "level": 45,
+          "source": "offered Tactic"
+        },
+        {
+          "id": "dodge_focus",
+          "level": 50,
+          "source": "offered Tactic"
+        },
+        {
+          "id": "spring_water",
+          "level": 55,
+          "source": "offered Tactic"
+        },
+        {
+          "id": "mage_spread_2",
+          "source": "offered Skill",
+          "stage": 25
+        },
+        {
+          "id": "critical_eye",
+          "level": 60,
+          "source": "offered Tactic"
+        },
+        {
+          "id": "ward",
+          "level": 65,
+          "source": "offered Tactic"
+        }
+      ]
+    },
+    {
+      "active_enemies_remaining": 0,
+      "actual_kills": 87,
+      "arena_seed": null,
+      "boss_moves_released": {
+        "dawn_rings": 2,
+        "eclipse_seals": 4,
+        "fan": 2,
+        "ring": 1,
+        "solar_lance": 2
+      },
+      "boss_moves_started": {
+        "dawn_rings": 2,
+        "eclipse_seals": 4,
+        "fan": 2,
+        "ring": 1,
+        "solar_lance": 2
+      },
+      "build": "mage",
+      "clear_seconds": 148.033333333363,
+      "cleared": true,
+      "damage_taken": 232.423958333334,
+      "debug_navigation": {},
+      "end_hp": 218.903124999991,
+      "end_position": [
+        1015.40118408203,
+        409.658538818359
+      ],
+      "enemies_remaining": 0,
+      "entry_hp": 260.23,
+      "entry_level": 68,
+      "entry_setup": "natural_campaign",
+      "entry_stats": {
+        "armor": 0.0,
+        "attack_speed": 1.17,
+        "block_rate": 0.07,
+        "critical_damage": 0.8,
+        "critical_rate": 0.085,
+        "damage": 82.9499999999999,
+        "dash_cooldown": 3.0,
+        "dash_damage": 0.0,
+        "dodge_cooldown": 3.92,
+        "dodge_rate": 0.085,
+        "lifesteal": 0.0,
+        "mage_armor": 60.1500000000001,
+        "magic": 0.0,
+        "max_hp": 260.23,
+        "pickup": 121.9,
+        "projectiles": 0.0,
+        "range": 87.39,
+        "regen": 1.79,
+        "shield_regen": 5.0,
+        "speed": 148.29
+      },
+      "entry_weapon": "staff",
+      "entry_xp": 125.0,
+      "environment_hazard_contacts": 1,
+      "environment_hazards_released": 74,
+      "environment_hazards_spawned": 74,
+      "gear": [
+        {
+          "description": "Lucky Acorn\n+0.2 attack speed / +8.3 speed",
+          "stage": 5
+        },
+        {
+          "description": "Windchime Charm\n+8.0% critical damage / +9.4 range",
+          "stage": 10
+        },
+        {
+          "description": "Heartwood Buckler\n+0.4 regen / +10.0% critical damage",
+          "stage": 15
+        },
+        {
+          "description": "Lucky Acorn\n+12.0% critical damage / +23.0 max hp",
+          "stage": 20
+        },
+        {
+          "description": "Bramble Bow\n+26.6 max hp / +0.4 regen",
+          "stage": 25
+        }
+      ],
+      "hits_taken": 8,
+      "initial_enemies": 87,
+      "minimum_hp": 147.561499999995,
+      "mode": "2:fire",
+      "movement": "kite",
+      "outcome": "cleared",
+      "peak_active_enemies": 15,
+      "queued_enemies_remaining": 0,
+      "remaining_enemy_details": [],
+      "seconds_observed": 148.033333333363,
+      "seed": 1760,
+      "skills": [
+        "mage_spread_1",
+        "mage_ward_1",
+        "mage_familiar_1",
+        "mage_ward_2",
+        "mage_spread_2"
+      ],
+      "stage": 30,
+      "strategy": "2:fire",
+      "survived": true,
+      "travel_pixels": 20308.3636752367,
+      "upgrades": [
+        {
+          "id": "balanced_training",
+          "level": 5,
+          "source": "offered Tactic"
+        },
+        {
+          "id": "vitality",
+          "level": 10,
+          "source": "offered Tactic"
+        },
+        {
+          "id": "mage_spread_1",
+          "source": "offered Skill",
+          "stage": 5
+        },
+        {
+          "id": "spring_water",
+          "level": 15,
+          "source": "offered Tactic"
+        },
+        {
+          "id": "heartwood",
+          "level": 20,
+          "source": "offered Tactic"
+        },
+        {
+          "id": "mage_ward_1",
+          "source": "offered Skill",
+          "stage": 10
+        },
+        {
+          "id": "agile_heart",
+          "level": 25,
+          "source": "offered Tactic"
+        },
+        {
+          "id": "vitality",
+          "level": 30,
+          "source": "offered Tactic"
+        },
+        {
+          "id": "mage_familiar_1",
+          "source": "offered Skill",
+          "stage": 15
+        },
+        {
+          "id": "heartwood",
+          "level": 35,
+          "source": "offered Tactic"
+        },
+        {
+          "id": "critical_guard",
+          "level": 40,
+          "source": "offered Tactic"
+        },
+        {
+          "id": "mage_ward_2",
+          "source": "offered Skill",
+          "stage": 20
+        },
+        {
+          "id": "heartwood",
+          "level": 45,
+          "source": "offered Tactic"
+        },
+        {
+          "id": "dodge_focus",
+          "level": 50,
+          "source": "offered Tactic"
+        },
+        {
+          "id": "spring_water",
+          "level": 55,
+          "source": "offered Tactic"
+        },
+        {
+          "id": "mage_spread_2",
+          "source": "offered Skill",
+          "stage": 25
+        },
+        {
+          "id": "critical_eye",
+          "level": 60,
+          "source": "offered Tactic"
+        },
+        {
+          "id": "ward",
+          "level": 65,
+          "source": "offered Tactic"
+        }
+      ]
+    }
+  ]
+}

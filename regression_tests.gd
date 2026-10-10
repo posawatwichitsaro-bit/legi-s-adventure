@@ -141,7 +141,7 @@ func run_tests():
 	game.show_cosmetics()
 	game.panel.get_child(1).get_child(3).pressed.emit()
 	game.show_skills()
-	game.panel.get_child(1).get_child(3).get_child(0).get_child(0).pressed.emit()
+	game.panel.get_child(1).get_child(4).pressed.emit()
 	game.profile.sfx = not expected_sfx
 	game.profile.volume = 0.9
 	game.selected_class = 0
@@ -149,7 +149,7 @@ func run_tests():
 	game.selected_skill = ""
 	game.load_profile()
 	check(game.profile.sfx == expected_sfx and is_equal_approx(float(game.profile.volume), 0.3), "Settings callbacks persist sound and volume")
-	check(game.selected_class == 2 and game.selected_cosmetic == 1 and game.selected_skill == "heartwood", "Build, cosmetic and starting-ability callbacks persist selections")
+	check(game.selected_class == 2 and game.selected_cosmetic == 1 and game.selected_option == "lightning" and game.selected_skill == "", "Class, cosmetic and Starting Option callbacks persist selections")
 	game.test_mode = true
 
 	game.start_run()
@@ -159,7 +159,7 @@ func run_tests():
 	file.close()
 	game.load_profile()
 	check(game.profile.unlocks is Array and game.profile.equipment is Array, "Corrupt profile collections use safe defaults")
-	check(game.profile.best_stage is int and game.profile.best_stage >= 0 and game.profile.best_stage <= 20 and game.profile.wins is int and game.profile.wins >= 0, "Profile records are bounded nonnegative integers")
+	check(game.profile.best_stage is int and game.profile.best_stage >= 0 and game.profile.best_stage <= 30 and game.profile.wins is int and game.profile.wins >= 0, "Profile records are bounded nonnegative integers")
 	check(game.profile.sfx is bool and game.profile.shake is bool and (game.profile.volume is float or game.profile.volume is int) and float(game.profile.volume) >= 0 and float(game.profile.volume) <= 1, "Corrupt setting types are sanitized")
 	game.profile = old_profile
 	if had_profile:
@@ -176,7 +176,7 @@ func run_tests():
 		var upgrade_count = 0
 		var loot_count = 0
 		var stage_failures = 0
-		for stage_number in range(1, 21):
+		for stage_number in range(1, 31):
 			if game.stage != stage_number:
 				stage_failures += 1
 				break
@@ -188,6 +188,8 @@ func run_tests():
 				if game.state == "tactic":
 					upgrade_count += 1
 					game.panel.get_child(1).get_child(2).pressed.emit()
+				elif game.state == "skill":
+					game.panel.get_child(1).get_child(2).pressed.emit()
 				elif game.state == "loot":
 					loot_count += 1
 					game.panel.get_child(1).get_child(2).pressed.emit()
@@ -195,8 +197,8 @@ func run_tests():
 					for enemy in game.enemies:
 						enemy.hp = 0
 					game.simulate(1.0 / 60)
-		check(stage_failures == 0 and game.state == "won" and game.stage == 20 and game.level == 43 and is_equal_approx(game.xp, 82.0) and game.kills == 736, "Build %d completes all 20 grouped arenas with natural EXP totals" % build_index)
-		check(upgrade_count == 8 and loot_count == 4 and game.run_equipment.size() == 4 and game.pending_choices == 0, "Build %d receives all eight upgrades and four guardian rewards" % build_index)
+		check(stage_failures == 0 and game.state == "won" and game.stage == 30 and game.level == 71 and is_equal_approx(game.xp, 172.0) and game.kills == 1479, "Build %d completes all 30 grouped arenas with natural EXP totals" % build_index)
+		check(upgrade_count == 14 and loot_count == 6 and game.run_equipment.size() == 6 and game.skill_choices_taken == 5 and game.pending_choices == 0, "Build %d receives all fourteen Tactics, five Skills and six Equipment rewards" % build_index)
 		print("BUILD_RESULT: ", build_index, " level=", game.level, " xp=", game.xp, " kills=", game.kills, " upgrades=", upgrade_count, " loot=", loot_count)
 
 	var spawn_failures = 0
@@ -204,7 +206,7 @@ func run_tests():
 	var checked_arenas = 0
 	for seed_number in range(100):
 		game.rng.seed = seed_number
-		for stage_number in range(1, 21):
+		for stage_number in range(1, 31):
 			game.stage = stage_number
 			game.start_stage()
 			# Inspect every spawn, including enemies that normally arrive later.
@@ -220,8 +222,8 @@ func run_tests():
 				reachability_failures += 1
 				if reachability_failures <= 5:
 					print("UNREACHABLE_SPAWN: seed=", seed_number, " stage=", stage_number, " positions=", inaccessible, " walls=", game.obstacles)
-	check(spawn_failures == 0, "All enemy spawn clearances are safe in 2,000 seeded arenas")
-	check(reachability_failures == 0, "All enemy spawn positions are player-reachable in 2,000 seeded arenas")
+	check(spawn_failures == 0, "All enemy spawn clearances are safe in 3,000 seeded arenas")
+	check(reachability_failures == 0, "All enemy spawn positions are player-reachable in 3,000 seeded arenas")
 	print("SEED_RESULT: ", checked_arenas, " arenas; unsafe_spawns=", spawn_failures, " unreachable_arenas=", reachability_failures)
 
 	print("REGRESSION_TESTS: ", passed, " passed; ", failures.size(), " failed")
