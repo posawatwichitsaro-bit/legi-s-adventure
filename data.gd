@@ -10,7 +10,7 @@ extends RefCounted
 ## Negative dash_cooldown reduces the delay. Clamp its final value above zero.
 
 # Global outer bounds; ClassProgression.stat_bounds applies stricter class caps.
-# Effective bounds apply to level growth, skills AND guardian relics.
+# Effective bounds apply to level growth, Tactics AND Equipment.
 # Keep melee local: range changes aimed projectile speed, not their lifetime.
 const STAT_LIMITS = {
 	"max_hp": [1.0, 400.0], "damage": [1.0, 80.0],
@@ -28,7 +28,7 @@ const THEMES = [
 	{"name": "Night", "floor": Color("46375f"), "accent": Color("d3a2ff"), "wall": Color("614573")},
 ]
 
-const BUILDS = [
+const CLASSES = [
 	{
 		"id": "melee", "name": "Blade Dancer", "weapon": "sword", "weapon_label": "Sword",
 		"description": "Focused sword slash; choose thrust, cleave or full sweep. Level bonus: speed + attack speed.",
@@ -64,7 +64,7 @@ const PRIMARY_WEAPONS = {
 	"staff": {"cooldown": 0.95, "windup": 0.28, "release": 0.22, "damage": 1.1},
 }
 
-const UPGRADES = [
+const TACTICS = [
 	{"id": "life_drain", "cap": 1, "name": "Life Drain", "description": "Heal 10% of actual attack damage. Unique; does not stack.", "stats": {"lifesteal": 0.1}},
 	{"id": "keen_edge", "cap": 3, "rank_scales": [1.0, 0.8, 0.6], "name": "Keen Edge", "description": "+6 attack damage.", "stats": {"damage": 6.0}},
 	{"id": "heartwood", "cap": 3, "name": "Heartwood", "description": "+25 maximum health.", "stats": {"max_hp": 25.0}},

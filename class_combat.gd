@@ -26,13 +26,13 @@ static func melee_spec(g) -> Dictionary:
 	if weapon != "sword": return spec
 	spec["cone_dot"] = 0.82
 	spec["style"] = "slash"
-	# The upgrade selector owns exclusivity; deterministic precedence also keeps
+	# The tactic selector owns exclusivity; deterministic precedence also keeps
 	# malformed/legacy saves from combining the damage and area of all styles.
-	if g.upgrade_rank("blade_thrust") > 0:
+	if g.tactic_rank("blade_thrust") > 0:
 		spec.merge({"style":"thrust", "cone_dot":0.96, "reach":1.3, "damage":1.3, "cooldown":0.9}, true)
-	elif g.upgrade_rank("blade_cleave") > 0:
+	elif g.tactic_rank("blade_cleave") > 0:
 		spec.merge({"style":"cleave", "cone_dot":0.0, "reach":1.0, "damage":0.8}, true)
-	elif g.upgrade_rank("blade_sweep") > 0:
+	elif g.tactic_rank("blade_sweep") > 0:
 		spec.merge({"style":"sweep", "cone_dot":-1.0, "reach":0.9, "damage":0.55}, true)
 	return spec
 
@@ -48,7 +48,7 @@ static func _append_bolt(g, pos: Vector2, direction: Vector2, speed: float, dama
 
 static func release_staff(g):
 	if not live(g) or g.primary_weapon() != "staff": return
-	var rank = clampi(g.upgrade_rank("moon_spread"), 0, 2)
+	var rank = clampi(g.tactic_rank("moon_spread"), 0, 2)
 	var count = 1 + 2 * rank
 	var volley_multiplier = [1.0, 1.35, 1.65][rank]
 	var power = 1.1 + 0.15 * maxf(0.0, minf(3.0, float(g.stats.get("magic", 1.0))) - 1.0)
@@ -58,7 +58,7 @@ static func release_staff(g):
 	for i in range(count):
 		var angle = (float(i) - float(count - 1) * 0.5) * 0.22
 		_append_bolt(g, g.player, aim.rotated(angle), g.aimed_projectile_speed(260.0), damage, 2.5, "moon", MAX_HOMING_TURN, 0.12 if rank > 0 else 0.0)
-	var radial = clampi(g.upgrade_rank("moon_radial"), 0, 2)
+	var radial = clampi(g.tactic_rank("moon_radial"), 0, 2)
 	if radial > 0 and float(g.class_fx.get("radial_cd", 0.0)) <= 0:
 		g.class_fx["radial_cd"] = RADIAL_INTERVAL
 		var spark_damage = float(g.stats.damage) * (0.15 if radial == 1 else 0.22)
@@ -85,7 +85,7 @@ static func update_bullet(g, b: Dictionary, dt: float):
 
 static func on_dash_hit(g, e: Dictionary):
 	if not live(g) or g.primary_weapon() != "dagger" or float(e.get("hp", 0.0)) <= 0: return
-	var poison = clampi(g.upgrade_rank("comet_poison"), 0, 2)
+	var poison = clampi(g.tactic_rank("comet_poison"), 0, 2)
 	if poison > 0:
 		var active = float(e.get("poison_left", 0.0)) > 0
 		e["poison_stacks"] = mini(MAX_POISON_STACKS, (int(e.get("poison_stacks", 0)) if active else 0) + 1)
@@ -93,7 +93,7 @@ static func on_dash_hit(g, e: Dictionary):
 		e["poison_rank"] = poison
 		# Refresh duration but preserve cadence: repeated dashes never postpone DOT.
 		if not active: e["poison_tick"] = POISON_INTERVAL
-	var knockback = clampi(g.upgrade_rank("comet_push"), 0, 2)
+	var knockback = clampi(g.tactic_rank("comet_push"), 0, 2)
 	if knockback > 0 and e.get("attack_state", "idle") in ["idle", "recover"]:
 		var away: Vector2 = e.pos - g.player
 		if away.length_squared() < 0.0001: away = g.facing
@@ -133,7 +133,7 @@ static func _tick_fire(g, dt: float, old_player: Vector2):
 	for i in range(g.trail_patches.size() - 1, -1, -1):
 		g.trail_patches[i]["time"] = float(g.trail_patches[i].get("time", 0.0)) - dt
 		if g.trail_patches[i].time <= 0.000001: g.trail_patches.remove_at(i)
-	var rank = clampi(g.upgrade_rank("moon_fire"), 0, 2) if g.primary_weapon() == "staff" else 0
+	var rank = clampi(g.tactic_rank("moon_fire"), 0, 2) if g.primary_weapon() == "staff" else 0
 	var distance = old_player.distance_to(g.player)
 	# Walking only: a dash does not paint an entire arena in a single instant.
 	if rank > 0 and g.dash_left <= 0 and distance > 0.0001:
@@ -169,7 +169,7 @@ static func _add_fire_patch(g, pos: Vector2, rank: int):
 	g.trail_patches.append({"pos":pos, "time":FIRE_LIFETIME, "damage":float(g.stats.damage) * (0.12 if rank == 1 else 0.18), "phase":float(g.elapsed) * 9.0})
 
 static func _tick_familiar(g, dt: float):
-	if g.primary_weapon() != "staff" or g.upgrade_rank("moon_familiar") <= 0:
+	if g.primary_weapon() != "staff" or g.tactic_rank("moon_familiar") <= 0:
 		g.class_fx.erase("familiar")
 		return
 	if not g.class_fx.has("familiar"):
@@ -219,7 +219,7 @@ static func draw(g):
 	# Deliberately pixel-sized primitives; no texture dependencies or extra nodes.
 	# Call inside main's translated world draw, before the player is drawn.
 	_draw_shield(g)
-	if g.primary_weapon() == "sword" and g.sword_state == "active" and g.upgrade_rank("blade_thrust") > 0:
+	if g.primary_weapon() == "sword" and g.sword_state == "active" and g.tactic_rank("blade_thrust") > 0:
 		var aim: Vector2 = g.sword_aim.normalized()
 		var tip: Vector2 = g.player + aim * float(g.stats.range) * 1.3
 		var side: Vector2 = aim.orthogonal()

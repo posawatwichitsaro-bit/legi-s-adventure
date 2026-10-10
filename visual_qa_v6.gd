@@ -17,7 +17,7 @@ func _ready():
 	test_mode = true
 	super._ready()
 	profile.sfx = false
-	selected_ability = ""
+	selected_skill = ""
 	start_run()
 	setup_qa(0)
 
@@ -133,7 +133,7 @@ func _unhandled_input(event):
 			KEY_G:setup_live_waves()
 			KEY_P:setup_portal()
 			KEY_N:enemies.clear();bullets.clear();World.reset_hazards(self);qa_scenario="seeded-group-clear";qa_pose="natural";qa_frozen=true;update_qa_hud()
-			KEY_B:selected_build=(selected_build+1)%4;start_run();setup_qa(qa_theme)
+			KEY_B:selected_class=(selected_class+1)%4;start_run();setup_qa(qa_theme)
 			KEY_R:setup_qa(qa_theme)
 			KEY_F12:save_capture()
 			KEY_V:print("V6_QA_STATUS ",{"stage":stage,"state":state,"player":player,"camera":camera_offset,"hp":hp,"dash":dash_cd,"active":enemies.size(),"queued":spawn_queue.size(),"wave":wave_index,"portal":portal_open})

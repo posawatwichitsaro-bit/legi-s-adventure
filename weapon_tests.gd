@@ -23,8 +23,8 @@ func near(a: float, b: float) -> bool:
 	return absf(a - b) < 0.0001
 
 func fresh_field(build = 0, stage_number = 1):
-	game.selected_build = build
-	game.selected_ability = ""
+	game.selected_class = build
+	game.selected_skill = ""
 	game.start_run()
 	if stage_number != 1:
 		game.stage = stage_number
@@ -220,10 +220,10 @@ func test_cooldowns_and_caps():
 		var speed_cap = game.ClassProgression.stat_bounds(game,"attack_speed")[1]
 		check(near(game.stats.attack_speed, speed_cap) and near(actual_cd, base_cd / speed_cap), "%s primary cooldown obeys the class-specific attack-speed cap without skipping anticipation" % PRIMARY[build].capitalize())
 		check(near(game.stats.damage, 80.0) and near(game.stats.range, 145.0) and near(game.stats.projectiles, 4.0 if build==1 else 2.0) and near(game.stats.magic, 3.0 if build==2 else 2.0), "%s still obeys shared damage/reach and class-specific projectile/magic caps" % PRIMARY[build].capitalize())
-		for upgrade in game.D.UPGRADES:
-			for attempt in range(upgrade.cap + 2): game.apply_upgrade(upgrade.id)
+		for upgrade in game.D.TACTICS:
+			for attempt in range(upgrade.cap + 2): game.apply_tactic(upgrade.id)
 		var before = game.stats.duplicate(true)
-		for upgrade in game.D.UPGRADES: game.apply_upgrade(upgrade.id)
+		for upgrade in game.D.TACTICS: game.apply_tactic(upgrade.id)
 		check(game.stats == before and game.stats.attack_speed <= speed_cap and game.stats.damage <= 80.0 and game.stats.projectiles <= 4.0 and game.stats.magic <= 3.0, "%s cannot overstack capped upgrades through its exclusive primary" % PRIMARY[build].capitalize())
 
 func test_range_benefits():
@@ -239,7 +239,7 @@ func test_range_benefits():
 			check(game.bullets.size() == 1 and near(game.bullets[0].vel.length(), base_speed + maxf(0, reach - 78.0)) and near(game.bullets[0].life, 2.5), "%s reach %.0f applies only its declared bounded aimed-projectile speed bonus" % [PRIMARY[build].capitalize(), reach])
 		fresh_field(build)
 		var before = game.stats.range
-		check(game.apply_upgrade("long_reach") and game.stats.range > before, "%s can obtain a useful Long Reach upgrade instead of a dead melee stat" % PRIMARY[build].capitalize())
+		check(game.apply_tactic("long_reach") and game.stats.range > before, "%s can obtain a useful Long Reach upgrade instead of a dead melee stat" % PRIMARY[build].capitalize())
 	fresh_field(0)
 	game.stats.range = 145.0
 	game.stats.magic = 1.0
@@ -255,8 +255,8 @@ func test_intentional_secondary_attacks():
 	for build in range(4):
 		fresh_field(build)
 		var target = enemy_at(Vector2(200, 0))
-		game.apply_upgrade("split_shot")
-		game.apply_upgrade("starlight")
+		game.apply_tactic("split_shot")
+		game.apply_tactic("starlight")
 		game.attack_cd = 0.0
 		game.bow_cd = 0.0
 		game.magic_cd = 0.0
@@ -275,7 +275,7 @@ func test_intentional_secondary_attacks():
 
 func test_interruption_and_reset():
 	for build in range(4):
-		for mode in ["paused", "upgrade", "loot", "menu", "dead", "won"]:
+		for mode in ["paused", "tactic", "loot", "menu", "dead", "won"]:
 			fresh_field(build)
 			var target = enemy_at(Vector2(35, 0))
 			arm_primary(build)
@@ -295,7 +295,7 @@ func test_interruption_and_reset():
 			reset_ok = reset_ok and game.primary_weapon() == PRIMARY[build] and game.sword_state == "idle" and game.sword_hits.is_empty() and game.bow_windup == 0 and game.cast_windup == 0 and game.bullets.is_empty()
 		check(reset_ok, "%s remains exclusive and clears unfinished attack state across all 20 stages" % PRIMARY[build].capitalize())
 		game.start_run()
-		check(game.primary_weapon() == PRIMARY[build] and game.stage == 1 and game.upgrade_ranks.is_empty(), "%s replay starts cleanly with its chosen primary and no stale run ranks" % PRIMARY[build].capitalize())
+		check(game.primary_weapon() == PRIMARY[build] and game.stage == 1 and game.tactic_ranks.is_empty(), "%s replay starts cleanly with its chosen primary and no stale run ranks" % PRIMARY[build].capitalize())
 
 func test_primary_cadence():
 	for build in range(4):

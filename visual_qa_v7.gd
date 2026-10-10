@@ -9,14 +9,14 @@ const QA_CASES = [
 	"moon-homing", "moon-spread", "moon-radial", "moon-fire", "moon-familiar", "moon-shield-hit", "moon-shield-regen",
 	"ranger-bow", "ranger-trap-charge", "ranger-rapid-fan",
 	"comet-dagger", "comet-long-trail", "comet-double-dash", "comet-poison", "comet-push",
-	"menu-builds", "menu-blade-upgrades", "menu-moon-upgrades", "menu-ranger-upgrades", "menu-comet-upgrades"
+	"menu-classes", "menu-blade-tactics", "menu-moon-tactics", "menu-ranger-tactics", "menu-comet-tactics"
 ]
 var qa_index := 0
 var qa_case := ""
 var qa_description := ""
 var qa_banner: Label
 var qa_busy := false
-var qa_upgrade_filter: Array = []
+var qa_tactic_filter: Array = []
 var qa_annotations: Array = []
 
 func load_profile():
@@ -30,7 +30,7 @@ func _ready():
 	super._ready()
 	profile.sfx = false
 	profile.shake = false
-	selected_ability = ""
+	selected_skill = ""
 	qa_banner = Label.new()
 	qa_banner.z_index = 100
 	qa_banner.position = Vector2(45,122)
@@ -44,10 +44,10 @@ func _ready():
 	if "--qa-capture-all" in OS.get_cmdline_user_args():
 		call_deferred("capture_all")
 
-func available_upgrades() -> Array:
-	var choices = super.available_upgrades()
-	if qa_upgrade_filter.is_empty(): return choices
-	return choices.filter(func(u): return u.id in qa_upgrade_filter)
+func available_tactics() -> Array:
+	var choices = super.available_tactics()
+	if qa_tactic_filter.is_empty(): return choices
+	return choices.filter(func(u): return u.id in qa_tactic_filter)
 
 func _process(_delta):
 	queue_redraw()
@@ -66,20 +66,20 @@ func seed_enemy(offset: Vector2, kind: String = "grunt") -> Dictionary:
 	e.moving = false
 	return e
 
-func seed_upgrade(id: String, count: int = 1):
+func seed_tactic(id: String, count: int = 1):
 	for i in range(count):
-		if not apply_upgrade(id): push_error("V7 QA could not apply " + id + " rank " + str(i + 1))
+		if not apply_tactic(id): push_error("V7 QA could not apply " + id + " rank " + str(i + 1))
 
 func setup_case(index: int):
 	qa_index = posmod(index,QA_CASES.size())
 	qa_case = QA_CASES[qa_index]
-	qa_upgrade_filter.clear()
+	qa_tactic_filter.clear()
 	qa_annotations.clear()
-	selected_ability = ""
-	selected_build = 0
-	if "moon" in qa_case: selected_build = 2
-	elif "ranger" in qa_case: selected_build = 1
-	elif "comet" in qa_case: selected_build = 3
+	selected_skill = ""
+	selected_class = 0
+	if "moon" in qa_case: selected_class = 2
+	elif "ranger" in qa_case: selected_class = 1
+	elif "comet" in qa_case: selected_class = 3
 	rng.seed = 7072026
 	start_run()
 	enemies.clear(); spawn_queue.clear(); bullets.clear(); effects.clear()
@@ -93,7 +93,7 @@ func setup_case(index: int):
 	wave_index = 1; wave_count = 1
 	qa_description = "Actual game render; deterministic pose, no saved progress."
 	if qa_case.begins_with("blade-"):
-		if qa_case != "blade-focused": seed_upgrade(qa_case.replace("-","_"))
+		if qa_case != "blade-focused": seed_tactic(qa_case.replace("-","_"))
 		for angle in [-PI,-PI / 2.0,0.0,PI / 2.0]: seed_enemy(Vector2.RIGHT.rotated(angle) * 135.0)
 		sword_aim = Vector2.RIGHT
 		sword_state = "active"
@@ -105,10 +105,10 @@ func setup_case(index: int):
 	elif qa_case.begins_with("moon-"):
 		seed_enemy(Vector2(235,-66))
 		cast_aim = Vector2.RIGHT
-		if qa_case in ["moon-spread","moon-fire"]: seed_upgrade("moon_spread",2)
-		if qa_case in ["moon-radial","moon-familiar"]: seed_upgrade("moon_radial",2)
+		if qa_case in ["moon-spread","moon-fire"]: seed_tactic("moon_spread",2)
+		if qa_case in ["moon-radial","moon-familiar"]: seed_tactic("moon_radial",2)
 		if qa_case == "moon-fire":
-			seed_upgrade("moon_fire",2)
+			seed_tactic("moon_fire",2)
 			player = CENTER - Vector2(88,0)
 			for i in range(8):
 				var old = player
@@ -116,12 +116,12 @@ func setup_case(index: int):
 				ClassCombat.tick(self,0.055,old)
 			qa_description = "Moonfire rank 2 | native fire patch rendering | Lunar Fan 5-bolt spread"
 		elif qa_case == "moon-familiar":
-			seed_upgrade("moon_familiar")
+			seed_tactic("moon_familiar")
 			ClassCombat.tick(self,0.01,player)
 			ClassCombat.tick(self,1.75,player)
 			qa_description = "Orbiting Familiar | homing familiar bolt + Moonburst radial sparks"
 		elif qa_case.begins_with("moon-shield"):
-			seed_upgrade("moon_ward",2)
+			seed_tactic("moon_ward",2)
 			shield = ClassProgression.shield_max(self)
 			damage_player(24.0)
 			hurt_cd = 0.0
@@ -139,9 +139,9 @@ func setup_case(index: int):
 	elif qa_case.begins_with("ranger-"):
 		var target = seed_enemy(Vector2(235,0))
 		if qa_case == "ranger-rapid-fan":
-			seed_upgrade("ranger_rapid",2); seed_upgrade("ranger_fan",2)
+			seed_tactic("ranger_rapid",2); seed_tactic("ranger_fan",2)
 		if qa_case == "ranger-trap-charge":
-			seed_upgrade("ranger_evasion",2)
+			seed_tactic("ranger_evasion",2)
 			trap_charges = ClassProgression.trap_max(self)
 			ClassProgression.avoid_trap(self)
 			ClassProgression.tick(self,3.3)
@@ -153,10 +153,10 @@ func setup_case(index: int):
 		qa_description = "Native bow volley | %d arrows | attack speed %.2f | trap charges %d/%d" % [bullets.size(),stats.attack_speed,trap_charges,ClassProgression.trap_max(self)]
 	elif qa_case.begins_with("comet-"):
 		var target = seed_enemy(Vector2(130,0))
-		if qa_case in ["comet-long-trail","comet-poison"]: seed_upgrade("comet_length",2)
-		if qa_case in ["comet-double-dash","comet-push"]: seed_upgrade("comet_echo")
-		if qa_case == "comet-poison": seed_upgrade("comet_poison",2)
-		if qa_case == "comet-push": seed_upgrade("comet_push",2)
+		if qa_case in ["comet-long-trail","comet-poison"]: seed_tactic("comet_length",2)
+		if qa_case in ["comet-double-dash","comet-push"]: seed_tactic("comet_echo")
+		if qa_case == "comet-poison": seed_tactic("comet_poison",2)
+		if qa_case == "comet-push": seed_tactic("comet_push",2)
 		if qa_case != "comet-dagger":
 			dash_charges = ClassProgression.dash_max(self)
 			dash()
@@ -177,22 +177,22 @@ func setup_case(index: int):
 			sword_state = "active"; sword_time = melee_duration("active") * 0.7
 			slash_time = sword_time; slash_angle = 0.0
 		if qa_case != "comet-push": qa_description = "Native %s | dash %.2fs | charges %d/%d | poison markers %d" % [qa_case.trim_prefix("comet-"),ClassProgression.dash_duration(self),dash_charges,ClassProgression.dash_max(self),int(target.get("poison_stacks",0))]
-	elif qa_case == "menu-builds":
-		show_menu(); show_builds()
-		qa_description = "Build selector readability / class identity"
+	elif qa_case == "menu-classes":
+		show_menu(); show_classes()
+		qa_description = "Class selector readability / class identity"
 	elif qa_case.begins_with("menu-"):
-		match selected_build:
-			0: qa_upgrade_filter = ["blade_thrust","blade_cleave","blade_sweep"]
-			1: qa_upgrade_filter = ["ranger_fan","ranger_rapid","ranger_evasion"]
+		match selected_class:
+			0: qa_tactic_filter = ["blade_thrust","blade_cleave","blade_sweep"]
+			1: qa_tactic_filter = ["ranger_fan","ranger_rapid","ranger_evasion"]
 			2:
-				seed_upgrade("moon_spread"); seed_upgrade("moon_radial")
-				qa_upgrade_filter = ["moon_fire","moon_familiar","moon_ward"]
+				seed_tactic("moon_spread"); seed_tactic("moon_radial")
+				qa_tactic_filter = ["moon_fire","moon_familiar","moon_ward"]
 			3:
-				seed_upgrade("comet_echo"); seed_upgrade("comet_length")
-				qa_upgrade_filter = ["comet_length","comet_poison","comet_push"]
+				seed_tactic("comet_echo"); seed_tactic("comet_length")
+				qa_tactic_filter = ["comet_length","comet_poison","comet_push"]
 		level = 5; pending_choices = 1
-		show_upgrades()
-		qa_description = "Native upgrade menu; class choices seeded for long-description readability."
+		show_tactics()
+		qa_description = "Native Tactic menu; class choices seeded for long-description readability."
 	total_enemies = maxi(1,enemies.size())
 	update_camera()
 	if not qa_case.begins_with("menu-"): update_hud()

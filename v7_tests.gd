@@ -18,7 +18,7 @@ func check(condition: bool,message: String):
 	else:failures.append(message);print("FAIL: ",message)
 func near(a: float,b: float) -> bool:return absf(a-b)<0.001
 func fresh(build: int=0,ability: String=""):
-	game.selected_build=build;game.selected_ability=ability
+	game.selected_class=build;game.selected_skill=ability
 	game.profile.unlocks=[]
 	if ability!="":game.profile.unlocks.append(ability)
 	game.start_run()
@@ -42,7 +42,7 @@ func attack_steps(duration: float):
 		game.update_player_attacks(dt,game.nearest_enemy(game.player));remaining-=dt
 func upgrade_ids() -> Array:
 	var ids=[]
-	for upgrade in game.available_upgrades():ids.append(upgrade.id)
+	for upgrade in game.available_tactics():ids.append(upgrade.id)
 	return ids
 func run_tests():
 	seed(7007)
@@ -65,20 +65,20 @@ func test_class_eligibility():
 				check((id in offered)==(owner==build),"Class %d offers %s only to its owning class"%[build,id])
 				if owner!=build:
 					var before=game.stats.duplicate(true)
-					check(not game.apply_upgrade(id) and game.upgrade_rank(id)==0 and game.stats==before,"Class %d rejects wrong-class %s without side effects"%[build,id])
-		check(not game.apply_upgrade("unknown_upgrade"),"Class %d safely rejects unknown upgrades"%build)
+					check(not game.apply_tactic(id) and game.tactic_rank(id)==0 and game.stats==before,"Class %d rejects wrong-class %s without side effects"%[build,id])
+		check(not game.apply_tactic("unknown_upgrade"),"Class %d safely rejects unknown upgrades"%build)
 	for style in BRANCHES[0]:
 		fresh(0)
-		check(game.apply_upgrade(style),"Melee accepts chosen style "+style)
-		for other in BRANCHES[0]:check(not game.apply_upgrade(other) and other not in upgrade_ids(),"Chosen %s rejects/removes %s repeats or competing styles"%[style,other])
+		check(game.apply_tactic(style),"Melee accepts chosen style "+style)
+		for other in BRANCHES[0]:check(not game.apply_tactic(other) and other not in upgrade_ids(),"Chosen %s rejects/removes %s repeats or competing styles"%[style,other])
 func test_starting_selection():
 	for build in range(4):
 		fresh(build,BRANCHES[(build+1)%4][0])
-		check(game.selected_ability=="" and game.upgrade_ranks.is_empty(),"Class %d clears a persistent starting skill belonging to another class"%build)
+		check(game.selected_skill=="" and game.tactic_ranks.is_empty(),"Class %d clears a persistent starting skill belonging to another class"%build)
 		var ability=BRANCHES[build][0]
 		fresh(build,ability)
-		check(game.selected_ability==ability and game.upgrade_rank(ability)==1,"Class %d consumes one legal starting rank of %s"%[build,ability])
-		game.start_run();check(game.upgrade_rank(ability)==1,"Class %d restarts without accumulating starting ranks"%build)
+		check(game.selected_skill==ability and game.tactic_rank(ability)==1,"Class %d consumes one legal starting rank of %s"%[build,ability])
+		game.start_run();check(game.tactic_rank(ability)==1,"Class %d restarts without accumulating starting ranks"%build)
 	fresh(2)
 	check(near(game.hp,70) and near(game.stats.max_hp,70),"Moon Weaver begins at 70 health")
 	check(near(game.shield,35),"Moon Weaver begins with a distinct 35-point shield")
@@ -86,22 +86,22 @@ func test_starting_selection():
 		fresh(build);check(near(game.hp,100) and near(game.shield,0),"Class %d preserves 100 HP and has no mana shield"%build)
 func test_offer_and_stack_caps():
 	for build in range(4):
-		fresh(build);game.pending_choices=1;game.level=5;game.show_upgrades()
+		fresh(build);game.pending_choices=1;game.level=5;game.show_tactics()
 		var class_offer=false
 		var buttons=0
 		for child in game.panel.get_child(1).get_children():
 			if not child is Button:continue
 			buttons+=1
-			for upgrade in game.D.UPGRADES:
+			for upgrade in game.D.TACTICS:
 				if child.text.begins_with(upgrade.name) and upgrade.id in BRANCHES[build]:class_offer=true
 		check(buttons==3 and class_offer,"Class %d level-five modal offers three choices including a class branch"%build)
 		game.clear_panel();game.state="playing";game.pending_choices=0
-		for upgrade in game.D.UPGRADES:
-			for repeat in range(int(upgrade.cap)+5):game.apply_upgrade(upgrade.id)
-		var ranks=game.upgrade_ranks.duplicate(true)
+		for upgrade in game.D.TACTICS:
+			for repeat in range(int(upgrade.cap)+5):game.apply_tactic(upgrade.id)
+		var ranks=game.tactic_ranks.duplicate(true)
 		var stats=game.stats.duplicate(true)
-		for upgrade in game.D.UPGRADES:game.apply_upgrade(upgrade.id)
-		check(game.upgrade_ranks==ranks and game.stats==stats,"Class %d repeated upgrade requests stop changing capped ranks and stats"%build)
+		for upgrade in game.D.TACTICS:game.apply_tactic(upgrade.id)
+		check(game.tactic_ranks==ranks and game.stats==stats,"Class %d repeated upgrade requests stop changing capped ranks and stats"%build)
 		var limits=true
 		for key in game.D.STAT_LIMITS:
 			var bounds=game.ClassProgression.stat_bounds(game,key)
@@ -110,17 +110,17 @@ func test_offer_and_stack_caps():
 		var wrong_rank=false
 		for owner in range(4):
 			if owner==build:continue
-			for id in BRANCHES[owner]:wrong_rank=wrong_rank or game.upgrade_rank(id)>0
+			for id in BRANCHES[owner]:wrong_rank=wrong_rank or game.tactic_rank(id)>0
 		check(not wrong_rank,"Class %d max-stack cannot acquire another class branch"%build)
 		var maximum={}
 		for key in game.D.STAT_LIMITS:maximum[key]=10000.0 if key!="dash_cooldown" else -10000.0
 		game.apply_stats(maximum)
-		check(game.available_upgrades().is_empty(),"Class %d hides no-op offers after compatible branches and stat ceilings are exhausted"%build)
-		game.pending_choices=1;game.hp=game.stats.max_hp*0.5;game.show_upgrades()
+		check(game.available_tactics().is_empty(),"Class %d hides no-op offers after compatible branches and stat ceilings are exhausted"%build)
+		game.pending_choices=1;game.hp=game.stats.max_hp*0.5;game.show_tactics()
 		var rest=null
 		for child in game.panel.get_child(1).get_children():
 			if child is Button:rest=child
-		check(rest!=null and "NO FURTHER UPGRADES" in rest.text,"Class %d exhausted modal has a mastery-rest fallback"%build)
+		check(rest!=null and "NO FURTHER TACTICS" in rest.text,"Class %d exhausted modal has a mastery-rest fallback"%build)
 		if rest!=null:rest.pressed.emit()
 		check(game.state=="playing" and game.pending_choices==0,"Class %d mastery rest consumes the choice without softlocking"%build)
 func test_melee_shapes():
@@ -157,7 +157,7 @@ func test_melee_shapes():
 func test_moon_projectiles():
 	for rank in range(3):
 		fresh(2)
-		for i in range(rank):game.apply_upgrade("moon_spread")
+		for i in range(rank):game.apply_tactic("moon_spread")
 		var target=enemy_at(Vector2(200,0))
 		game.magic_cd=0;game.update_player_attacks(0,target);attack_steps(0.275)
 		check(game.bullets.is_empty(),"Moon spread rank %d preserves full staff anticipation"%rank)
@@ -210,7 +210,7 @@ func test_fire_and_familiar():
 	check(game.class_fx.has("familiar") and game.bullets.is_empty(),"One familiar follows before its first 0.9-second shot")
 	game.ClassCombat.tick(game,0.011,game.player)
 	check(game.bullets.size()==1 and game.bullets[0].class_kind=="familiar" and near(game.bullets[0].damage,6.3),"Familiar fires one homing bolt at 35% damage")
-	check(not game.apply_upgrade("moon_familiar"),"Familiar cannot stack into multiple companions")
+	check(not game.apply_tactic("moon_familiar"),"Familiar cannot stack into multiple companions")
 	game.class_fx.familiar.pos=game.player+Vector2(999,0)
 	game.ClassCombat.tick(game,STEP,game.player)
 	check(game.class_fx.familiar.pos.distance_to(game.player)<180,"Familiar recovers from excessive displacement")
@@ -235,7 +235,7 @@ func test_poison_and_push():
 	check(near(enemy.pos.distance_to(position),20),"Comet Push moves an idle foe twenty collision-checked pixels")
 	enemy.attack_state="windup";position=enemy.pos;game.ClassCombat.on_dash_hit(game,enemy)
 	check(enemy.pos==position,"Comet Push cannot invalidate a committed windup's position")
-	game.apply_upgrade("comet_push");enemy.attack_state="recover";position=enemy.pos
+	game.apply_tactic("comet_push");enemy.attack_state="recover";position=enemy.pos
 	game.obstacles=[Rect2(position+Vector2(20,-30),Vector2(20,60))]
 	game.ClassCombat.on_dash_hit(game,enemy)
 	check(enemy.pos.x<=position.x+5,"Comet Push respects enemy-radius wall collision")
@@ -249,7 +249,7 @@ func test_shield():
 	check(near(game.shield,0.7),"A frame crossing the delay recharges only its remaining 0.1 seconds")
 	game.ClassProgression.tick(game,20)
 	check(near(game.shield,35) and near(game.hp,65),"Shield capacity does not silently heal HP")
-	game.apply_upgrade("moon_ward");game.apply_upgrade("moon_ward")
+	game.apply_tactic("moon_ward");game.apply_tactic("moon_ward")
 	check(near(game.ClassProgression.shield_max(game),55) and near(game.ClassProgression.shield_regen(game),9),"Two Ward ranks cap shield at 55 and regen at nine per second")
 	check(near(game.shield,35),"Added shield capacity is not an instant shield refill")
 	game.shield=10;game.shield_delay=2;game.hurt_cd=1;game.damage_player(999)
@@ -275,11 +275,11 @@ func test_charges_and_timing():
 	check(game.dash_charges==1 and game.dash_recharge>0,"Spent Comet charges recharge serially")
 	game.ClassProgression.tick(game,interval)
 	check(game.dash_charges==2 and near(game.dash_recharge,0),"Second charge needs the next full interval")
-	game.apply_upgrade("comet_length");game.apply_upgrade("comet_length");game.dash()
+	game.apply_tactic("comet_length");game.apply_tactic("comet_length");game.dash()
 	check(near(game.dash_left,0.26) and near(game.ClassProgression.dash_duration(game),0.26),"Comet Length caps dash duration at 0.26 seconds")
 	fresh(3);game.dash();game.dash_left=0
 	game.ClassProgression.tick(game,1);var before=game.dash_recharge
-	game.apply_upgrade("comet_echo")
+	game.apply_tactic("comet_echo")
 	check(game.dash_charges==0 and near(game.dash_recharge,before),"Unlocking a second dash preserves recharge progress and grants no free charge")
 	game.ClassProgression.tick(game,20)
 	check(game.dash_charges==2 and near(game.dash_recharge,0),"Large resource ticks remain bounded to maximum dash capacity")
@@ -289,13 +289,13 @@ func test_ranger():
 	fresh(1)
 	check(near(game.stats.speed,175) and near(game.stats.attack_speed,1.15),"Ranger starts faster in both movement and attack cadence")
 	var enemy=enemy_at(Vector2(200,0))
-	game.apply_upgrade("ranger_rapid");game.apply_upgrade("ranger_rapid")
+	game.apply_tactic("ranger_rapid");game.apply_tactic("ranger_rapid")
 	check(near(game.stats.attack_speed,1.55),"Two Quickdraw ranks add a bounded 0.4 attack speed")
-	game.apply_upgrade("ranger_fan");game.apply_upgrade("ranger_fan")
+	game.apply_tactic("ranger_fan");game.apply_tactic("ranger_fan")
 	game.bow_cd=0;game.update_player_attacks(0,enemy);attack_steps(0.205)
 	check(game.bullets.size()==3 and near(game.bow_cd,0.85/1.55),"Two Star Fan ranks create a three-arrow volley at Quickdraw's actual cooldown")
 	check(game.trap_charges==1 and game.ClassProgression.trap_max(game)==1,"Ranger begins with one independent map-trap dodge")
-	game.apply_upgrade("ranger_evasion");game.apply_upgrade("ranger_evasion")
+	game.apply_tactic("ranger_evasion");game.apply_tactic("ranger_evasion")
 	check(game.trap_charges==1 and game.ClassProgression.trap_max(game)==3 and near(game.trap_recharge,10),"Trail Instinct raises capacity to three without filling new slots")
 	game.ClassProgression.tick(game,10.01)
 	check(game.trap_charges==2 and game.trap_recharge>0,"Trap charges regenerate serially at the upgraded ten-second cadence")
@@ -315,7 +315,7 @@ func test_ranger():
 	game.dash_left=0;game.trap_charges=0;game.world_data.hazards=[hazard_at(game.player)];game.World.update_hazards(game,0)
 	check(near(game.hp,before_hp-40),"A map hazard deals normal damage when evasion charges are empty")
 func test_lifecycle():
-	for frozen_state in ["paused","upgrade","loot","menu","dead","won"]:
+	for frozen_state in ["paused","tactic","loot","menu","dead","won"]:
 		fresh(2,"moon_familiar")
 		game.shield=0;game.shield_delay=1;game.dash_charges=0;game.dash_recharge=1
 		game.trail_patches=[{"pos":game.player,"time":1.0,"damage":1.0}]
@@ -348,17 +348,17 @@ func test_dash_hit_integration():
 	game.Combat.tick(game,enemy,0)
 	check(near(enemy.hp,920) and enemy.poison_stacks==2,"A separately recharged dash can damage and add one poison stack again")
 	fresh(3,"comet_length")
-	game.apply_upgrade("comet_length");game.dash()
+	game.apply_tactic("comet_length");game.dash()
 	var start=game.player
 	for i in range(31):game.simulate(STEP)
 	check(game.player.distance_to(start)>145 and game.player.distance_to(start)<165,"Extended dash travels through normal collision movement at its bounded duration")
 	fresh(2,"moon_ward")
-	game.apply_upgrade("moon_ward")
+	game.apply_tactic("moon_ward")
 	var capacity=game.ClassProgression.shield_max(game)
 	game.gain_xp(100000)
 	check(near(game.ClassProgression.shield_max(game),capacity) and near(game.ClassProgression.shield_regen(game),9),"Level growth cannot multiply fixed shield capacity or regeneration")
 	fresh(1,"ranger_evasion")
-	game.apply_upgrade("ranger_evasion");game.ClassProgression.tick(game,30)
+	game.apply_tactic("ranger_evasion");game.ClassProgression.tick(game,30)
 	enemy=enemy_at(Vector2(200,0))
 	game.world_data.hazards=[hazard_at(game.player),hazard_at(game.player),hazard_at(game.player),hazard_at(game.player)]
 	game.World.update_hazards(game,0)

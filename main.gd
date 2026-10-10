@@ -38,7 +38,7 @@ var effects: Array = []
 var obstacles: Array = []
 var flowers: Array = []
 var run_equipment: Array = []
-var upgrade_ranks: Dictionary = {}
+var tactic_ranks: Dictionary = {}
 var pending_choices = 0
 var boss_reward_taken = false
 var portal_open = false
@@ -52,9 +52,10 @@ var wave_size = 4
 var active_cap = 6
 var world_data: Dictionary = {}
 var camera_offset = Vector2.ZERO
-var selected_build = 0
-var selected_ability = ""
+var selected_class = 0
+var selected_skill = ""
 var selected_cosmetic = 0
+# Legacy profile keys keep existing saves compatible with Class and Skill names.
 var profile = {"best_stage":0,"wins":0,"unlocks":[],"equipment":[],"sfx":true,"shake":true,"volume":0.5,"selected_build":0,"selected_ability":"","selected_cosmetic":0}
 var ui: CanvasLayer
 var panel: Control
@@ -139,27 +140,27 @@ func load_profile():
 				if not value is String or value in profile[key]: continue
 				if key == "equipment" and value in D.EQUIPMENT_NAMES: profile[key].append(value)
 				if key == "unlocks":
-					for upgrade in D.UPGRADES:
-						if value == upgrade.id: profile[key].append(value); break
-	selected_build = clampi(int(profile.selected_build),0,D.BUILDS.size()-1)
+					for tactic in D.TACTICS:
+						if value == tactic.id: profile[key].append(value); break
+	selected_class = clampi(int(profile.selected_build),0,D.CLASSES.size()-1)
 	selected_cosmetic = clampi(int(profile.selected_cosmetic),0,D.COSMETICS.size()-1)
 	if D.COSMETICS[selected_cosmetic].stage > profile.best_stage: selected_cosmetic = 0
-	selected_ability = saved.get("selected_ability", "") if saved.get("selected_ability", "") is String else ""
-	if not selected_ability in profile.unlocks: selected_ability = ""
-	validate_starting_ability()
+	selected_skill = saved.get("selected_ability", "") if saved.get("selected_ability", "") is String else ""
+	if not selected_skill in profile.unlocks: selected_skill = ""
+	validate_starting_skill()
 
-func validate_starting_ability():
-	for u in D.UPGRADES:
-		if u.id == selected_ability and not u.get("classes",[]).is_empty() and not D.BUILDS[selected_build].id in u.classes:
-			selected_ability = ""
+func validate_starting_skill():
+	for u in D.TACTICS:
+		if u.id == selected_skill and not u.get("classes",[]).is_empty() and not D.CLASSES[selected_class].id in u.classes:
+			selected_skill = ""
 			return
 
 func save_profile():
 	if test_mode: return
-	validate_starting_ability()
+	validate_starting_skill()
 	profile.version = 7
-	profile.selected_build = selected_build
-	profile.selected_ability = selected_ability
+	profile.selected_build = selected_class
+	profile.selected_ability = selected_skill
 	profile.selected_cosmetic = selected_cosmetic
 	var file = FileAccess.open(SAVE_PATH,FileAccess.WRITE)
 	if file: file.store_string(JSON.stringify(profile))
@@ -255,9 +256,9 @@ func show_menu():
 	button(box,"START ADVENTURE  →",start_run,Color("416946"))
 	var row = HBoxContainer.new()
 	box.add_child(row)
-	button(row,"BUILD: " + str(D.BUILDS[selected_build].name),show_builds).size_flags_horizontal=Control.SIZE_EXPAND_FILL
+	button(row,"CLASS: " + str(D.CLASSES[selected_class].name),show_classes).size_flags_horizontal=Control.SIZE_EXPAND_FILL
 	button(row,"COSMETICS",show_cosmetics).size_flags_horizontal=Control.SIZE_EXPAND_FILL
-	button(box,"STARTING ABILITY  ·  " + ability_name(selected_ability),show_abilities)
+	button(box,"STARTING SKILL  ·  " + skill_name(selected_skill),show_skills)
 	var row2 = HBoxContainer.new()
 	box.add_child(row2)
 	button(row2,"EQUIPMENT JOURNAL",show_equipment).size_flags_horizontal=Control.SIZE_EXPAND_FILL
@@ -270,16 +271,16 @@ func show_menu():
 	hint.z_index=5
 	queue_redraw()
 
-func ability_name(id: String) -> String:
-	for u in D.UPGRADES:
+func skill_name(id: String) -> String:
+	for u in D.TACTICS:
 		if u.id == id: return u.name
-	return "None (" + str(D.BUILDS[selected_build].weapon_label) + " primary)"
+	return "None (" + str(D.CLASSES[selected_class].weapon_label) + " primary)"
 
-func show_builds():
-	var box = modal("CHOOSE YOUR PATH","Your build equips its own automatic primary weapon from level 1.\nSpecial upgrades can add other attack types. All stats keep their final limits.")
-	for i in D.BUILDS.size():
-		var build = D.BUILDS[i]
-		button(box,build.name + "  ·  " + build.weapon_label.to_upper() + "\n" + build.description,func(): selected_build=i; save_profile(); show_menu())
+func show_classes():
+	var box = modal("CHOOSE YOUR CLASS","Your Class equips its automatic primary weapon from level 1.\nTactics can add other attack types. All stats keep their final limits.")
+	for i in D.CLASSES.size():
+		var class_def = D.CLASSES[i]
+		button(box,class_def.name + "  ·  " + class_def.weapon_label.to_upper() + "\n" + class_def.description,func(): selected_class=i; save_profile(); show_menu())
 	button(box,"BACK",show_menu)
 
 func show_cosmetics():
@@ -291,28 +292,28 @@ func show_cosmetics():
 		b.disabled = not unlocked
 	button(box,"BACK",show_menu)
 
-func show_abilities():
-	var box = modal("ONE STARTING ABILITY","Special upgrades you discover stay unlocked after death.\nEquip one here for your next run.")
-	button(box,"NONE  ·  " + str(D.BUILDS[selected_build].weapon_label) + " primary only",func(): selected_ability="";save_profile();show_menu())
+func show_skills():
+	var box = modal("CHOOSE YOUR STARTING SKILL","Tactics you discover unlock Skills for future runs.\nEquip one Skill at rank 1. Discoveries stay unlocked after death.")
+	button(box,"NONE  ·  " + str(D.CLASSES[selected_class].weapon_label) + " primary only",func(): selected_skill="";save_profile();show_menu())
 	var scroll = ScrollContainer.new()
 	scroll.custom_minimum_size.y = 245
 	box.add_child(scroll)
 	var list = VBoxContainer.new()
 	list.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	scroll.add_child(list)
-	for u in D.UPGRADES:
-		if u.id in profile.unlocks and (u.get("classes",[]).is_empty() or D.BUILDS[selected_build].id in u.classes):
-			button(list,u.name + "  ·  " + u.description,func(): selected_ability=u.id;save_profile();show_menu())
+	for u in D.TACTICS:
+		if u.id in profile.unlocks and (u.get("classes",[]).is_empty() or D.CLASSES[selected_class].id in u.classes):
+			button(list,u.name + "  ·  " + u.description,func(): selected_skill=u.id;save_profile();show_menu())
 	if profile.unlocks.is_empty():
 		var l = Label.new()
-		l.text = "Reach level 5 to discover your first special upgrade."
+		l.text = "Reach level 5 and choose a Tactic to unlock your first Skill."
 		list.add_child(l)
 	button(box,"BACK",show_menu)
 
 func show_equipment():
-	var box = modal("EQUIPMENT JOURNAL","Guardians offer three randomized pieces. Choose one.\nEquipment stacks during a run and resets on death.")
+	var box = modal("EQUIPMENT JOURNAL","Guardians offer three randomized Equipment rewards. Choose one.\nBonuses stack for this run; discovered names stay in this journal.")
 	var l = Label.new()
-	l.text = "DISCOVERED RELICS\n\n" + ("No relics yet. Defeat the stage 5 guardian!" if profile.equipment.is_empty() else "\n".join(profile.equipment))
+	l.text = "DISCOVERED EQUIPMENT\n\n" + ("No Equipment yet. Defeat the stage 5 guardian!" if profile.equipment.is_empty() else "\n".join(profile.equipment))
 	l.custom_minimum_size.y=220
 	l.horizontal_alignment=HORIZONTAL_ALIGNMENT_CENTER
 	box.add_child(l)
@@ -334,14 +335,14 @@ func start_run():
 	stats={"max_hp":100.0,"damage":18.0,"speed":150.0,"attack_speed":1.0,"range":78.0,"projectiles":0.0,"magic":0.0,"dash_damage":0.0,"dash_cooldown":3.0,"pickup":75.0,"regen":0.15,"armor":0.0,"lifesteal":0.0}
 	level=1;xp=0;stage=1;kills=0;elapsed=0;hp=100;pending_choices=0
 	run_equipment.clear()
-	upgrade_ranks.clear()
+	tactic_ranks.clear()
 	class_fx.clear();trail_patches.clear()
-	validate_starting_ability()
-	# Equip the chosen class before applying its one optional starting ability.
-	apply_stats(D.BUILDS[selected_build].starting_stats)
+	validate_starting_skill()
+	# Equip the chosen class before applying its one optional Starting Skill.
+	apply_stats(D.CLASSES[selected_class].starting_stats)
 	ClassProgression.reset_run(self)
-	for u in D.UPGRADES:
-		if u.id==selected_ability: apply_upgrade(u.id)
+	for u in D.TACTICS:
+		if u.id==selected_skill: apply_tactic(u.id)
 	hp=stats.max_hp
 	start_stage()
 
@@ -557,7 +558,7 @@ func simulate(dt: float):
 		if effects[i].time<=0:effects.remove_at(i)
 	if hp<=0:end_run(false);return
 	if pending_choices>0:
-		show_upgrades();return
+		show_tactics();return
 	if remaining_enemies()==0 and gems.is_empty() and potions.is_empty() and not portal_open:
 		heal_stage_clear()
 		if stage%5==0 and not boss_reward_taken:show_loot();return
@@ -574,7 +575,7 @@ func update_enemy(enemy: Dictionary, dt: float):
 	Combat.tick(self,enemy,dt)
 
 func primary_weapon() -> String:
-	return D.BUILDS[clampi(selected_build,0,D.BUILDS.size()-1)].weapon
+	return D.CLASSES[clampi(selected_class,0,D.CLASSES.size()-1)].weapon
 
 func melee_duration(phase_name: String) -> float:
 	return float(ClassCombat.melee_spec(self).get(phase_name,0.12))
@@ -704,11 +705,11 @@ func gain_xp(amount:float):
 			if key=="lifesteal":continue # Fixed 10% ability, never scaled by leveling.
 			if key=="dash_cooldown":stats[key]/=1.03
 			else:stats[key]*=1.03
-		var bonuses=D.BUILDS[selected_build].stats
+		var bonuses=D.CLASSES[selected_class].stats
 		for key in bonuses:stats[key]+=float(bonuses[key])*0.18
 		clamp_stats()
 		hp=minf(stats.max_hp,hp+12)
-		toast("LEVEL %d  ·  All stats +3%%  ·  Path bonus" % level)
+		toast("LEVEL %d  ·  Stats +3%%  ·  Class bonus" % level)
 		if level%5==0:pending_choices+=1
 
 func clamp_stats():
@@ -718,32 +719,32 @@ func clamp_stats():
 			stats[key]=clampf(float(stats[key]),bounds[0],bounds[1])
 	hp=minf(hp,stats.max_hp)
 
-func upgrade_cap(id: String) -> int:
-	for upgrade in D.UPGRADES:
-		if upgrade.id==id:return int(upgrade.cap)
+func tactic_cap(id: String) -> int:
+	for tactic in D.TACTICS:
+		if tactic.id==id:return int(tactic.cap)
 	return 0
 
-func upgrade_rank(id: String) -> int:
-	var value=upgrade_ranks.get(id,0)
+func tactic_rank(id: String) -> int:
+	var value=tactic_ranks.get(id,0)
 	if not (value is int or value is float):return 0
 	if not is_finite(float(value)):return 0
-	return clampi(int(value),0,upgrade_cap(id))
+	return clampi(int(value),0,tactic_cap(id))
 
-func available_upgrades() -> Array:
-	return D.UPGRADES.filter(func(u):
-		return ClassProgression.eligible(self,u) and upgrade_rank(u.id)<upgrade_cap(u.id) and (u.id!="life_drain" or stats.get("lifesteal",0.0)<=0) and (ClassProgression.has_effect(self,u) or not effective_upgrade_changes(u).is_empty())
+func available_tactics() -> Array:
+	return D.TACTICS.filter(func(u):
+		return ClassProgression.eligible(self,u) and tactic_rank(u.id)<tactic_cap(u.id) and (u.id!="life_drain" or stats.get("lifesteal",0.0)<=0) and (ClassProgression.has_effect(self,u) or not effective_tactic_changes(u).is_empty())
 	)
 
-func upgrade_changes(upgrade: Dictionary) -> Dictionary:
-	var changes=upgrade.stats.duplicate()
-	var scales=upgrade.get("rank_scales",[])
+func tactic_changes(tactic: Dictionary) -> Dictionary:
+	var changes=tactic.stats.duplicate()
+	var scales=tactic.get("rank_scales",[])
 	if not scales.is_empty():
-		var factor=float(scales[mini(upgrade_rank(upgrade.id),scales.size()-1)])
+		var factor=float(scales[mini(tactic_rank(tactic.id),scales.size()-1)])
 		for key in changes:changes[key]*=factor
 	return changes
 
-func effective_upgrade_changes(upgrade: Dictionary) -> Dictionary:
-	var changes=upgrade_changes(upgrade)
+func effective_tactic_changes(tactic: Dictionary) -> Dictionary:
+	var changes=tactic_changes(tactic)
 	var effective={}
 	for key in changes:
 		var current=float(stats.get(key,0.0))
@@ -752,17 +753,17 @@ func effective_upgrade_changes(upgrade: Dictionary) -> Dictionary:
 		if not is_zero_approx(change):effective[key]=change
 	return effective
 
-func apply_upgrade(id: String) -> bool:
-	if upgrade_rank(id)>=upgrade_cap(id):return false
+func apply_tactic(id: String) -> bool:
+	if tactic_rank(id)>=tactic_cap(id):return false
 	if id=="life_drain" and stats.get("lifesteal",0.0)>0:return false
-	for upgrade in D.UPGRADES:
-		if upgrade.id==id:
-			if not ClassProgression.eligible(self,upgrade):return false
-			if effective_upgrade_changes(upgrade).is_empty() and not ClassProgression.has_effect(self,upgrade):return false
-			var changes=upgrade_changes(upgrade)
-			upgrade_ranks[id]=upgrade_rank(id)+1
+	for tactic in D.TACTICS:
+		if tactic.id==id:
+			if not ClassProgression.eligible(self,tactic):return false
+			if effective_tactic_changes(tactic).is_empty() and not ClassProgression.has_effect(self,tactic):return false
+			var changes=tactic_changes(tactic)
+			tactic_ranks[id]=tactic_rank(id)+1
 			apply_stats(changes)
-			ClassProgression.on_upgrade(self,id)
+			ClassProgression.on_tactic(self,id)
 			return true
 	return false
 
@@ -773,10 +774,10 @@ func apply_stats(changes:Dictionary):
 	clamp_stats()
 	if changes.has("max_hp"):hp=minf(stats.max_hp,hp+float(changes.max_hp))
 
-func show_upgrades():
+func show_tactics():
 	if pending_choices<=0:return
-	state="upgrade"
-	var choices=available_upgrades()
+	state="tactic"
+	var choices=available_tactics()
 	# Use the run RNG, so seeded balance and regression tests reproduce choices.
 	for i in range(choices.size()-1,0,-1):
 		var j=rng.randi_range(0,i)
@@ -786,25 +787,25 @@ func show_upgrades():
 		if choices[i].has("classes"):
 			var class_choice=choices[i];choices.remove_at(i);choices.push_front(class_choice)
 			break
-	var box=modal("A LITTLE WISER","LEVEL %d  ·  Choose one special upgrade
-Ranks reset each run. Starting abilities use rank 1; final stat limits apply." % level)
+	var box=modal("CHOOSE YOUR TACTIC","LEVEL %d  ·  Choose one randomly offered Tactic
+Tactic ranks reset each run. Starting Skills use rank 1; stat limits apply." % level)
 	if choices.is_empty():
-		button(box,"NO FURTHER UPGRADES\nRest: restore 10% maximum HP, then continue.",func():
+		button(box,"NO FURTHER TACTICS\nRest: restore 10% maximum HP, then continue.",func():
 			heal_player(stats.max_hp*0.1,"MASTERY REST")
 			pending_choices=maxi(0,pending_choices-1);clear_panel();state="playing"
 		,Color("354868")).custom_minimum_size.y=78
 		return
 	for i in range(mini(3,choices.size())):
-		var upgrade=choices[i]
-		var changes=effective_upgrade_changes(upgrade)
+		var tactic=choices[i]
+		var changes=effective_tactic_changes(tactic)
 		var parts=[]
 		for key in changes:
 			parts.append("%+.2f %s" % [changes[key],"melee reach / aimed-shot speed" if key=="range" else key.replace("_"," ")])
-		var description=upgrade.description if upgrade.id=="life_drain" or upgrade.has("classes") else "Next: " + " / ".join(parts)
-		var label=upgrade.name + "\nRank %d/%d → %d/%d  ·  " % [upgrade_rank(upgrade.id),upgrade.cap,upgrade_rank(upgrade.id)+1,upgrade.cap] + description
+		var description=tactic.description if tactic.id=="life_drain" or tactic.has("classes") else "Next: " + " / ".join(parts)
+		var label=tactic.name + "\nRank %d/%d → %d/%d  ·  " % [tactic_rank(tactic.id),tactic.cap,tactic_rank(tactic.id)+1,tactic.cap] + description
 		button(box,label,func():
-			if not apply_upgrade(upgrade.id):return
-			if not upgrade.id in profile.unlocks:profile.unlocks.append(upgrade.id)
+			if not apply_tactic(tactic.id):return
+			if not tactic.id in profile.unlocks:profile.unlocks.append(tactic.id)
 			save_profile();pending_choices=maxi(0,pending_choices-1);clear_panel();state="playing"
 		,Color("354868")).custom_minimum_size.y=78
 
@@ -828,7 +829,7 @@ func show_loot():
 	state="loot"
 	profile.best_stage=maxi(int(profile.best_stage),stage)
 	save_profile()
-	var box=modal("GUARDIAN DEFEATED!","Choose one randomized relic. Bonuses stack within the final stat limits.\nA new wardrobe color may now be available.")
+	var box=modal("CHOOSE YOUR EQUIPMENT","Guardian defeated! Choose one randomized Equipment reward. Bonuses stack within stat limits.\nA new wardrobe color may now be available.")
 	for i in range(3):
 		var item=random_equipment()
 		button(box,item.name+"\n"+item.description,func():
@@ -853,13 +854,13 @@ func end_run(won:bool):
 	update_hud()
 	if won:profile.wins+=1;profile.best_stage=20
 	save_profile()
-	var box=modal("HOME, A HERO." if won else "EVERY OWL RISES AGAIN.","%s\nStage %d  ·  Level %d  ·  %d foes defeated\nCosmetics and discovered special abilities are yours forever." % ["All twenty arenas conquered!" if won else "Your run ends here. Your discoveries don't.",stage,level,kills])
+	var box=modal("HOME, A HERO." if won else "EVERY OWL RISES AGAIN.","%s\nStage %d  ·  Level %d  ·  %d foes defeated\nDiscovered Skills and Cosmetics stay unlocked for future runs." % ["All twenty arenas conquered!" if won else "Your run ends here. Your discoveries don't.",stage,level,kills])
 	button(box,"ONE MORE ADVENTURE",start_run,Color("416946"))
 	button(box,"MAIN MENU",show_menu)
 
 func update_hud():
 	hud.text="STAGE %02d / 20   %s          LEVEL %02d          %d FOES LEFT" % [stage,str(D.THEMES[mini(3,int((stage-1)/5))].name).to_upper(),level,remaining_enemies()]
-	hint.text="HP %d/%d  •  %s  •  %s  •  %s  •  Esc: pause" % [ceil(hp),ceil(stats.max_hp),str(D.BUILDS[selected_build].weapon_label).to_upper(),"DASH %d/%d%s" % [dash_charges,ClassProgression.dash_max(self)," +%.1fs" % dash_recharge if dash_recharge>0 else ""], "ENTER THE CENTER PORTAL" if portal_open else "WASD / hold left mouse: move"]
+	hint.text="HP %d/%d  •  %s  •  %s  •  %s  •  Esc: pause" % [ceil(hp),ceil(stats.max_hp),str(D.CLASSES[selected_class].weapon_label).to_upper(),"DASH %d/%d%s" % [dash_charges,ClassProgression.dash_max(self)," +%.1fs" % dash_recharge if dash_recharge>0 else ""], "ENTER THE CENTER PORTAL" if portal_open else "WASD / hold left mouse: move"]
 
 func toast(text:String):toast_text=text;toast_time=3
 
@@ -1006,18 +1007,18 @@ func _draw():
 	draw_string(font,Vector2(288,80),"EXPERIENCE  %d / %d" % [xp,needed_xp()],HORIZONTAL_ALIGNMENT_LEFT,-1,11,Color("afbdd3"))
 	draw_string(font,Vector2(553,80),"GROUP %d/%d  ·  %d ACTIVE + %d QUEUED" % [wave_index,wave_count,enemies.size(),spawn_queue.size()],HORIZONTAL_ALIGNMENT_LEFT,-1,11,Color("afbdd3"))
 	var resource_text = ""
-	if selected_build==2:
+	if selected_class==2:
 		draw_rect(Rect2(32,87,150,7),Color("273348"))
 		draw_rect(Rect2(32,87,150*shield/maxf(1,ClassProgression.shield_max(self)),7),Color("b5a3ff"))
 		resource_text="MANA SHIELD %d/%d  ·  %s" % [ceil(shield),ClassProgression.shield_max(self),"REGEN %.1fs" % shield_delay if shield_delay>0 else "+%d/s" % ClassProgression.shield_regen(self)]
 		draw_string(font,Vector2(193,94),resource_text,HORIZONTAL_ALIGNMENT_LEFT,-1,11,Color("d1c3ff"))
-	elif selected_build==1:
+	elif selected_class==1:
 		resource_text="TRAP EVADE %d/%d%s  ·  map traps only" % [trap_charges,ClassProgression.trap_max(self),"  +%.1fs" % trap_recharge if trap_recharge>0 else ""]
-	elif selected_build==0:
-		resource_text="STYLE: " + ("THRUST · narrow / 130%" if upgrade_rank("blade_thrust")>0 else ("CLEAVE · half circle / 80%" if upgrade_rank("blade_cleave")>0 else ("SWEEP · full circle / 55%" if upgrade_rank("blade_sweep")>0 else "FOCUSED SLASH · narrow / 100%")))
-	elif selected_build==3:
-		resource_text="COMET DASH %.2fs  ·  POISON %d/2  ·  PUSH %d/2" % [ClassProgression.dash_duration(self),upgrade_rank("comet_poison"),upgrade_rank("comet_push")]
-	if selected_build!=2:draw_string(font,Vector2(32,98),resource_text,HORIZONTAL_ALIGNMENT_LEFT,-1,12,Color("c7deff"))
+	elif selected_class==0:
+		resource_text="STYLE: " + ("THRUST · narrow / 130%" if tactic_rank("blade_thrust")>0 else ("CLEAVE · half circle / 80%" if tactic_rank("blade_cleave")>0 else ("SWEEP · full circle / 55%" if tactic_rank("blade_sweep")>0 else "FOCUSED SLASH · narrow / 100%")))
+	elif selected_class==3:
+		resource_text="COMET DASH %.2fs  ·  POISON %d/2  ·  PUSH %d/2" % [ClassProgression.dash_duration(self),tactic_rank("comet_poison"),tactic_rank("comet_push")]
+	if selected_class!=2:draw_string(font,Vector2(32,98),resource_text,HORIZONTAL_ALIGNMENT_LEFT,-1,12,Color("c7deff"))
 	if toast_time>0 and state=="playing":
 		draw_rect(Rect2(200,158,560,27),Color(0.05,0.08,0.14,0.85))
 		draw_string(font,Vector2(208,177),toast_text,HORIZONTAL_ALIGNMENT_CENTER,544,15,Color("fff0b3"))
@@ -1088,10 +1089,10 @@ func self_test():
 	if state!="playing":failures.append("pause resume")
 	# Exercise all three actual choice callbacks, loot, portal, and unlock paths.
 	for choice_index in range(3):
-		start_run();level=5;pending_choices=1;show_upgrades()
+		start_run();level=5;pending_choices=1;show_tactics()
 		var choice_box=panel.get_child(1)
 		choice_box.get_child(2+choice_index).pressed.emit()
-		if state!="playing" or pending_choices!=0:failures.append("upgrade callback")
+		if state!="playing" or pending_choices!=0:failures.append("tactic callback")
 		if profile.unlocks.is_empty():failures.append("persistent discovery")
 		stage=5;start_stage();enemies.clear();spawn_queue.clear();gems.clear();simulate(0.01)
 		if state!="loot":failures.append("boss reward transition")
