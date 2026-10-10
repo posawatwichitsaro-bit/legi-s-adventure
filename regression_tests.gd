@@ -28,6 +28,10 @@ func run_tests():
 	root.add_child(game)
 	game.set_process(false)
 	game.rng.seed = 1760
+	# _ready loads the user's profile even in test mode. Gameplay fixtures must
+	# start with the sword and no persistent ability, regardless of that save.
+	game.selected_build = 0
+	game.selected_ability = ""
 	game.start_run()
 	game.level = 5
 	game.pending_choices = 1
